@@ -3,7 +3,7 @@
 > **Media Pendamping Intervensi Psikologis & Manajemen Waktu Mahasiswa**  
 > Mengatasi prokrastinasi akademik dengan kerangka produktivitas teruji, dekomposisi tugas otomatis, dan timer fokus multi-fase.
 > 
-> 🌐 **Live Web App**: [https://itspallyourfren.github.io/jadwalin-app/](https://itspallyourfren.github.io/jadwalin-app/)
+> 🌐 **Live Web App**: [https://app.jadwalin.xyz](https://app.jadwalin.xyz) (atau [https://itspallyourfren.github.io/jadwalin-app/](https://itspallyourfren.github.io/jadwalin-app/))
 
 ---
 
