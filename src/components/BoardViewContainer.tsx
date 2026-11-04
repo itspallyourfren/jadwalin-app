@@ -1,16 +1,16 @@
 // src/components/BoardViewContainer.tsx - Clean, Spacious Multi-Framework Board
 import React from 'react'
-import { CheckCircle2, Eye, Grid2X2, Kanban, Layers, ListOrdered, Plus } from 'lucide-react'
+import { CheckCircle2, Eye, Plus, Sparkles } from 'lucide-react'
 import {
   getIvyLeeQueue,
   getOneThreeFiveAllocation,
   groupTasksByEisenhower,
   sortKanbanColumnTasks,
 } from '../engine/boardFrameworksEngine'
+import { getArchetypeMetadata } from '../engine/procrastinationDiagnosticEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
 import { TaskCard } from './TaskCard'
 import type {
-  BoardFrameworkView,
   EisenhowerQuadrant,
   KanbanStatus,
   TimeBlockTag,
@@ -22,18 +22,8 @@ type BoardViewContainerProps = {
   onOpenDetail: (task: TrackerTask) => void
   onStartFocusTimer: (task: TrackerTask) => void
   onOpenNewTask: () => void
+  onOpenDiagnostic: () => void
 }
-
-const VIEW_TABS: Array<{
-  id: BoardFrameworkView
-  label: string
-  icon: React.ReactNode
-}> = [
-  { id: 'KANBAN', label: 'Kanban', icon: <Kanban className="w-3.5 h-3.5" /> },
-  { id: 'EISENHOWER', label: 'Eisenhower', icon: <Grid2X2 className="w-3.5 h-3.5" /> },
-  { id: 'ONE_THREE_FIVE', label: '1-3-5', icon: <Layers className="w-3.5 h-3.5" /> },
-  { id: 'IVY_LEE', label: 'Ivy Lee', icon: <ListOrdered className="w-3.5 h-3.5" /> },
-]
 
 const TIME_OPTIONS: Array<{ value: TimeBlockTag | 'ALL'; label: string }> = [
   { value: 'ALL', label: 'Semua' },
@@ -48,10 +38,10 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
   onOpenDetail,
   onStartFocusTimer,
   onOpenNewTask,
+  onOpenDiagnostic,
 }) => {
   const tasks = useTrackerStore((s) => s.tasks)
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
-  const setActiveBoardView = useTrackerStore((s) => s.setActiveBoardView)
   const activeMobileKanbanTab = useTrackerStore((s) => s.activeMobileKanbanTab)
   const setActiveMobileKanbanTab = useTrackerStore((s) => s.setActiveMobileKanbanTab)
   const activeTimeFilter = useTrackerStore((s) => s.activeTimeFilter)
@@ -61,6 +51,8 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
   const setTaskQuadrant = useTrackerStore((s) => s.setTaskQuadrant)
   const setOneThreeFiveSlot = useTrackerStore((s) => s.setOneThreeFiveSlot)
   const setIvyLeeRank = useTrackerStore((s) => s.setIvyLeeRank)
+  const hasCompletedDiagnosis = useTrackerStore((s) => s.hasCompletedDiagnosis)
+  const userProfile = useTrackerStore((s) => s.userProfile)
 
   const backlogTasks = sortKanbanColumnTasks(
     tasks.filter((t) => t.status === 'BACKLOG'),
@@ -170,7 +162,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                         ? 'Laci tugas kosong. Catat tugas kuliah atau proyekmu di sini.'
                         : 'Belum ada tugas selesai. Mulai cicil 1 langkah kecil!'}
                     </p>
-                    {col.status !== 'COMPLETED' && (
+                    {col.status !== 'COMPLETED' && tasks.length > 0 && (
                       <button
                         type="button"
                         onClick={onOpenNewTask}
@@ -519,68 +511,77 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
         isSimulatedMobile ? 'px-3 py-2.5 pb-32' : 'max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 pb-28'
       }`}
     >
-      {/* Streamlined Horizontal Scroll Toolbar (Zero Stacking Clutter on Mobile) */}
-      <div className="mb-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-        {VIEW_TABS.map((tab) => {
-          const active = activeBoardView === tab.id
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveBoardView(tab.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer ${
-                active
-                  ? 'bg-[#2C4A3E] text-[#FAF7F2] shadow-2xs'
-                  : 'bg-[#FFFDF9] text-[#5C5148] hover:text-[#1E1915] border border-[#E2D9C8]'
-              }`}
-            >
-              {tab.icon}
-              <span>{tab.label}</span>
-            </button>
-          )
-        })}
+      {/* Streamlined Time Block Filter Chips Bar (Zero Duplicate Framework Tabs) */}
+      <div className="mb-3 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar py-0.5">
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="text-xs font-extrabold text-[#5C5148] mr-1 hidden sm:inline">
+            Waktu:
+          </span>
+          {TIME_OPTIONS.map((opt) => {
+            const active = activeTimeFilter === opt.value
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setActiveTimeFilter(opt.value)}
+                className={`min-h-[36px] px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
+                  active
+                    ? 'bg-[#1E1915] text-white shadow-2xs'
+                    : 'text-[#5C5148] bg-[#F2ECE1]/70 hover:bg-[#F2ECE1] border border-[#E2D9C8]'
+                }`}
+              >
+                {opt.label}
+              </button>
+            )
+          })}
+        </div>
 
-        <div className="h-4 w-px bg-[#E2D9C8] mx-1 shrink-0" />
-
-        {/* Time Block Filter Chips */}
-        {TIME_OPTIONS.map((opt) => {
-          const active = activeTimeFilter === opt.value
-          return (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => setActiveTimeFilter(opt.value)}
-              className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-colors shrink-0 cursor-pointer ${
-                active
-                  ? 'bg-[#1E1915] text-white'
-                  : 'text-[#5C5148] bg-[#F2ECE1]/70 hover:bg-[#F2ECE1]'
-              }`}
-            >
-              {opt.label}
-            </button>
-          )
-        })}
+        {hasCompletedDiagnosis && userProfile && (
+          <button
+            type="button"
+            onClick={onOpenDiagnostic}
+            className="text-xs font-bold text-[#2C4A3E] hover:underline flex items-center gap-1.5 shrink-0 cursor-pointer py-1.5 px-2.5 rounded-xl bg-[#FFFDF9] border border-[#E2D9C8] hover:bg-[#F2ECE1]"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#D4532F]" />
+            <span className="hidden sm:inline">Profil:</span>
+            <span>{getArchetypeMetadata(userProfile.archetype).title}</span>
+          </button>
+        )}
       </div>
 
       {tasks.length === 0 && (
-        <div className="mb-4 bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-5 text-center space-y-3 shadow-2xs">
+        <div className="mb-4 bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-5 sm:p-6 text-center space-y-3 shadow-2xs">
           <div className="w-12 h-12 rounded-2xl bg-[#E7F6EE] text-[#1F7A4C] mx-auto flex items-center justify-center">
             <CheckCircle2 className="w-6 h-6 stroke-[2.2]" />
           </div>
           <div className="space-y-1">
             <h2 className="text-base font-extrabold text-[#1E1915]">Papan Tugas Masih Bersih</h2>
             <p className="text-xs text-[#5C5148] max-w-sm mx-auto leading-relaxed font-medium">
-              Belum ada target tugas yang tercatat. Tambahkan tugas kuliah, skripsi, atau proyek pertamamu untuk mulai merapikan jadwal.
+              {!hasCompletedDiagnosis
+                ? 'Yuk ikuti diagnosis singkat 1 menit untuk mengenali gaya prokrastinasimu dan menyesuaikan fitur aplikasi secara otomatis.'
+                : 'Papan siap digunakan. Tambahkan tugas kuliah, skripsi, atau target belajarmu hari ini.'}
             </p>
           </div>
-          <div>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={onOpenDiagnostic}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white text-xs font-extrabold cursor-pointer transition-all shadow-sm"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>
+                {hasCompletedDiagnosis
+                  ? 'Ubah Profil Diagnosis'
+                  : 'Mulai Diagnosis (1 Menit)'}
+              </span>
+            </button>
             <button
               type="button"
               onClick={onOpenNewTask}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white text-xs font-extrabold cursor-pointer transition-all shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#C9B99F] active:scale-95 text-[#1E1915] text-xs font-extrabold cursor-pointer transition-all"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>Tambah Tugas Pertamamu</span>
+              <span>Tambah Tugas Langsung</span>
             </button>
           </div>
         </div>

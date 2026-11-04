@@ -6,6 +6,7 @@ import { DeviceSimulatorWrapper } from './components/DeviceSimulatorWrapper'
 import { FloatingSwitcherDock } from './components/FloatingSwitcherDock'
 import { FocusTimerModal } from './components/FocusTimerModal'
 import { NotificationAndRecoveryModal } from './components/NotificationAndRecoveryModal'
+import { ProcrastinationDiagnosticModal } from './components/ProcrastinationDiagnosticModal'
 import { TaskWorkspaceModal } from './components/TaskWorkspaceModal'
 import { TechniqueToolkitModal } from './components/TechniqueToolkitModal'
 import { TopHeaderBar } from './components/TopHeaderBar'
@@ -52,11 +53,17 @@ export function App() {
     mode: 'TEN_MINUTE_RULE',
   })
   const [showToolkitModal, setShowToolkitModal] = useState(false)
+  const [showDiagnosticModal, setShowDiagnosticModal] = useState(false)
   const [notifRecoveryTab, setNotifRecoveryTab] = useState<'NOTIFICATION' | 'RECOVERY' | null>(null)
 
   useEffect(() => {
     void useTrackerStore.persist.rehydrate()
-    void recoverFromIndexedDbIfNeeded()
+    void recoverFromIndexedDbIfNeeded().then(() => {
+      const hasDone = useTrackerStore.getState().hasCompletedDiagnosis
+      if (!hasDone) {
+        setShowDiagnosticModal(true)
+      }
+    })
   }, [recoverFromIndexedDbIfNeeded])
 
   const handleActivateTechnique = (item: TechniqueCatalogItem) => {
@@ -138,6 +145,7 @@ export function App() {
               onOpenToolkit={() => setShowToolkitModal(true)}
               onOpenNotifications={() => setNotifRecoveryTab('NOTIFICATION')}
               onOpenBackup={() => setNotifRecoveryTab('RECOVERY')}
+              onOpenDiagnostic={() => setShowDiagnosticModal(true)}
             />
 
             {/* Main Content Viewport */}
@@ -167,6 +175,7 @@ export function App() {
                 onOpenNewTask={() =>
                   setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
                 }
+                onOpenDiagnostic={() => setShowDiagnosticModal(true)}
               />
 
             {/* Sleek Floating Center Switcher Dock (Non-Repetitive Command Center) */}
@@ -200,6 +209,12 @@ export function App() {
             <TechniqueToolkitModal
               onClose={() => setShowToolkitModal(false)}
               onActivateTechnique={handleActivateTechnique}
+            />
+          )}
+
+          {showDiagnosticModal && (
+            <ProcrastinationDiagnosticModal
+              onClose={() => setShowDiagnosticModal(false)}
             />
           )}
 

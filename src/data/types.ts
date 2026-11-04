@@ -161,6 +161,21 @@ export type SimulatedNotificationItem = {
   relatedTaskId?: string
 }
 
+export type ProcrastinationArchetype = 'OVERWHELMED' | 'PERFECTIONIST' | 'DEADLINER' | 'DISTRACTED'
+
+export type PrimaryAcademicGoal = 'THESIS' | 'COURSEWORK' | 'EXAMS' | 'ROUTINE'
+
+export type PreferredFocusStyle = 'POMODORO' | 'TEN_MIN' | 'FLOW' | 'FLEXIBLE'
+
+export type UserProcrastinationProfile = {
+  archetype: ProcrastinationArchetype
+  primaryGoal: PrimaryAcademicGoal
+  focusStyle: PreferredFocusStyle
+  recommendedFramework: BoardFrameworkView
+  recommendedTechniqueIds: TechniqueId[]
+  diagnosedAtIso: string
+}
+
 export type MobileBackupPayload = {
   version: 1
   exportedAtIso: string
@@ -170,4 +185,5 @@ export type MobileBackupPayload = {
   completedDates: string[] // YYYY-MM-DD untuk TEK_05 Seinfeld Strategy Streak
   reminderConfig: HabitReminderConfig
   gameCommitment: ImportedGameCommitment | null
+  userProfile?: UserProcrastinationProfile | null
 }

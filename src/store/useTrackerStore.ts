@@ -25,8 +25,10 @@ import type {
   TaskScale,
   TimeBlockTag,
   TrackerTask,
+  UserProcrastinationProfile,
   WoopNote,
 } from '../data/types'
+import { generateStarterTaskForProfile } from '../engine/procrastinationDiagnosticEngine'
 
 export type NewTaskInput = {
   title: string
@@ -56,6 +58,8 @@ export type TrackerStoreState = {
   gameCommitment: ImportedGameCommitment | null
   simulatedNotifications: SimulatedNotificationItem[]
   lastBackupSyncedIso: string | null
+  hasCompletedDiagnosis: boolean
+  userProfile: UserProcrastinationProfile | null
 
   // Actions
   setParticipantProfile: (name: string, characterId: CharacterId) => void
@@ -89,6 +93,8 @@ export type TrackerStoreState = {
   updateReminderConfig: (patch: Partial<HabitReminderConfig>) => void
   triggerSampleNotification: (customTitle?: string, customBody?: string, relatedTaskId?: string) => void
   dismissSimulatedNotification: (id: string) => void
+  saveDiagnosisResult: (profile: UserProcrastinationProfile, createStarterTask?: boolean) => void
+  resetDiagnosis: () => void
 
   exportBackupPayload: () => MobileBackupPayload
   importBackupPayload: (payload: MobileBackupPayload) => void
@@ -106,6 +112,7 @@ function buildBackupSnapshot(state: TrackerStoreState): MobileBackupPayload {
     completedDates: state.completedDates,
     reminderConfig: state.reminderConfig,
     gameCommitment: state.gameCommitment,
+    userProfile: state.userProfile,
   }
 }
 
@@ -138,6 +145,8 @@ export const useTrackerStore = create<TrackerStoreState>()(
         gameCommitment: null,
         simulatedNotifications: [],
         lastBackupSyncedIso: new Date().toISOString(),
+        hasCompletedDiagnosis: false,
+        userProfile: null,
 
         setParticipantProfile: (participantName, characterId) => {
           set({ participantName, characterId, lastBackupSyncedIso: new Date().toISOString() })
@@ -541,6 +550,29 @@ export const useTrackerStore = create<TrackerStoreState>()(
           }))
         },
 
+        saveDiagnosisResult: (profile, createStarterTask = false) => {
+          set({
+            hasCompletedDiagnosis: true,
+            userProfile: profile,
+            activeBoardView: profile.recommendedFramework,
+            lastBackupSyncedIso: new Date().toISOString(),
+          })
+          if (createStarterTask) {
+            const starterTask = generateStarterTaskForProfile(profile)
+            get().addTask(starterTask)
+          }
+          mirrorToIdb()
+        },
+
+        resetDiagnosis: () => {
+          set({
+            hasCompletedDiagnosis: false,
+            userProfile: null,
+            lastBackupSyncedIso: new Date().toISOString(),
+          })
+          mirrorToIdb()
+        },
+
         exportBackupPayload: () => buildBackupSnapshot(get()),
 
         importBackupPayload: (payload) => {
@@ -551,6 +583,9 @@ export const useTrackerStore = create<TrackerStoreState>()(
             completedDates: payload.completedDates || [formatDateYmd()],
             reminderConfig: payload.reminderConfig || DEFAULT_HABIT_REMINDER_CONFIG,
             gameCommitment: payload.gameCommitment ?? null,
+            userProfile: payload.userProfile ?? null,
+            hasCompletedDiagnosis: Boolean(payload.userProfile),
+            activeBoardView: payload.userProfile?.recommendedFramework ?? 'KANBAN',
             lastBackupSyncedIso: new Date().toISOString(),
           })
           mirrorToIdb()

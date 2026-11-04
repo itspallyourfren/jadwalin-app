@@ -11,6 +11,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   ShieldCheck,
+  Sparkles,
   Timer,
   Trash2,
 } from 'lucide-react'
@@ -29,6 +30,7 @@ type AppSidebarProps = {
   onOpenToolkit: () => void
   onOpenNotifications: () => void
   onOpenBackup: () => void
+  onOpenDiagnostic: () => void
 }
 
 export const AppSidebar: React.FC<AppSidebarProps> = ({
@@ -40,6 +42,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   onOpenToolkit,
   onOpenNotifications,
   onOpenBackup,
+  onOpenDiagnostic,
 }) => {
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
   const setActiveBoardView = useTrackerStore((s) => s.setActiveBoardView)
@@ -218,6 +221,21 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             <BookOpen className="w-4 h-4 text-[#2C4A3E] shrink-0" />
             {(!isCollapsed || isMobile) && (
               <span className="flex-1 text-left truncate">Panduan Teknik</span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              onOpenDiagnostic()
+              onCloseMobileDrawer()
+            }}
+            title="Diagnosis Gaya Prokrastinasi & Personalisasi"
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-[#B86B14] shrink-0" />
+            {(!isCollapsed || isMobile) && (
+              <span className="flex-1 text-left truncate">Diagnosis Gaya Belajar</span>
             )}
           </button>
         </div>

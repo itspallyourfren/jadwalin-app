@@ -42,4 +42,30 @@ describe('useTrackerStore', () => {
     expect(useTrackerStore.getState().participantName).toBe('Nadia Kusuma')
     expect(useTrackerStore.getState().characterId).toBe('CHR-02')
   })
+
+  it('saves procrastination diagnosis, adapts active framework, and optionally generates starter task', () => {
+    const store = useTrackerStore.getState()
+    store.clearAllTasks()
+    store.resetDiagnosis()
+    expect(useTrackerStore.getState().hasCompletedDiagnosis).toBe(false)
+
+    store.saveDiagnosisResult(
+      {
+        archetype: 'OVERWHELMED',
+        primaryGoal: 'THESIS',
+        focusStyle: 'TEN_MIN',
+        recommendedFramework: 'ONE_THREE_FIVE',
+        recommendedTechniqueIds: ['TEK_11'],
+        diagnosedAtIso: new Date().toISOString(),
+      },
+      true // create starter task
+    )
+
+    const updated = useTrackerStore.getState()
+    expect(updated.hasCompletedDiagnosis).toBe(true)
+    expect(updated.activeBoardView).toBe('ONE_THREE_FIVE')
+    expect(updated.userProfile?.archetype).toBe('OVERWHELMED')
+    expect(updated.tasks.length).toBe(1)
+    expect(updated.tasks[0].title).toContain('Skripsi')
+  })
 })
