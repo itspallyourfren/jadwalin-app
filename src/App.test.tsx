@@ -5,6 +5,7 @@ import { FocusTimerModal } from './components/FocusTimerModal'
 import { NotificationAndRecoveryModal } from './components/NotificationAndRecoveryModal'
 import { TaskWorkspaceModal } from './components/TaskWorkspaceModal'
 import { TechniqueToolkitModal } from './components/TechniqueToolkitModal'
+import { SmartDecompositionModal } from './components/SmartDecompositionModal'
 import { useTrackerStore } from './store/useTrackerStore'
 
 describe('App & Modals SSR Render Verification', () => {
@@ -55,6 +56,15 @@ describe('App & Modals SSR Render Verification', () => {
       <TaskWorkspaceModal taskId={firstTask.id} initialTab="WOOP" onClose={() => {}} />
     )
     expect(htmlWoop).toContain('WOOP Framework')
+
+    // 4c. SmartDecompositionModal (Adaptive Strategy Engine)
+    const htmlSmart = renderToString(
+      <SmartDecompositionModal task={firstTask} onClose={() => {}} onApplySteps={() => {}} />
+    )
+    expect(htmlSmart).toContain('Asisten Alur Kerja Cerdas')
+    expect(htmlSmart).toContain('Pilih Gaya Pengerjaan')
+    expect(htmlSmart).toContain('Sprint Mepet')
+    expect(htmlSmart).toContain('Peta Fase')
 
     // 5. NotificationAndRecoveryModal
     const htmlNotif = renderToString(

@@ -249,6 +249,7 @@ export type TrackerStoreState = {
   setTaskQuadrant: (taskId: string, isImportant: boolean, isUrgentOverride: boolean) => void
 
   autoChunkTask: (taskId: string) => void
+  applyAdaptivePlan: (taskId: string, steps: Array<{ title: string; isParetoCore: boolean }>) => void
   addSubtask: (taskId: string, title: string, isParetoCore?: boolean) => void
   toggleSubtask: (taskId: string, subtaskId: string) => void
   toggleSubtaskPareto: (taskId: string, subtaskId: string) => void
@@ -498,6 +499,26 @@ export const useTrackerStore = create<TrackerStoreState>()(
               return {
                 ...t,
                 subtasks: generated,
+              }
+            }),
+            lastBackupSyncedIso: new Date().toISOString(),
+          }))
+          mirrorToIdb()
+        },
+
+        applyAdaptivePlan: (taskId, steps) => {
+          set((s) => ({
+            tasks: s.tasks.map((t) => {
+              if (t.id !== taskId) return t
+              const newSubtasks: SubtaskItem[] = steps.map((st, idx) => ({
+                id: `sub-${Date.now()}-${idx}-${Math.random().toString(36).slice(2, 5)}`,
+                title: st.title,
+                completed: false,
+                isParetoCore: st.isParetoCore,
+              }))
+              return {
+                ...t,
+                subtasks: newSubtasks,
               }
             }),
             lastBackupSyncedIso: new Date().toISOString(),

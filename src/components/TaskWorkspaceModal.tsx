@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import {
   BookOpen,
+  Brain,
   CheckCircle2,
   Plus,
   Scissors,
@@ -14,6 +15,7 @@ import {
 import { TASK_SCALES } from '../data/constants'
 import { calcTaskProgress, isEligibleFor85Rule } from '../engine/boardFrameworksEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
+import { SmartDecompositionModal } from './SmartDecompositionModal'
 import { StudyWorkspacePanel } from './StudyWorkspacePanel'
 import type {
   KanbanStatus,
@@ -52,6 +54,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   const updateTask = useTrackerStore((s) => s.updateTask)
   const deleteTask = useTrackerStore((s) => s.deleteTask)
   const autoChunkTask = useTrackerStore((s) => s.autoChunkTask)
+  const applyAdaptivePlan = useTrackerStore((s) => s.applyAdaptivePlan)
   const addSubtask = useTrackerStore((s) => s.addSubtask)
   const toggleSubtask = useTrackerStore((s) => s.toggleSubtask)
   const toggleSubtaskPareto = useTrackerStore((s) => s.toggleSubtaskPareto)
@@ -82,6 +85,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   const [activeTab, setActiveTab] = useState<'STEPS' | 'WOOP' | 'STUDY'>(initialTab)
   const [newSubtaskText, setNewSubtaskText] = useState('')
   const [newSubtaskPareto, setNewSubtaskPareto] = useState(false)
+  const [showSmartAssistant, setShowSmartAssistant] = useState(false)
 
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -443,18 +447,28 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
             <>
               {/* Progress & 85% Rule Box */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-2.5">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs font-extrabold text-[#1E1915]">
                     Kemajuan Tugas: {progress}%
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => autoChunkTask(existingTask.id)}
-                    className="text-xs font-bold text-[#2C4A3E] hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    <Scissors className="w-3.5 h-3.5" />
-                    <span>Susun Ulang Langkah Otomatis (Task Chunking)</span>
-                  </button>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => setShowSmartAssistant(true)}
+                      className="px-2.5 py-1 rounded-xl bg-[#E7F6EE] hover:bg-[#D1EEDE] text-[#1F7A4C] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <Brain className="w-3.5 h-3.5" />
+                      <span>Asisten Alur Cerdas</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => autoChunkTask(existingTask.id)}
+                      title="Reset langkah dasar"
+                      className="p-1 rounded-lg text-[#8C7E72] hover:text-[#1E1915] cursor-pointer"
+                    >
+                      <Scissors className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="w-full h-2.5 rounded-full bg-[#F2ECE1] overflow-hidden">
@@ -786,6 +800,14 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
           </button>
         </div>
       </div>
+
+      {showSmartAssistant && existingTask && (
+        <SmartDecompositionModal
+          task={existingTask}
+          onClose={() => setShowSmartAssistant(false)}
+          onApplySteps={(steps) => applyAdaptivePlan(existingTask.id, steps)}
+        />
+      )}
     </div>
   )
 }
