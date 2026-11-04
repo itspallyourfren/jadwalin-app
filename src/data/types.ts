@@ -3,7 +3,15 @@
 export type Phase = 'Pagi' | 'Siang' | 'Sore' | 'Malam'
 export type TimeBlockTag = Phase | 'Bebas'
 export type TaskScale = 'Kecil' | 'Sedang' | 'Besar' | 'Tugas Akhir'
-export type KanbanStatus = 'BACKLOG' | 'IN_PROGRESS' | 'COMPLETED'
+export type KanbanStatus =
+  | 'BACKLOG'        // Laci / Antrean
+  | 'RESEARCH'       // Riset & Bahan
+  | 'IN_PROGRESS'    // Pengerjaan Aktif
+  | 'REVIEW'         // Review & Revisi
+  | 'COMPLETED'      // Selesai & Kumpul
+  | 'BLOCKED'        // Tersendat / Butuh Solusi
+
+export type KanbanGroupingMode = 'STAGE' | 'CATEGORY' | 'TABLE'
 export type TaskCategory = 'Kuliah & Tugas' | 'Belajar & Ujian' | 'Organisasi & Proyek' | 'Pribadi & Kebiasaan'
 
 export type BoardFrameworkView = 'KANBAN' | 'EISENHOWER' | 'ONE_THREE_FIVE' | 'IVY_LEE'

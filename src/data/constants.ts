@@ -1,11 +1,87 @@
 // src/data/constants.ts - Constants for Jadwal-In! Mobile Companion
-import type { CharacterId, HabitReminderConfig, Phase, TaskScale } from './types'
+import type { CharacterId, HabitReminderConfig, KanbanStatus, Phase, TaskScale } from './types'
 
 export const PHASES: readonly Phase[] = ['Pagi', 'Siang', 'Sore', 'Malam'] as const
 
 export const TASK_SCALES: readonly TaskScale[] = ['Kecil', 'Sedang', 'Besar', 'Tugas Akhir'] as const
 
 export const CLUTCH_85_THRESHOLD = 85
+
+export interface WorkflowStageConfig {
+  id: KanbanStatus
+  label: string
+  shortLabel: string
+  description: string
+  colorBadge: string
+  borderClass: string
+  dotColor: string
+}
+
+export const WORKFLOW_STAGES: Record<KanbanStatus, WorkflowStageConfig> = {
+  BACKLOG: {
+    id: 'BACKLOG',
+    label: 'Laci / Antrean',
+    shortLabel: 'Laci',
+    description: 'Tugas tercatat tapi belum mulai dikerjakan',
+    colorBadge: 'bg-[#F2ECE1] text-[#5C5148]',
+    borderClass: 'border-[#E2D9C8]',
+    dotColor: '#8C7E72',
+  },
+  RESEARCH: {
+    id: 'RESEARCH',
+    label: 'Riset & Bahan',
+    shortLabel: 'Riset',
+    description: 'Kumpul materi, baca jurnal, cari referensi & outline',
+    colorBadge: 'bg-[#EBF1FF] text-[#2B59C3]',
+    borderClass: 'border-[#BDD4F8]',
+    dotColor: '#2B59C3',
+  },
+  IN_PROGRESS: {
+    id: 'IN_PROGRESS',
+    label: 'Pengerjaan Aktif',
+    shortLabel: 'Dikerjakan',
+    description: 'Sedang fokus eksekusi (ngetik naskah, hitung, ngoding)',
+    colorBadge: 'bg-[#FEF3E2] text-[#B86B14]',
+    borderClass: 'border-[#FAD6A5]',
+    dotColor: '#B86B14',
+  },
+  REVIEW: {
+    id: 'REVIEW',
+    label: 'Review & Revisi',
+    shortLabel: 'Review',
+    description: 'Proofreading, asistensi dosen, atau periksa catatan',
+    colorBadge: 'bg-[#F5EBFF] text-[#6B21A8]',
+    borderClass: 'border-[#E0C6FF]',
+    dotColor: '#6B21A8',
+  },
+  BLOCKED: {
+    id: 'BLOCKED',
+    label: 'Tersendat / Butuh Solusi',
+    shortLabel: 'Tersendat',
+    description: 'Sedang buntu, bingung langkah, atau butuh bantuan',
+    colorBadge: 'bg-[#FDECE8] text-[#C8432B]',
+    borderClass: 'border-[#F8BDB4]',
+    dotColor: '#C8432B',
+  },
+  COMPLETED: {
+    id: 'COMPLETED',
+    label: 'Selesai & Kumpul',
+    shortLabel: 'Selesai',
+    description: 'Tugas rampung dan siap dikumpulkan / sudah diserahkan',
+    colorBadge: 'bg-[#E7F6EE] text-[#1F7A4C]',
+    borderClass: 'border-[#A3E5C2]',
+    dotColor: '#1F7A4C',
+  },
+}
+
+export const WORKFLOW_STAGE_ORDER: readonly KanbanStatus[] = [
+  'BACKLOG',
+  'RESEARCH',
+  'IN_PROGRESS',
+  'REVIEW',
+  'COMPLETED',
+  'BLOCKED',
+] as const
 
 export const ONE_THREE_FIVE_LIMITS = {
   LARGE_1: 1,

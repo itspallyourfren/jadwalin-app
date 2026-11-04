@@ -255,15 +255,19 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-extrabold text-[#1E1915] mb-1">
-                  Status Pengerjaan
+                  Kondisi / Tahap Pengerjaan
                 </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as KanbanStatus)}
                   className="w-full px-3 py-2 rounded-xl bg-[#FFFDF9] border border-[#E2D9C8] text-sm font-semibold text-[#1E1915]"
                 >
-                  <option value="IN_PROGRESS">Mulai Kerjakan Hari Ini</option>
-                  <option value="BACKLOG">Simpan di Laci Dulu</option>
+                  <option value="BACKLOG">Laci / Antrean (Belum Dimulai)</option>
+                  <option value="RESEARCH">Riset &amp; Bahan (Kumpul Literatur)</option>
+                  <option value="IN_PROGRESS">Pengerjaan Aktif (Eksekusi / Draft)</option>
+                  <option value="REVIEW">Review &amp; Revisi (Cek Ulang)</option>
+                  <option value="BLOCKED">Tersendat / Butuh Bantuan</option>
+                  <option value="COMPLETED">Selesai &amp; Kumpul</option>
                 </select>
               </div>
 

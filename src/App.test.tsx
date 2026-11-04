@@ -18,9 +18,10 @@ describe('App & Modals SSR Render Verification', () => {
 
     // 1. Main App Shell & Navigation
     const htmlApp = renderToString(<App />)
-    expect(htmlApp).toContain('Papan Tugas Masih Bersih')
-    expect(htmlApp).toContain('Laci Tugas')
-    expect(htmlApp).toContain('Hari Ini')
+    expect(htmlApp).toContain('Papan Kanban')
+    expect(htmlApp).toContain('Tahap Pengerjaan')
+    expect(htmlApp).toContain('Laci / Antrean')
+    expect(htmlApp).toContain('Pengerjaan Aktif')
 
     // 1b. AppSidebar Open Mode (Overlay with Dim Dashboard)
     const htmlSidebar = renderToString(

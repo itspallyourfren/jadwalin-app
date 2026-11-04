@@ -4,7 +4,9 @@ import {
   generateChunkedSubtasks,
   getIvyLeeQueue,
   getOneThreeFiveAllocation,
-   groupTasksByEisenhower,
+  groupTasksByEisenhower,
+  groupTasksByKanbanCategory,
+  groupTasksByKanbanStage,
   isEligibleFor85Rule,
   resolveEisenhowerQuadrant,
   sortKanbanColumnTasks,
@@ -128,5 +130,30 @@ describe('boardFrameworksEngine', () => {
 
     const sorted = sortKanbanColumnTasks(tasks)
     expect(sorted[0].id).toBe('b') // Eat That Frog first
+  })
+
+  it('groups tasks by academic workflow stage and category for spreadsheet-style Kanban', () => {
+    const tasks = [
+      makeMockTask({ id: '1', status: 'BACKLOG', category: 'Kuliah & Tugas' }),
+      makeMockTask({ id: '2', status: 'RESEARCH', category: 'Kuliah & Tugas' }),
+      makeMockTask({ id: '3', status: 'IN_PROGRESS', category: 'Belajar & Ujian' }),
+      makeMockTask({ id: '4', status: 'REVIEW', category: 'Organisasi & Proyek' }),
+      makeMockTask({ id: '5', status: 'BLOCKED', category: 'Pribadi & Kebiasaan' }),
+      makeMockTask({ id: '6', status: 'COMPLETED', category: 'Kuliah & Tugas' }),
+    ]
+
+    const stages = groupTasksByKanbanStage(tasks)
+    expect(stages.BACKLOG).toHaveLength(1)
+    expect(stages.RESEARCH).toHaveLength(1)
+    expect(stages.IN_PROGRESS).toHaveLength(1)
+    expect(stages.REVIEW).toHaveLength(1)
+    expect(stages.BLOCKED).toHaveLength(1)
+    expect(stages.COMPLETED).toHaveLength(1)
+
+    const categories = groupTasksByKanbanCategory(tasks)
+    expect(categories['Kuliah & Tugas']).toHaveLength(3)
+    expect(categories['Belajar & Ujian']).toHaveLength(1)
+    expect(categories['Organisasi & Proyek']).toHaveLength(1)
+    expect(categories['Pribadi & Kebiasaan']).toHaveLength(1)
   })
 })

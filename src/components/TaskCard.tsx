@@ -1,8 +1,7 @@
-// src/components/TaskCard.tsx - Animated Scannable Task Card with Spring Physics & Tactile Interactions
+// src/components/TaskCard.tsx - Animated Scannable Task Card with Spreadsheet-style Condition Dropdown
 import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  ArrowRight,
   Calendar,
   Check,
   ChevronDown,
@@ -10,10 +9,10 @@ import {
   Flame,
   Play,
   Star,
-  Undo2,
 } from 'lucide-react'
 import { calcTaskProgress, isEligibleFor85Rule } from '../engine/boardFrameworksEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
+import { TaskConditionDropdown } from './TaskConditionDropdown'
 import type { TrackerTask } from '../data/types'
 
 type TaskCardProps = {
@@ -227,106 +226,52 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Row 4: Clean Action Row with Tactile Buttons */}
+      {/* Row 4: Spreadsheet-style Dropdown Condition + Quick Actions */}
       <div className="pt-2 border-t border-[#E2D9C8]/60 flex items-center justify-between gap-2 flex-wrap">
-        {!isCompleted ? (
-          <>
+        <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
+          <TaskConditionDropdown
+            currentStatus={task.status}
+            onSelectStatus={(nextStatus) => moveTaskStatus(task.id, nextStatus)}
+            size="sm"
+          />
+
+          {canClutch85 && (
             <motion.button
               type="button"
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.94 }}
               onClick={(e) => {
                 e.stopPropagation()
-                onStartFocusTimer(task)
+                completeTaskVia85Rule(task.id)
               }}
-              className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+              className="min-h-[28px] px-2.5 py-0.5 rounded-lg bg-[#1F7A4C] hover:bg-[#18633C] text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer shadow-2xs"
+              title="Progres sudah 85% — kumpulkan sekarang tanpa ragu (Aturan 85%)"
             >
-              <Play className="w-3 h-3 fill-white" />
-              <span>Fokus</span>
+              <Check className="w-3 h-3 stroke-[2.5]" />
+              <span>Selesai 85%</span>
             </motion.button>
+          )}
+        </div>
 
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {task.status === 'BACKLOG' ? (
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.94 }}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    moveTaskStatus(task.id, 'IN_PROGRESS')
-                  }}
-                  className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] text-white text-xs font-semibold flex items-center gap-1 cursor-pointer shadow-2xs"
-                >
-                  <span>Kerjakan Hari Ini</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </motion.button>
-              ) : (
-                <>
-                  <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.08 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      moveTaskStatus(task.id, 'BACKLOG')
-                    }}
-                    title="Simpan ke Laci"
-                    aria-label="Simpan ke Laci"
-                    className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-[#8C7E72] hover:text-[#1E1915] hover:bg-[#F2ECE1] text-xs font-medium flex items-center gap-1 cursor-pointer transition-colors"
-                  >
-                    <Undo2 className="w-4 h-4" />
-                  </motion.button>
-
-                  {canClutch85 ? (
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.94 }}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        completeTaskVia85Rule(task.id)
-                      }}
-                      className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#1F7A4C] hover:bg-[#18633C] text-white text-xs font-bold flex items-center gap-1 cursor-pointer shadow-2xs"
-                      title="Progres sudah 85% — kumpulkan sekarang tanpa ragu"
-                    >
-                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                      <span>Selesai Cukup</span>
-                    </motion.button>
-                  ) : (
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.94 }}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        moveTaskStatus(task.id, 'COMPLETED')
-                      }}
-                      className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#E7F6EE] hover:bg-[#D1EEDE] text-[#1F7A4C] text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                      <span>Selesai</span>
-                    </motion.button>
-                  )}
-                </>
-              )}
-            </div>
-          </>
+        {!isCompleted ? (
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.94 }}
+            onClick={(e) => {
+              e.stopPropagation()
+              onStartFocusTimer(task)
+            }}
+            className="min-h-[30px] px-3 py-1 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs shrink-0"
+          >
+            <Play className="w-3 h-3 fill-white" />
+            <span>Fokus</span>
+          </motion.button>
         ) : (
-          <div className="w-full flex items-center justify-between text-xs py-0.5">
-            <span className="font-semibold text-[#1F7A4C]">
-              Selesai {task.completedVia85Rule ? '(Cukup Baik)' : ''}
-            </span>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                moveTaskStatus(task.id, 'IN_PROGRESS')
-              }}
-              className="text-[#8C7E72] hover:text-[#1E1915] font-medium cursor-pointer"
-            >
-              Buka kembali
-            </button>
-          </div>
+          <span className="text-[11px] font-bold text-[#1F7A4C] flex items-center gap-1">
+            <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span>Rampung</span>
+          </span>
         )}
       </div>
     </motion.article>

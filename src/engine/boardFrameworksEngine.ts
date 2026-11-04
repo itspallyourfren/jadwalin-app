@@ -2,6 +2,7 @@
 import { CLUTCH_85_THRESHOLD, IVY_LEE_MAX_ITEMS, ONE_THREE_FIVE_LIMITS } from '../data/constants'
 import type {
   EisenhowerQuadrant,
+  KanbanStatus,
   SubtaskItem,
   TaskCategory,
   TaskScale,
@@ -211,4 +212,52 @@ export function sortKanbanColumnTasks(tasks: readonly TrackerTask[], timeFilter:
     if (bDead) return 1
     return 0
   })
+}
+
+export function groupTasksByKanbanStage(
+  tasks: readonly TrackerTask[],
+  timeFilter: TimeBlockTag | 'ALL' = 'ALL'
+): Record<KanbanStatus, TrackerTask[]> {
+  const result: Record<KanbanStatus, TrackerTask[]> = {
+    BACKLOG: [],
+    RESEARCH: [],
+    IN_PROGRESS: [],
+    REVIEW: [],
+    COMPLETED: [],
+    BLOCKED: [],
+  }
+
+  const sorted = sortKanbanColumnTasks(tasks, timeFilter)
+  for (const t of sorted) {
+    if (t.status in result) {
+      result[t.status].push(t)
+    } else {
+      result.IN_PROGRESS.push(t)
+    }
+  }
+
+  return result
+}
+
+export function groupTasksByKanbanCategory(
+  tasks: readonly TrackerTask[],
+  timeFilter: TimeBlockTag | 'ALL' = 'ALL'
+): Record<TaskCategory, TrackerTask[]> {
+  const result: Record<TaskCategory, TrackerTask[]> = {
+    'Kuliah & Tugas': [],
+    'Belajar & Ujian': [],
+    'Organisasi & Proyek': [],
+    'Pribadi & Kebiasaan': [],
+  }
+
+  const sorted = sortKanbanColumnTasks(tasks, timeFilter)
+  for (const t of sorted) {
+    if (t.category in result) {
+      result[t.category].push(t)
+    } else {
+      result['Kuliah & Tugas'].push(t)
+    }
+  }
+
+  return result
 }
