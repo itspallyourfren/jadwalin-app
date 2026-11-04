@@ -100,16 +100,24 @@ export const DeviceSimulatorWrapper: React.FC<DeviceSimulatorWrapperProps> = ({
       {renderNotificationToast()}
 
       {isPhoneFrame ? (
-        <div className="flex-1 bg-[#E8E1D3] py-5 px-4 flex items-center justify-center overflow-auto">
-          <div className="w-[400px] h-[844px] bg-[#FAF7F2] rounded-[40px] border-[8px] border-[#1E1915] shadow-xl overflow-hidden flex flex-col relative shrink-0">
-            <div className="h-6 bg-[#FAF7F2] px-5 flex items-center justify-between text-xs font-semibold text-[#5C5148] shrink-0">
-              <span>09:41</span>
-              <div className="w-16 h-3 bg-[#1E1915] rounded-full" />
-              <span>100%</span>
-            </div>
-            <div className="flex-1 flex flex-col overflow-hidden relative">{children(true)}</div>
+        <>
+          {/* Tampilan layar penuh tanpa mockup saat dibuka di HP sungguhan */}
+          <div className="flex md:hidden flex-1 flex-col min-h-0">
+            {children(true)}
           </div>
-        </div>
+
+          {/* Mockup bingkai HP khusus saat dibuka di browser Desktop */}
+          <div className="hidden md:flex flex-1 bg-[#E8E1D3] py-5 px-4 items-center justify-center overflow-auto">
+            <div className="w-[400px] h-[844px] bg-[#FAF7F2] rounded-[40px] border-[8px] border-[#1E1915] shadow-xl overflow-hidden flex flex-col relative shrink-0">
+              <div className="h-6 bg-[#FAF7F2] px-5 flex items-center justify-between text-xs font-semibold text-[#5C5148] shrink-0">
+                <span>09:41</span>
+                <div className="w-16 h-3 bg-[#1E1915] rounded-full" />
+                <span>100%</span>
+              </div>
+              <div className="flex-1 flex flex-col overflow-hidden relative">{children(true)}</div>
+            </div>
+          </div>
+        </>
       ) : (
         <div className="flex-1 flex flex-col min-h-0">{children(false)}</div>
       )}
