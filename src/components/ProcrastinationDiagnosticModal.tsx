@@ -96,31 +96,26 @@ const APP_EXPECTATIONS: Array<{
   id: AppExpectationGoal
   title: string
   desc: string
-  featureBadge: string
 }> = [
   {
     id: 'BREAK_BIG_TASKS',
-    title: 'Pecah tugas besar jadi langkah kecil',
-    desc: 'Bantu saya agar tidak bingung mulai dan langsung tahu aksi pembuka < 2 menit.',
-    featureBadge: 'Dekomposisi Otomatis + Task Chunking',
+    title: 'Bisa langsung mulai tanpa bingung dan malas',
+    desc: 'Ingin tahu langkah pertama yang gampang agar tugas tidak terasa menumpuk dan membingungkan.',
   },
   {
     id: 'BEAT_DISTRACTIONS',
-    title: 'Kunci fokus & stop buka HP saat belajar',
-    desc: 'Bantu saya menahan godaan medsos dan menjalani siklus fokus-rehat yang disiplin.',
-    featureBadge: 'Pomodoro Multi-Fase + Ulysses Pact',
+    title: 'Bisa fokus belajar tanpa tergoda membuka HP',
+    desc: 'Ingin bisa tenang belajar tanpa mudah terdistraksi notifikasi, media sosial, atau video pendek.',
   },
   {
     id: 'BUILD_ROUTINE',
-    title: 'Rapikan rutinitas harian teratur',
-    desc: 'Bantu saya menyusun antrean prioritas harian agar tugas tidak menumpuk di akhir.',
-    featureBadge: 'Papan Ivy Lee + Target 1-3-5',
+    title: 'Punya rutinitas harian yang rapi dan teratur',
+    desc: 'Ingin bisa membagi waktu dengan jelas setiap hari agar tugas selesai tepat waktu tanpa panik.',
   },
   {
     id: 'REDUCE_ANXIETY_DEADLINE',
-    title: 'Kurangi cemas & berani kumpul tugas',
-    desc: 'Bantu saya mengatasi overthinking naskah dan berani submit dengan prinsip 85%.',
-    featureBadge: 'Aturan 85% + Matriks Eisenhower',
+    title: 'Berhenti overthinking dan lebih tenang',
+    desc: 'Ingin mengurangi rasa cemas takut salah dan lebih percaya diri menyelesaikan tugas kuliah.',
   },
 ]
 
@@ -232,8 +227,8 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
         }
       case 'EXPECTATION':
         return {
-          title: 'Harapan terhadap Aplikasi',
-          subtitle: 'Tahap 3 dari 4: Fitur prioritas yang kamu butuhkan',
+          title: 'Target yang Ingin Kamu Capai',
+          subtitle: 'Tahap 3 dari 4: Apa hasil yang paling kamu butuhkan?',
         }
       case 'REPORT':
         return {
@@ -481,7 +476,7 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
             <div className="space-y-2.5">
               <div className="bg-[#FFFDF9] rounded-xl border border-[#C9B99F] p-3 shadow-2xs">
                 <p className="text-xs text-[#5C5148] leading-relaxed">
-                  Pilihlah bantuan utama yang paling kamu butuhkan. Aplikasi akan memprioritaskan papan kerja dan alat produktivitas yang sesuai untukmu.
+                  Pilih satu perubahan utama yang paling ingin kamu capai. Aplikasi akan otomatis mengatur tata letak dan alat bantu belajar yang pas untukmu.
                 </p>
               </div>
 
@@ -512,17 +507,6 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
                       >
                         {exp.desc}
                       </p>
-                      <div className="mt-2">
-                        <span
-                          className={`text-[10px] font-black px-2 py-0.5 rounded-md inline-block ${
-                            isSelected
-                              ? 'bg-white/20 text-white'
-                              : 'bg-[#FAF7F2] text-[#2C4A3E] border border-[#C9B99F]'
-                          }`}
-                        >
-                          Fokus Fitur: {exp.featureBadge}
-                        </span>
-                      </div>
                     </button>
                   )
                 })}
@@ -751,7 +735,7 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
                 onClick={() => setStep('EXPECTATION')}
                 className="px-4 py-2 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
               >
-                <span>Lanjut ke Harapan Fitur</span>
+                <span>Lanjut ke Target Belajar</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </>
