@@ -1,34 +1,128 @@
-// src/components/ProcrastinationDiagnosticModal.tsx - Academic Procrastination Diagnostic & Onboarding Wizard
-import React, { useState } from 'react'
+// src/components/ProcrastinationDiagnosticModal.tsx - Comprehensive Academic Diagnostic: Personal Baseline + MAPS-15 + App Expectations
+import React, { useMemo, useState } from 'react'
 import {
   Brain,
   Check,
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  HelpCircle,
-  Layers,
   Sparkles,
-  Target,
-  User,
-  X,
-  Zap,
 } from 'lucide-react'
 import {
-  evaluateProcrastinationProfile,
-  getArchetypeMetadata,
-} from '../engine/procrastinationDiagnosticEngine'
+  evaluateMaps15Responses,
+  shuffleMaps15Items,
+  synthesizeProcrastinationProfile,
+  type Maps15Item,
+} from '../engine/maps15DiagnosticEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
 import type {
-  PreferredFocusStyle,
+  AppExpectationGoal,
   PrimaryAcademicGoal,
   ProcrastinationArchetype,
+  UserProcrastinationProfile,
 } from '../data/types'
+
+type StepId = 'PERSONAL' | 'MAPS_1' | 'MAPS_2' | 'MAPS_3' | 'EXPECTATION' | 'REPORT'
 
 type ProcrastinationDiagnosticModalProps = {
   onClose: () => void
   onStartTourAfterDiagnosis?: () => void
 }
+
+const ACADEMIC_GOALS: Array<{
+  id: PrimaryAcademicGoal
+  title: string
+  desc: string
+  icon: string
+}> = [
+  {
+    id: 'THESIS',
+    title: 'Skripsi / Tugas Akhir',
+    desc: 'Menyusun proposal, bab pembahasan, riset literatur, atau olah data naskah akhir.',
+    icon: '🎓',
+  },
+  {
+    id: 'COURSEWORK',
+    title: 'Tugas Kuliah & Makalah Rutin',
+    desc: 'Menyelesaikan laporan mingguan, tugas kelompok, presentasi, dan esai kuliah.',
+    icon: '📚',
+  },
+  {
+    id: 'EXAMS',
+    title: 'Persiapan Ujian & Materi Kuliah',
+    desc: 'Belajar untuk UTS/UAS, kuis, menghafal konsep, dan membaca bahan kuliah tebal.',
+    icon: '📝',
+  },
+  {
+    id: 'ROUTINE',
+    title: 'Disiplin Belajar Mandiri',
+    desc: 'Membangun kebiasaan harian yang konsisten dan mengatasi rasa malas mencicil.',
+    icon: '🎯',
+  },
+]
+
+const PERSONAL_OBSTACLES: Array<{
+  id: ProcrastinationArchetype
+  title: string
+  desc: string
+  icon: string
+}> = [
+  {
+    id: 'OVERWHELMED',
+    title: 'Kewalahan & Bingung Mulai',
+    desc: 'Beban tugas terasa terlalu besar dan rumit, membuat kepala pusing sebelum mulai.',
+    icon: '🌊',
+  },
+  {
+    id: 'PERFECTIONIST',
+    title: 'Takut Salah (Perfeksionis)',
+    desc: 'Ragu memulai sebelum semua referensi siap atau takut hasil naskah kurang sempurna.',
+    icon: '🎯',
+  },
+  {
+    id: 'DEADLINER',
+    title: 'Baru Gerak Saat Mepet (SKS)',
+    desc: 'Sulit mendapatkan energi kalau belum H-1 atau beberapa jam sebelum deadline.',
+    icon: '⚡',
+  },
+  {
+    id: 'DISTRACTED',
+    title: 'Cepat Bosan & Gatal Buka HP',
+    desc: 'Baru mengetik sebentar langsung membuka media sosial atau perhatian terpecah.',
+    icon: '📱',
+  },
+]
+
+const APP_EXPECTATIONS: Array<{
+  id: AppExpectationGoal
+  title: string
+  desc: string
+  featureBadge: string
+}> = [
+  {
+    id: 'BREAK_BIG_TASKS',
+    title: 'Pecah tugas besar jadi langkah kecil',
+    desc: 'Bantu saya agar tidak bingung mulai dan langsung tahu aksi pembuka < 2 menit.',
+    featureBadge: 'Dekomposisi Otomatis + Task Chunking',
+  },
+  {
+    id: 'BEAT_DISTRACTIONS',
+    title: 'Kunci fokus & stop buka HP saat belajar',
+    desc: 'Bantu saya menahan godaan medsos dan menjalani siklus fokus-rehat yang disiplin.',
+    featureBadge: 'Pomodoro Multi-Fase + Ulysses Pact',
+  },
+  {
+    id: 'BUILD_ROUTINE',
+    title: 'Rapikan rutinitas harian teratur',
+    desc: 'Bantu saya menyusun antrean prioritas harian agar tugas tidak menumpuk di akhir.',
+    featureBadge: 'Papan Ivy Lee + Target 1-3-5',
+  },
+  {
+    id: 'REDUCE_ANXIETY_DEADLINE',
+    title: 'Kurangi cemas & berani kumpul tugas',
+    desc: 'Bantu saya mengatasi overthinking naskah dan berani submit dengan prinsip 85%.',
+    featureBadge: 'Aturan 85% + Matriks Eisenhower',
+  },
+]
 
 export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticModalProps> = ({
   onClose,
@@ -40,31 +134,63 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
   const characterId = useTrackerStore((s) => s.characterId)
   const setParticipantProfile = useTrackerStore((s) => s.setParticipantProfile)
 
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
+  // Step flow state
+  const [step, setStep] = useState<StepId>('PERSONAL')
+
+  // Step 1: Personal Conditions
   const [userName, setUserName] = useState<string>(participantName || '')
-  const [obstacle, setObstacle] = useState<ProcrastinationArchetype>(
-    existingProfile?.archetype ?? 'OVERWHELMED'
-  )
-  const [primaryGoal, setPrimaryGoal] = useState<PrimaryAcademicGoal>(
+  const [personalGoal, setPersonalGoal] = useState<PrimaryAcademicGoal>(
     existingProfile?.primaryGoal ?? 'THESIS'
   )
-  const [focusStyle, setFocusStyle] = useState<PreferredFocusStyle>(
-    existingProfile?.focusStyle ?? 'TEN_MIN'
+  const [personalObstacle, setPersonalObstacle] = useState<ProcrastinationArchetype>(
+    existingProfile?.archetype ?? 'OVERWHELMED'
   )
+
+  // Step 2: MAPS-15 (15 randomized items in 3 batches)
+  const shuffledMapsItems = useMemo<Maps15Item[]>(() => shuffleMaps15Items(), [])
+  const [mapsResponses, setMapsResponses] = useState<Record<number, number>>(() => {
+    return existingProfile?.maps15?.rawResponses ?? {}
+  })
+
+  // Step 3: App Expectations
+  const [appExpectation, setAppExpectation] = useState<AppExpectationGoal>(
+    existingProfile?.appExpectation ?? 'BREAK_BIG_TASKS'
+  )
+
+  // Step 4: Starter task toggle
   const [createStarterTask, setCreateStarterTask] = useState(true)
 
-  const evaluatedProfile = evaluateProcrastinationProfile({
-    obstacle,
-    primaryGoal,
-    focusStyle,
-  })
-  const meta = getArchetypeMetadata(evaluatedProfile.archetype)
+  // Calculated MAPS-15 & Profile Synthesis
+  const mapsAssessment = useMemo(() => {
+    return evaluateMaps15Responses(mapsResponses)
+  }, [mapsResponses])
+
+  const synthesizedProfile = useMemo<UserProcrastinationProfile>(() => {
+    return synthesizeProcrastinationProfile({
+      userName: userName.trim() || 'Teman Belajar',
+      personalGoal,
+      personalObstacle,
+      appExpectation,
+      maps15Assessment: mapsAssessment,
+    })
+  }, [userName, personalGoal, personalObstacle, appExpectation, mapsAssessment])
+
+  const displayName = userName.trim() || 'Teman Belajar'
+
+  // Batch slicing for MAPS-15 (5 items per batch)
+  const batch1Items = shuffledMapsItems.slice(0, 5)
+  const batch2Items = shuffledMapsItems.slice(5, 10)
+  const batch3Items = shuffledMapsItems.slice(10, 15)
+
+  const isBatchAnswered = (items: Maps15Item[]) => {
+    return items.every((i) => typeof mapsResponses[i.id] === 'number')
+  }
 
   const handleFinish = (startTour: boolean) => {
     if (userName.trim()) {
       setParticipantProfile(userName.trim(), characterId)
     }
-    saveDiagnosisResult(evaluatedProfile, createStarterTask)
+    saveDiagnosisResult(synthesizedProfile, createStarterTask)
     onClose()
     if (startTour && onStartTourAfterDiagnosis) {
       setTimeout(() => {
@@ -73,23 +199,59 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
     }
   }
 
-  const displayName = userName.trim() || 'Teman Belajar'
+  // Header Title & Subtitle helper
+  const renderHeaderMeta = () => {
+    switch (step) {
+      case 'PERSONAL':
+        return {
+          title: 'Kondisi & Perasaan Pribadi',
+          subtitle: 'Tahap 1 dari 4: Ceritakan situasi akademikmu',
+        }
+      case 'MAPS_1':
+        return {
+          title: 'Asesmen Psikometri MAPS-15',
+          subtitle: 'Tahap 2 dari 4: Butir 1–5 dari 15 (±30 detik)',
+        }
+      case 'MAPS_2':
+        return {
+          title: 'Asesmen Psikometri MAPS-15',
+          subtitle: 'Tahap 2 dari 4: Butir 6–10 dari 15',
+        }
+      case 'MAPS_3':
+        return {
+          title: 'Asesmen Psikometri MAPS-15',
+          subtitle: 'Tahap 2 dari 4: Butir 11–15 dari 15',
+        }
+      case 'EXPECTATION':
+        return {
+          title: 'Harapan terhadap Aplikasi',
+          subtitle: 'Tahap 3 dari 4: Fitur prioritas yang kamu butuhkan',
+        }
+      case 'REPORT':
+        return {
+          title: 'Rapor Profil Belajar & Rekomendasi',
+          subtitle: `Disusun berdasarkan MAPS-15 untuk ${displayName}`,
+        }
+    }
+  }
+
+  const headerMeta = renderHeaderMeta()
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-[#FAF7F2] w-full max-w-lg rounded-2xl sm:rounded-3xl border border-[#C9B99F] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
-        {/* Header */}
+    <div className="fixed inset-0 z-50 bg-black/55 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-[#FAF7F2] w-full max-w-xl rounded-2xl sm:rounded-3xl border border-[#C9B99F] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+        {/* Modal Top Header */}
         <div className="px-5 py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#2C4A3E] text-white flex items-center justify-center shrink-0">
-              <Sparkles className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-xl bg-[#2C4A3E] text-white flex items-center justify-center shrink-0 shadow-2xs">
+              <Brain className="w-4 h-4" />
             </div>
             <div>
               <h2 className="text-base font-extrabold text-[#1E1915]">
-                {step < 4 ? 'Diagnosis Gaya Belajar & Prokrastinasi' : 'Hasil Analisis & Profil Belajar'}
+                {headerMeta.title}
               </h2>
               <p className="text-xs text-[#5C5148] font-medium">
-                {step < 4 ? `Langkah ${step} dari 3` : `Disusun khusus untuk ${displayName}`}
+                {headerMeta.subtitle}
               </p>
             </div>
           </div>
@@ -99,268 +261,240 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
             aria-label="Tutup tes diagnosis"
             className="w-10 h-10 min-w-[40px] flex items-center justify-center rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <span className="text-base font-black">✕</span>
           </button>
         </div>
 
-        {/* Wizard Step Progress Bar */}
-        {step < 4 && (
-          <div className="h-1 bg-[#E2D9C8] w-full">
-            <div
-              className="h-full bg-[#2C4A3E] transition-all duration-300"
-              style={{ width: `${(step / 3) * 100}%` }}
-            />
-          </div>
-        )}
-
-        {/* Body Content */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
-          {/* STEP 1: Nama & Hambatan Utama */}
-          {step === 1 && (
-            <div className="space-y-3.5">
-              {/* Personalized Name Input */}
-              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 space-y-1.5">
-                <label className="flex items-center gap-1.5 text-xs font-extrabold text-[#1E1915]">
-                  <User className="w-3.5 h-3.5 text-[#2C4A3E]" />
-                  <span>Nama Panggilanmu:</span>
+        {/* Modal Scrollable Body */}
+        <div className="p-4 sm:p-5 overflow-y-auto space-y-4">
+          {/* STEP 1: PERSONAL CONDITION & USERNAME */}
+          {step === 'PERSONAL' && (
+            <div className="space-y-4">
+              {/* Name Input */}
+              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 space-y-2">
+                <label className="text-xs font-black text-[#1E1915] block">
+                  1. Nama Panggilanmu
                 </label>
                 <input
                   type="text"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
-                  placeholder="Contoh: Raden / Nadia / Sarah"
-                  className="w-full px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#C9B99F] text-xs font-bold text-[#1E1915] focus:outline-2 focus:outline-[#2C4A3E]"
+                  placeholder="Ketik nama panggilanmu (misal: Rian / Sarah)..."
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] border border-[#C9B99F] text-xs font-bold text-[#1E1915] focus:outline-2 focus:outline-[#2C4A3E]"
                 />
               </div>
 
-              <div className="space-y-1 pt-1">
-                <span className="text-xs font-bold text-[#D4532F] uppercase tracking-wider">
-                  Pemicu Utama
-                </span>
-                <h3 className="text-sm sm:text-base font-extrabold text-[#1E1915]">
-                  Halo {displayName}! Saat mulai menunda tugas kuliah/skripsi, apa yang paling sering kamu rasakan?
-                </h3>
-                <p className="text-xs text-[#5C5148]">
-                  Pilih kondisi yang paling menggambarkan alasan mengapa tugasmu belum disentuh.
-                </p>
-              </div>
-
-              <div className="space-y-2.5 pt-1">
-                {[
-                  {
-                    id: 'OVERWHELMED' as const,
-                    title: 'Beban Pikiran Terlalu Besar (Overwhelmed)',
-                    desc: 'Bingung mulai dari mana karena tugas terlihat terlalu rumit, banyak, dan bikin pusing.',
-                    icon: <Layers className="w-4 h-4 text-[#2C4A3E]" />,
-                  },
-                  {
-                    id: 'PERFECTIONIST' as const,
-                    title: 'Takut Hasil Kurang Maksimal (Perfeksionis)',
-                    desc: 'Takut salah atau merasa riset belum cukup matang, akhirnya terus menunda memulai naskah.',
-                    icon: <Target className="w-4 h-4 text-[#B86B14]" />,
-                  },
-                  {
-                    id: 'DEADLINER' as const,
-                    title: 'Baru Bisa Gerak Saat Mepet (Deadliner/SKS)',
-                    desc: 'Susah ada energi kalau belum H-1 atau beberapa jam sebelum deadline pengumpulan.',
-                    icon: <Zap className="w-4 h-4 text-[#D4532F]" />,
-                  },
-                  {
-                    id: 'DISTRACTED' as const,
-                    title: 'Gatal Buka Medsos & Cepat Bosan (Distraksi)',
-                    desc: 'Baru ngetik 5 menit langsung membuka HP, Instagram/TikTok, atau perhatian melayang.',
-                    icon: <Brain className="w-4 h-4 text-[#1F7A4C]" />,
-                  },
-                ].map((item) => {
-                  const isSelected = obstacle === item.id
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setObstacle(item.id)}
-                      className={`w-full p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-start gap-3 ${
-                        isSelected
-                          ? 'bg-[#FFFDF9] border-[#2C4A3E] ring-2 ring-[#2C4A3E]/15 shadow-sm'
-                          : 'bg-[#FFFDF9]/70 border-[#E2D9C8] hover:border-[#C9B99F]'
-                      }`}
-                    >
-                      <div
-                        className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
-                          isSelected ? 'bg-[#2C4A3E]/10' : 'bg-[#F2ECE1]'
-                        }`}
-                      >
-                        {item.icon}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs sm:text-sm font-extrabold text-[#1E1915]">
-                          {item.title}
-                        </div>
-                        <p className="text-xs text-[#5C5148] font-medium mt-0.5 leading-relaxed">
-                          {item.desc}
-                        </p>
-                      </div>
-                      <div
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-1 ${
+              {/* Academic Burden / Situation */}
+              <div className="space-y-2">
+                <label className="text-xs font-black text-[#1E1915] block">
+                  2. Apa target atau situasi akademik utamamu saat ini?
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {ACADEMIC_GOALS.map((g) => {
+                    const isSelected = personalGoal === g.id
+                    return (
+                      <button
+                        key={g.id}
+                        type="button"
+                        onClick={() => setPersonalGoal(g.id)}
+                        className={`p-3 rounded-2xl border text-left flex items-start gap-2.5 transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-[#2C4A3E] border-[#2C4A3E] text-white'
-                            : 'border-[#C9B99F]'
+                            ? 'bg-[#2C4A3E] text-white border-[#2C4A3E] shadow-2xs'
+                            : 'bg-[#FFFDF9] hover:bg-[#F2ECE1] text-[#1E1915] border-[#E2D9C8]'
                         }`}
                       >
-                        {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: Target Akademik Terbesar */}
-          {step === 2 && (
-            <div className="space-y-3.5">
-              <div className="space-y-1">
-                <span className="text-xs font-bold text-[#D4532F] uppercase tracking-wider">
-                  Target Prioritas
-                </span>
-                <h3 className="text-sm sm:text-base font-extrabold text-[#1E1915]">
-                  Apa tanggung jawab akademik terbesar yang sedang kamu hadapi saat ini?
-                </h3>
-                <p className="text-xs text-[#5C5148]">
-                  Kami akan menyiapkan template alur tugas yang cocok untuk jenis tanggung jawab ini.
-                </p>
-              </div>
-
-              <div className="space-y-2.5 pt-1">
-                {[
-                  {
-                    id: 'THESIS' as const,
-                    title: 'Skripsi / Tugas Akhir / Tesis',
-                    desc: 'Proyek panjang mandiri yang butuh dicicil konsisten tanpa dorongan jadwal kelas.',
-                  },
-                  {
-                    id: 'COURSEWORK' as const,
-                    title: 'Tugas Kuliah & Laporan Praktikum',
-                    desc: 'Tumpukan tugas mingguan bertenggat pendek dari dosen yang saling susul-menyusul.',
-                  },
-                  {
-                    id: 'EXAMS' as const,
-                    title: 'Belajar Teori Kuliah & Persiapan Ujian',
-                    desc: 'Membaca modul, memahami rumus, atau mengulang materi kuliah agar siap UTS/UAS.',
-                  },
-                  {
-                    id: 'ROUTINE' as const,
-                    title: 'Membangun Rutinitas Harian Kampus',
-                    desc: 'Ingin lebih teratur setiap hari dan menghentikan rasa bersalah karena membuang waktu.',
-                  },
-                ].map((item) => {
-                  const isSelected = primaryGoal === item.id
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setPrimaryGoal(item.id)}
-                      className={`w-full p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                        isSelected
-                          ? 'bg-[#FFFDF9] border-[#2C4A3E] ring-2 ring-[#2C4A3E]/15 shadow-sm'
-                          : 'bg-[#FFFDF9]/70 border-[#E2D9C8] hover:border-[#C9B99F]'
-                      }`}
-                    >
-                      <div className="min-w-0">
-                        <div className="text-xs sm:text-sm font-extrabold text-[#1E1915]">
-                          {item.title}
-                        </div>
-                        <p className="text-xs text-[#5C5148] font-medium mt-0.5 leading-relaxed">
-                          {item.desc}
-                        </p>
-                      </div>
-                      <div
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                          isSelected
-                            ? 'bg-[#2C4A3E] border-[#2C4A3E] text-white'
-                            : 'border-[#C9B99F]'
-                        }`}
-                      >
-                        {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: Gaya Waktu Fokus */}
-          {step === 3 && (
-            <div className="space-y-3.5">
-              <div className="space-y-1">
-                <span className="text-xs font-bold text-[#D4532F] uppercase tracking-wider">
-                  Kapasitas Atensi
-                </span>
-                <h3 className="text-sm sm:text-base font-extrabold text-[#1E1915]">
-                  Berapa lama rentang waktu yang paling realistis untukmu saat mulai fokus?
-                </h3>
-                <p className="text-xs text-[#5C5148]">
-                  Pilih durasi yang tidak membuatmu merasa tersiksa atau malas membayangkan memulainya.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                {[
-                  {
-                    id: 'TEN_MIN' as const,
-                    title: '10 Menit Dulu',
-                    badge: 'Paling Ringan',
-                    desc: 'Cukup 10 menit tanpa paksaan. Begitu 10 menit lewat, bebas lanjut atau istirahat.',
-                  },
-                  {
-                    id: 'POMODORO' as const,
-                    title: 'Pomodoro (Siklus Rehat)',
-                    badge: 'Klasik Teratur',
-                    desc: 'Fokus penuh diselingi jeda istirahat sejenak untuk stamina berkelanjutan.',
-                  },
-                  {
-                    id: 'FLOW' as const,
-                    title: '45 Menit (Deep Sprint)',
-                    badge: 'Fokus Dalam',
-                    desc: 'Sprint mendalam tanpa jeda terlalu cepat saat konsentrasi sedang tinggi.',
-                  },
-                  {
-                    id: 'FLEXIBLE' as const,
-                    title: 'Fleksibel',
-                    badge: 'Bebas Santai',
-                    desc: 'Sesuai mood dan suasana hati hari ini, mengalir tanpa timer kaku.',
-                  },
-                ].map((item) => {
-                  const isSelected = focusStyle === item.id
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setFocusStyle(item.id)}
-                      className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                        isSelected
-                          ? 'bg-[#FFFDF9] border-[#2C4A3E] ring-2 ring-[#2C4A3E]/15 shadow-sm'
-                          : 'bg-[#FFFDF9]/70 border-[#E2D9C8] hover:border-[#C9B99F]'
-                      }`}
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs sm:text-sm font-extrabold text-[#1E1915]">
-                            {item.title}
+                        <span className="text-xl shrink-0">{g.icon}</span>
+                        <div>
+                          <span className="text-xs font-black block leading-snug">
+                            {g.title}
                           </span>
                           <span
-                            className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                              isSelected
-                                ? 'bg-[#2C4A3E] text-white'
-                                : 'bg-[#F2ECE1] text-[#5C5148]'
+                            className={`text-[11px] block mt-0.5 leading-relaxed ${
+                              isSelected ? 'text-white/80' : 'text-[#5C5148]'
                             }`}
                           >
-                            {item.badge}
+                            {g.desc}
                           </span>
                         </div>
-                        <p className="text-xs text-[#5C5148] font-medium leading-relaxed">
-                          {item.desc}
-                        </p>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Personal Emotional Obstacle */}
+              <div className="space-y-2">
+                <label className="text-xs font-black text-[#1E1915] block">
+                  3. Apa yang paling sering kamu rasakan saat mulai menunda tugas?
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {PERSONAL_OBSTACLES.map((o) => {
+                    const isSelected = personalObstacle === o.id
+                    return (
+                      <button
+                        key={o.id}
+                        type="button"
+                        onClick={() => setPersonalObstacle(o.id)}
+                        className={`p-3 rounded-2xl border text-left flex items-start gap-2.5 transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#2C4A3E] text-white border-[#2C4A3E] shadow-2xs'
+                            : 'bg-[#FFFDF9] hover:bg-[#F2ECE1] text-[#1E1915] border-[#E2D9C8]'
+                        }`}
+                      >
+                        <span className="text-xl shrink-0">{o.icon}</span>
+                        <div>
+                          <span className="text-xs font-black block leading-snug">
+                            {o.title}
+                          </span>
+                          <span
+                            className={`text-[11px] block mt-0.5 leading-relaxed ${
+                              isSelected ? 'text-white/80' : 'text-[#5C5148]'
+                            }`}
+                          >
+                            {o.desc}
+                          </span>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2: MAPS-15 BATCHES (1, 2, 3) */}
+          {(step === 'MAPS_1' || step === 'MAPS_2' || step === 'MAPS_3') && (
+            <div className="space-y-4">
+              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3 text-xs text-[#5C5148] flex items-center justify-between">
+                <span>
+                  Skala: <strong>1</strong> (Sangat Tidak Sesuai) s.d. <strong>5</strong> (Sangat Sesuai)
+                </span>
+                <span className="font-extrabold text-[#2C4A3E]">
+                  {step === 'MAPS_1' ? 'Batch 1/3' : step === 'MAPS_2' ? 'Batch 2/3' : 'Batch 3/3'}
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {(step === 'MAPS_1'
+                  ? batch1Items
+                  : step === 'MAPS_2'
+                  ? batch2Items
+                  : batch3Items
+                ).map((item, idx) => {
+                  const globalIdx =
+                    (step === 'MAPS_1' ? 0 : step === 'MAPS_2' ? 5 : 10) + idx + 1
+                  const currentAnswer = mapsResponses[item.id]
+
+                  return (
+                    <div
+                      key={item.id}
+                      className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 space-y-2.5 shadow-2xs"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-5 h-5 rounded-full bg-[#F2ECE1] text-[#1E1915] text-[11px] font-black flex items-center justify-center shrink-0">
+                            {globalIdx}
+                          </span>
+                          <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#FAF7F2] text-[#8C7E72] border border-[#E2D9C8]">
+                            {item.dimensionLabel}
+                          </span>
+                        </div>
+                        {currentAnswer && (
+                          <span className="text-[11px] font-extrabold text-[#2C4A3E] flex items-center gap-1">
+                            <Check className="w-3.5 h-3.5" /> Terisi
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-xs font-bold text-[#1E1915] leading-relaxed">
+                        &ldquo;{item.text}&rdquo;
+                      </p>
+
+                      {/* 5-Point Likert Rating Buttons */}
+                      <div className="grid grid-cols-5 gap-1.5 pt-1">
+                        {[
+                          { val: 1, label: 'STS', full: 'Sangat Tidak Sesuai' },
+                          { val: 2, label: 'TS', full: 'Tidak Sesuai' },
+                          { val: 3, label: 'N', full: 'Netral / Ragu' },
+                          { val: 4, label: 'S', full: 'Sesuai' },
+                          { val: 5, label: 'SS', full: 'Sangat Sesuai' },
+                        ].map((opt) => {
+                          const isSelected = currentAnswer === opt.val
+                          return (
+                            <button
+                              key={opt.val}
+                              type="button"
+                              onClick={() =>
+                                setMapsResponses((prev) => ({ ...prev, [item.id]: opt.val }))
+                              }
+                              title={opt.full}
+                              className={`py-2 px-1 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#2C4A3E] text-white shadow-2xs font-extrabold ring-2 ring-[#2C4A3E]/30'
+                                  : 'bg-[#FAF7F2] hover:bg-[#F2ECE1] text-[#5C5148] border border-[#E2D9C8] font-bold'
+                              }`}
+                            >
+                              <span className="text-xs leading-none">{opt.val}</span>
+                              <span className="text-[10px] opacity-80 mt-0.5 leading-none">
+                                {opt.label}
+                              </span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: APP EXPECTATIONS (What do you need from the app?) */}
+          {step === 'EXPECTATION' && (
+            <div className="space-y-3">
+              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5">
+                <p className="text-xs text-[#5C5148] leading-relaxed">
+                  Pilihlah bantuan utama yang paling kamu butuhkan. Aplikasi akan memprioritaskan papan kerja dan alat produktivitas yang sesuai untukmu.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                {APP_EXPECTATIONS.map((exp) => {
+                  const isSelected = appExpectation === exp.id
+                  return (
+                    <button
+                      key={exp.id}
+                      type="button"
+                      onClick={() => setAppExpectation(exp.id)}
+                      className={`w-full p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#2C4A3E] text-white border-[#2C4A3E] shadow-2xs'
+                          : 'bg-[#FFFDF9] hover:bg-[#F2ECE1] text-[#1E1915] border-[#E2D9C8]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-black block leading-snug">
+                          {exp.title}
+                        </span>
+                        {isSelected && <Check className="w-4 h-4 shrink-0" />}
+                      </div>
+                      <p
+                        className={`text-[11px] mt-1 leading-relaxed ${
+                          isSelected ? 'text-white/80' : 'text-[#5C5148]'
+                        }`}
+                      >
+                        {exp.desc}
+                      </p>
+                      <div className="mt-2">
+                        <span
+                          className={`text-[10px] font-black px-2 py-0.5 rounded-md inline-block ${
+                            isSelected
+                              ? 'bg-white/20 text-white'
+                              : 'bg-[#FAF7F2] text-[#2C4A3E] border border-[#C9B99F]'
+                          }`}
+                        >
+                          Fokus Fitur: {exp.featureBadge}
+                        </span>
                       </div>
                     </button>
                   )
@@ -369,158 +503,281 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
             </div>
           )}
 
-          {/* STEP 4: Hasil Diagnosis & Rekomendasi Personal */}
-          {step === 4 && (
+          {/* STEP 4: PSYCHOLOGICAL REPORT & ACTION */}
+          {step === 'REPORT' && (
             <div className="space-y-4">
-              {/* Profile Card */}
-              <div className="bg-[#FFFDF9] rounded-2xl border border-[#2C4A3E]/30 p-4 sm:p-5 space-y-3 shadow-xs">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-full bg-[#2C4A3E]/10 text-[#2C4A3E] text-xs font-black uppercase tracking-wider">
-                    Profil Belajar {displayName}
+              {/* Total MAPS-15 Score Header */}
+              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 text-center space-y-2 shadow-2xs">
+                <span className="text-xs font-extrabold text-[#8C7E72] uppercase tracking-wider block">
+                  Indeks Kerentanan Prokrastinasi Akademik
+                </span>
+                <div className="flex items-baseline justify-center gap-1.5">
+                  <span className="text-4xl font-black text-[#1E1915] tracking-tight">
+                    {mapsAssessment.totalScore}
                   </span>
-                  <span className="text-xs text-[#8C7E72] font-semibold">{meta.subtitle}</span>
+                  <span className="text-sm font-extrabold text-[#8C7E72]">/ 75</span>
                 </div>
-
                 <div>
-                  <h3 className="text-lg font-black text-[#1E1915] leading-snug">
-                    {meta.title}
-                  </h3>
-                  <p className="text-xs text-[#5C5148] mt-1 font-medium leading-relaxed">
-                    {meta.coreObstacle}
-                  </p>
-                </div>
-
-                <div className="p-3 rounded-xl bg-[#F4F8F5] border border-[#D1E6D8] space-y-1">
-                  <span className="text-[11px] font-extrabold text-[#1F7A4C] uppercase tracking-wide block">
-                    Penjelasan Sains Perilaku:
+                  <span
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-black ${
+                      mapsAssessment.normalizedScore > 65
+                        ? 'bg-[#FDECE8] text-[#C8432B]'
+                        : mapsAssessment.normalizedScore >= 40
+                        ? 'bg-[#FEF3E2] text-[#B86B14]'
+                        : 'bg-[#E7F6EE] text-[#1F7A4C]'
+                    }`}
+                  >
+                    Tingkat Prokrastinasi:{' '}
+                    {mapsAssessment.normalizedScore > 65
+                      ? 'Rentan Tinggi'
+                      : mapsAssessment.normalizedScore >= 40
+                      ? 'Tingkat Sedang'
+                      : 'Terkendali & Kuat'}
                   </span>
-                  <p className="text-xs text-[#2C4A3E] leading-relaxed">
-                    {meta.scientificExplanation}
-                  </p>
                 </div>
+                <p className="text-xs text-[#5C5148] max-w-sm mx-auto leading-relaxed pt-1">
+                  Data ini tersimpan offline sebagai baseline pribadi untuk mengukur perubahanmu di kemudian hari.
+                </p>
               </div>
 
-              {/* Automatic Adaptations */}
+              {/* 3 Dimensional Progress Bars */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
-                <h4 className="text-xs font-black text-[#1E1915] uppercase tracking-wider">
-                  Penyesuaian Otomatis Aplikasi untukmu:
-                </h4>
+                <h3 className="text-xs font-black text-[#1E1915] uppercase tracking-wider">
+                  Profil 3 Dimensi MAPS-15
+                </h3>
 
                 <div className="space-y-2.5">
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-5 h-5 rounded-full bg-[#2C4A3E] text-white flex items-center justify-center shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 stroke-[3]" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-bold text-[#1E1915]">
-                        Papan Kerja Utama: {meta.frameworkName}
+                  {/* Dimension 1: CP */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[#1E1915]">
+                        1. Inisiasi &amp; Sikap Belajar (CP)
                       </span>
-                      <p className="text-xs text-[#5C5148] mt-0.5 leading-relaxed">
-                        {meta.frameworkReason}
-                      </p>
+                      <span className="font-extrabold text-[#5C5148]">
+                        {mapsAssessment.cpNormalized}% ({mapsAssessment.dimensionLabels.cp})
+                      </span>
+                    </div>
+                    <div className="w-full h-2.5 rounded-full bg-[#F2ECE1] overflow-hidden">
+                      <div
+                        className="h-full bg-[#D4532F] rounded-full transition-all duration-300"
+                        style={{ width: `${mapsAssessment.cpNormalized}%` }}
+                      />
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-5 h-5 rounded-full bg-[#2C4A3E] text-white flex items-center justify-center shrink-0 mt-0.5">
-                      <Check className="w-3 h-3 stroke-[3]" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-bold text-[#1E1915]">
-                        Prinsip Harian: &ldquo;{meta.dailyMotto}&rdquo;
+                  {/* Dimension 2: PTM */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[#1E1915]">
+                        2. Manajemen Waktu &amp; Rutinitas (PTM)
                       </span>
+                      <span className="font-extrabold text-[#5C5148]">
+                        {mapsAssessment.ptmNormalized}% ({mapsAssessment.dimensionLabels.ptm})
+                      </span>
+                    </div>
+                    <div className="w-full h-2.5 rounded-full bg-[#F2ECE1] overflow-hidden">
+                      <div
+                        className="h-full bg-[#B86B14] rounded-full transition-all duration-300"
+                        style={{ width: `${mapsAssessment.ptmNormalized}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Dimension 3: WD */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[#1E1915]">
+                        3. Distraksi &amp; Diskoneksi Tugas (WD)
+                      </span>
+                      <span className="font-extrabold text-[#5C5148]">
+                        {mapsAssessment.wdNormalized}% ({mapsAssessment.dimensionLabels.wd})
+                      </span>
+                    </div>
+                    <div className="w-full h-2.5 rounded-full bg-[#F2ECE1] overflow-hidden">
+                      <div
+                        className="h-full bg-[#2C4A3E] rounded-full transition-all duration-300"
+                        style={{ width: `${mapsAssessment.wdNormalized}%` }}
+                      />
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Starter Task Checkbox */}
-              <label className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#FFFDF9] border border-[#E2D9C8] cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={createStarterTask}
-                  onChange={(e) => setCreateStarterTask(e.target.checked)}
-                  className="w-4 h-4 accent-[#2C4A3E] rounded shrink-0 cursor-pointer"
-                />
-                <div className="min-w-0">
-                  <span className="text-xs font-extrabold text-[#1E1915] block">
-                    Buatkan 1 tugas latihan awal di meja hari ini
-                  </span>
-                  <span className="text-xs text-[#5C5148] block mt-0.5">
-                    Lengkap dengan 3 sub-langkah kecil dan pemicu mulai 2 menit.
-                  </span>
+              {/* Adaptive Feature Recommendations */}
+              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-2.5">
+                <h3 className="text-xs font-black text-[#1E1915] uppercase tracking-wider">
+                  Rekomendasi Setelan Aplikasi untukmu
+                </h3>
+                <div className="space-y-1.5 text-xs text-[#1E1915]">
+                  <div className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] flex items-center justify-between">
+                    <span className="font-bold">Tampilan Papan Paling Cocok:</span>
+                    <span className="font-extrabold text-[#2C4A3E]">
+                      {synthesizedProfile.recommendedFramework === 'KANBAN'
+                        ? 'Papan Kanban (Hari Ini & Laci)'
+                        : synthesizedProfile.recommendedFramework === 'IVY_LEE'
+                        ? 'Antrean Ivy Lee (6 Prioritas)'
+                        : synthesizedProfile.recommendedFramework === 'ONE_THREE_FIVE'
+                        ? 'Target 1-3-5'
+                        : 'Matriks Eisenhower'}
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] flex items-center justify-between">
+                    <span className="font-bold">Mode Timer yang Disarankan:</span>
+                    <span className="font-extrabold text-[#D4532F]">
+                      {synthesizedProfile.focusStyle === 'POMODORO'
+                        ? 'Pomodoro Multi-Fase (Fokus & Rehat)'
+                        : synthesizedProfile.focusStyle === 'TEN_MIN'
+                        ? 'Pancingan 10 Menit'
+                        : 'Sesi Fleksibel'}
+                    </span>
+                  </div>
                 </div>
-              </label>
 
-              {/* Re-test info note */}
-              <div className="p-3 rounded-xl bg-[#F2ECE1]/60 border border-[#E2D9C8] flex items-start gap-2 text-xs text-[#5C5148]">
-                <HelpCircle className="w-4 h-4 text-[#8C7E72] shrink-0 mt-0.5" />
-                <span>
-                  Profil diagnosis ini tersimpan aman di perangkatmu. Kamu bisa mengulang atau memperbaruinya kapan saja melalui menu <strong>Sidebar &rarr; Diagnosis Gaya Belajar</strong>.
-                </span>
+                <div className="pt-2">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#1E1915]">
+                    <input
+                      type="checkbox"
+                      checked={createStarterTask}
+                      onChange={(e) => setCreateStarterTask(e.target.checked)}
+                      className="w-4 h-4 accent-[#2C4A3E]"
+                    />
+                    <span>Tambahkan 1 target tugas starter perdana di papan belajarmu</span>
+                  </label>
+                </div>
               </div>
             </div>
           )}
         </div>
 
-        {/* Footer Navigation */}
-        <div className="px-5 py-3.5 bg-[#FFFDF9] border-t border-[#E2D9C8] flex items-center justify-between shrink-0 flex-wrap gap-2">
-          {step > 1 && step < 4 ? (
-            <button
-              type="button"
-              onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3)}
-              className="px-3.5 py-2 rounded-xl text-xs font-extrabold text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors flex items-center gap-1 cursor-pointer"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Kembali</span>
-            </button>
-          ) : step === 4 ? (
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="px-3.5 py-2 rounded-xl text-xs font-extrabold text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
-            >
-              Ubah Jawaban
-            </button>
-          ) : (
-            <div />
+        {/* Modal Bottom Sticky Controls */}
+        <div className="px-5 py-3.5 bg-[#FFFDF9] border-t border-[#E2D9C8] flex items-center justify-between gap-2 shrink-0">
+          {step === 'PERSONAL' && (
+            <div className="w-full flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => setStep('MAPS_1')}
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+              >
+                <span>Lanjut ke Asesmen MAPS-15</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           )}
 
-          {step < 3 ? (
-            <button
-              type="button"
-              onClick={() => setStep((s) => (s + 1) as 2 | 3)}
-              className="px-5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#20372E] text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-all"
-            >
-              <span>Lanjut</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          ) : step === 3 ? (
-            <button
-              type="button"
-              onClick={() => setStep(4)}
-              className="px-5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#20372E] text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-all"
-            >
-              <span>Lihat Hasil Analisis</span>
-              <Sparkles className="w-4 h-4" />
-            </button>
-          ) : (
-            <div className="flex items-center gap-2">
+          {step === 'MAPS_1' && (
+            <>
               <button
                 type="button"
-                onClick={() => handleFinish(false)}
-                className="px-4 py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-bold cursor-pointer transition-colors"
+                onClick={() => setStep('PERSONAL')}
+                className="px-4 py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-bold flex items-center gap-1 cursor-pointer"
               >
-                Terapkan Langsung
+                <ChevronLeft className="w-4 h-4" />
+                <span>Kembali</span>
               </button>
               <button
                 type="button"
-                onClick={() => handleFinish(true)}
-                className="px-5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#20372E] text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-all"
+                disabled={!isBatchAnswered(batch1Items)}
+                onClick={() => setStep('MAPS_2')}
+                className="px-5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
               >
-                <span>Terapkan &amp; Ikuti Tur Panduan 🚀</span>
-                <CheckCircle2 className="w-4 h-4" />
+                <span>Lanjut (Butir 6–10)</span>
+                <ChevronRight className="w-4 h-4" />
               </button>
+            </>
+          )}
+
+          {step === 'MAPS_2' && (
+            <>
+              <button
+                type="button"
+                onClick={() => setStep('MAPS_1')}
+                className="px-4 py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Kembali</span>
+              </button>
+              <button
+                type="button"
+                disabled={!isBatchAnswered(batch2Items)}
+                onClick={() => setStep('MAPS_3')}
+                className="px-5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+              >
+                <span>Lanjut (Butir 11–15)</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </>
+          )}
+
+          {step === 'MAPS_3' && (
+            <>
+              <button
+                type="button"
+                onClick={() => setStep('MAPS_2')}
+                className="px-4 py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Kembali</span>
+              </button>
+              <button
+                type="button"
+                disabled={!isBatchAnswered(batch3Items)}
+                onClick={() => setStep('EXPECTATION')}
+                className="px-5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+              >
+                <span>Lanjut ke Harapan Aplikasi</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </>
+          )}
+
+          {step === 'EXPECTATION' && (
+            <>
+              <button
+                type="button"
+                onClick={() => setStep('MAPS_3')}
+                className="px-4 py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Kembali</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep('REPORT')}
+                className="px-5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+              >
+                <span>Lihat Hasil Rapor</span>
+                <Sparkles className="w-4 h-4" />
+              </button>
+            </>
+          )}
+
+          {step === 'REPORT' && (
+            <div className="w-full flex items-center justify-between gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setStep('EXPECTATION')}
+                className="px-3.5 py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Ubah Jawaban</span>
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleFinish(false)}
+                  className="px-3.5 py-2.5 rounded-xl bg-[#FAF7F2] hover:bg-[#F2ECE1] border border-[#C9B99F] text-[#1E1915] text-xs font-bold cursor-pointer transition-colors"
+                >
+                  Terapkan Langsung
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleFinish(true)}
+                  className="px-4 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+                >
+                  <span>Terapkan &amp; Mulai Tur Panduan 🚀</span>
+                </button>
+              </div>
             </div>
           )}
         </div>

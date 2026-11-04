@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { App } from './App'
 import { FocusTimerModal } from './components/FocusTimerModal'
 import { NotificationAndRecoveryModal } from './components/NotificationAndRecoveryModal'
+import { ProcrastinationDiagnosticModal } from './components/ProcrastinationDiagnosticModal'
 import { TaskWorkspaceModal } from './components/TaskWorkspaceModal'
 import { TechniqueToolkitModal } from './components/TechniqueToolkitModal'
 import { SmartDecompositionModal } from './components/SmartDecompositionModal'
@@ -77,6 +78,14 @@ describe('App & Modals SSR Render Verification', () => {
     expect(htmlSmart).toContain('Pilih Gaya Pengerjaan')
     expect(htmlSmart).toContain('Sprint Mepet')
     expect(htmlSmart).toContain('Rencana Langkah')
+
+    // 4d. ProcrastinationDiagnosticModal (Personal Baseline + MAPS-15 + Expectations)
+    const htmlDiagnostic = renderToString(
+      <ProcrastinationDiagnosticModal onClose={() => {}} />
+    )
+    expect(htmlDiagnostic).toContain('Kondisi &amp; Perasaan Pribadi')
+    expect(htmlDiagnostic).toContain('Nama Panggilanmu')
+    expect(htmlDiagnostic).toContain('Lanjut ke Asesmen MAPS-15')
 
     // 5. NotificationAndRecoveryModal
     const htmlNotif = renderToString(

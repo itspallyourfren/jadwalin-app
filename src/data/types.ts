@@ -167,10 +167,39 @@ export type PrimaryAcademicGoal = 'THESIS' | 'COURSEWORK' | 'EXAMS' | 'ROUTINE'
 
 export type PreferredFocusStyle = 'POMODORO' | 'TEN_MIN' | 'FLOW' | 'FLEXIBLE'
 
+export type AppExpectationGoal =
+  | 'BREAK_BIG_TASKS'          // Bantu pecah tugas raksasa & tahu langkah awal
+  | 'BEAT_DISTRACTIONS'         // Kunci fokus & stop buka HP/medsos
+  | 'BUILD_ROUTINE'             // Rapikan rutinitas & antrean harian
+  | 'REDUCE_ANXIETY_DEADLINE'   // Redakan stres tenggat & berani kumpul 85%
+
+export type Maps15Dimension = 'CP' | 'PTM' | 'WD'
+
+export type Maps15Assessment = {
+  answeredAtIso: string
+  totalScore: number // 15..75 (makin tinggi makin rentan prokrastinasi)
+  normalizedScore: number // 0..100
+  cpScore: number // Raw Core Procrastination (6 items, range 6..30)
+  ptmScore: number // Raw Poor Time Management (4 items, range 4..20)
+  wdScore: number // Raw Work Disconnection (5 items, range 5..25)
+  cpNormalized: number // 0..100
+  ptmNormalized: number // 0..100
+  wdNormalized: number // 0..100
+  dominantDimension: Maps15Dimension
+  dimensionLabels: {
+    cp: 'Rendah' | 'Sedang' | 'Tinggi'
+    ptm: 'Rendah' | 'Sedang' | 'Tinggi'
+    wd: 'Rendah' | 'Sedang' | 'Tinggi'
+  }
+  rawResponses: Record<number, number> // itemId (1..15) -> Likert 1..5
+}
+
 export type UserProcrastinationProfile = {
   archetype: ProcrastinationArchetype
   primaryGoal: PrimaryAcademicGoal
   focusStyle: PreferredFocusStyle
+  appExpectation?: AppExpectationGoal
+  maps15?: Maps15Assessment
   recommendedFramework: BoardFrameworkView
   recommendedTechniqueIds: TechniqueId[]
   diagnosedAtIso: string
