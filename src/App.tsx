@@ -1,0 +1,167 @@
+// src/App.tsx - Revamped Application Shell with Hybrid Responsive Sidebar & Floating Action Dock
+import { useEffect, useState } from 'react'
+import { AppSidebar } from './components/AppSidebar'
+import { BoardViewContainer } from './components/BoardViewContainer'
+import { DeviceSimulatorWrapper } from './components/DeviceSimulatorWrapper'
+import { FloatingSwitcherDock } from './components/FloatingSwitcherDock'
+import { FocusTimerModal } from './components/FocusTimerModal'
+import { NotificationAndRecoveryModal } from './components/NotificationAndRecoveryModal'
+import { TaskWorkspaceModal } from './components/TaskWorkspaceModal'
+import { TechniqueToolkitModal } from './components/TechniqueToolkitModal'
+import { TopHeaderBar } from './components/TopHeaderBar'
+import { useTrackerStore } from './store/useTrackerStore'
+import type { TechniqueCatalogItem, TimerMode, TrackerTask } from './data/types'
+
+export function App() {
+  const tasks = useTrackerStore((s) => s.tasks)
+  const setActiveBoardView = useTrackerStore((s) => s.setActiveBoardView)
+  const recoverFromIndexedDbIfNeeded = useTrackerStore((s) => s.recoverFromIndexedDbIfNeeded)
+
+  // Sidebar States (Mobile Drawer vs Desktop Collapse)
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false)
+  const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false)
+
+  // Modals
+  const [workspaceTaskId, setWorkspaceTaskId] = useState<string | null | undefined>(undefined)
+  const [timerModalState, setTimerModalState] = useState<{
+    open: boolean
+    task: TrackerTask | null
+    mode: TimerMode
+  }>({
+    open: false,
+    task: null,
+    mode: 'TEN_MINUTE_RULE',
+  })
+  const [showToolkitModal, setShowToolkitModal] = useState(false)
+  const [notifRecoveryTab, setNotifRecoveryTab] = useState<'NOTIFICATION' | 'RECOVERY' | null>(null)
+
+  useEffect(() => {
+    void recoverFromIndexedDbIfNeeded()
+  }, [recoverFromIndexedDbIfNeeded])
+
+  const handleActivateTechnique = (item: TechniqueCatalogItem) => {
+    setShowToolkitModal(false)
+    const firstActive = tasks.find((t) => t.status !== 'COMPLETED') ?? null
+
+    switch (item.linkedActionType) {
+      case 'VIEW_KANBAN':
+        setActiveBoardView('KANBAN')
+        break
+      case 'VIEW_EISENHOWER':
+        setActiveBoardView('EISENHOWER')
+        break
+      case 'VIEW_135':
+        setActiveBoardView('ONE_THREE_FIVE')
+        break
+      case 'VIEW_IVY_LEE':
+        setActiveBoardView('IVY_LEE')
+        break
+      case 'TIMER_10_MIN':
+        setTimerModalState({ open: true, task: firstActive, mode: 'TEN_MINUTE_RULE' })
+        break
+      case 'TIMER_POMODORO':
+        setTimerModalState({ open: true, task: firstActive, mode: 'POMODORO_25_5' })
+        break
+      case 'TIMER_FLOW':
+        setTimerModalState({ open: true, task: firstActive, mode: 'FLOW_SPRINT_45' })
+        break
+      case 'ACTION_CHUNK_TASK':
+      case 'ACTION_STUDY_NOTES':
+        setWorkspaceTaskId(firstActive ? firstActive.id : null)
+        break
+      case 'ACTION_HABIT_REMINDER':
+        setNotifRecoveryTab('NOTIFICATION')
+        break
+    }
+  }
+
+  const handleStartFocusQuick = (targetTask?: TrackerTask | null) => {
+    const task = targetTask ?? tasks.find((t) => t.status === 'IN_PROGRESS') ?? tasks[0] ?? null
+    setTimerModalState({ open: true, task, mode: 'TEN_MINUTE_RULE' })
+  }
+
+  return (
+    <DeviceSimulatorWrapper
+      onOpenTaskFromNotification={(taskId) => setWorkspaceTaskId(taskId)}
+    >
+      {(isSimulatedMobile) => (
+        <div className="flex-1 flex h-full overflow-hidden relative">
+          {/* Responsive Sidebar (Mobile Sheet Drawer + Desktop Persistent Rail) */}
+          <AppSidebar
+            isMobileDrawerOpen={isMobileDrawerOpen}
+            onCloseMobileDrawer={() => setIsMobileDrawerOpen(false)}
+            isDesktopCollapsed={isDesktopCollapsed}
+            onToggleDesktopCollapse={() => setIsDesktopCollapsed((v) => !v)}
+            onOpenFocusTimer={() => handleStartFocusQuick()}
+            onOpenToolkit={() => setShowToolkitModal(true)}
+            onOpenNotifications={() => setNotifRecoveryTab('NOTIFICATION')}
+            onOpenBackup={() => setNotifRecoveryTab('RECOVERY')}
+          />
+
+          {/* Main Content Viewport */}
+          <div className="flex-1 flex flex-col min-h-0 min-w-0 bg-[#FAF7F2] relative">
+            <TopHeaderBar
+              isSimulatedMobile={isSimulatedMobile}
+              onToggleSidebar={() => {
+                if (isSimulatedMobile) {
+                  setIsMobileDrawerOpen(true)
+                } else {
+                  // In desktop, toggle collapse
+                  setIsDesktopCollapsed((v) => !v)
+                }
+              }}
+              onOpenNotificationModal={() => setNotifRecoveryTab('NOTIFICATION')}
+              onOpenBackupModal={() => setNotifRecoveryTab('RECOVERY')}
+            />
+
+            <BoardViewContainer
+              isSimulatedMobile={isSimulatedMobile}
+              onOpenDetail={(task) => setWorkspaceTaskId(task.id)}
+              onStartFocusTimer={(task) => handleStartFocusQuick(task)}
+              onOpenNewTask={() => setWorkspaceTaskId(null)}
+            />
+
+            {/* Sleek Floating Center Switcher Dock (Non-Repetitive Command Center) */}
+            <FloatingSwitcherDock
+              onOpenNewTask={() => setWorkspaceTaskId(null)}
+              onOpenFocusTimer={() => handleStartFocusQuick()}
+            />
+          </div>
+
+          {/* Modals */}
+          {workspaceTaskId !== undefined && (
+            <TaskWorkspaceModal
+              taskId={workspaceTaskId}
+              onClose={() => setWorkspaceTaskId(undefined)}
+              onStartFocusFromModal={(task) => handleStartFocusQuick(task)}
+            />
+          )}
+
+          {timerModalState.open && (
+            <FocusTimerModal
+              initialTask={timerModalState.task}
+              initialMode={timerModalState.mode}
+              onClose={() => setTimerModalState((prev) => ({ ...prev, open: false }))}
+            />
+          )}
+
+          {showToolkitModal && (
+            <TechniqueToolkitModal
+              onClose={() => setShowToolkitModal(false)}
+              onActivateTechnique={handleActivateTechnique}
+            />
+          )}
+
+          {notifRecoveryTab !== null && (
+            <NotificationAndRecoveryModal
+              initialTab={notifRecoveryTab}
+              onClose={() => setNotifRecoveryTab(null)}
+            />
+          )}
+        </div>
+      )}
+    </DeviceSimulatorWrapper>
+  )
+}
+
+export default App
