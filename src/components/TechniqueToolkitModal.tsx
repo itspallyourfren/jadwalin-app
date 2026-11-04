@@ -126,9 +126,9 @@ export const TechniqueToolkitModal: React.FC<TechniqueToolkitModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Tutup katalog teknik"
-            className="p-1.5 rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
+            className="w-10 h-10 min-w-[40px] flex items-center justify-center rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 

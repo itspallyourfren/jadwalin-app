@@ -157,9 +157,9 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
               type="button"
               onClick={onClose}
               aria-label="Tutup modal"
-              className="p-2 rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
+              className="w-10 h-10 min-w-[40px] flex items-center justify-center rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
@@ -421,19 +421,19 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
               type="button"
               onClick={onClose}
               aria-label="Tutup rincian"
-              className="p-2 rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
+              className="w-10 h-10 min-w-[40px] flex items-center justify-center rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         {/* Navigation Tabs Inside Task Workspace */}
-        <div className="px-5 pt-3 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center gap-2 overflow-x-auto shrink-0">
+        <div className="px-5 pt-1 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center gap-2 overflow-x-auto shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab('STEPS')}
-            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`min-h-[44px] pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeTab === 'STEPS'
                 ? 'border-[#2C4A3E] text-[#1E1915]'
                 : 'border-transparent text-[#8C7E72] hover:text-[#1E1915]'
@@ -446,7 +446,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('WOOP')}
-            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`min-h-[44px] pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeTab === 'WOOP'
                 ? 'border-[#2C4A3E] text-[#1E1915]'
                 : 'border-transparent text-[#8C7E72] hover:text-[#1E1915]'
@@ -459,7 +459,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('STUDY')}
-            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`min-h-[44px] pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeTab === 'STUDY'
                 ? 'border-[#2C4A3E] text-[#1E1915]'
                 : 'border-transparent text-[#8C7E72] hover:text-[#1E1915]'

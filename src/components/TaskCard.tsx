@@ -58,15 +58,19 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       {/* Row 1: Context + Scale + Pin */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-          <span className="text-xs font-semibold text-[#5C5148] truncate max-w-[140px]">
-            {task.courseOrContext}
-          </span>
-          <span className="text-[#C9B99F]">·</span>
+          {task.courseOrContext && (
+            <>
+              <span className="text-xs font-semibold text-[#5C5148] truncate max-w-[140px]">
+                {task.courseOrContext}
+              </span>
+              <span className="text-[#C9B99F]">·</span>
+            </>
+          )}
           <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${SCALE_DOT[task.scale]}`}>
             {task.scale}
           </span>
           {task.timeBlock !== 'Bebas' && (
-            <span className="text-xs font-medium text-[#8C7E72] px-1.5 py-0.5 bg-[#F2ECE1] rounded-md">
+            <span className="text-xs font-semibold text-[#5C5148] px-1.5 py-0.5 bg-[#F2ECE1] rounded-md">
               {task.timeBlock}
             </span>
           )}
@@ -83,7 +87,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             onClick={() => toggleEatThatFrog(task.id)}
             title="Prioritas Utama Hari Ini"
             aria-label="Prioritas Utama"
-            className={`p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 ${
+            className={`w-8 h-8 rounded-lg transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
               task.isEatThatFrog
                 ? 'bg-[#FDECE8] text-[#D4532F]'
                 : 'text-[#8C7E72]/60 hover:text-[#1E1915] hover:bg-[#F2ECE1]'
@@ -97,7 +101,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       {/* Row 2: Task Title */}
       <h3
         onClick={() => onOpenDetail(task)}
-        className={`text-[15px] font-bold text-[#1E1915] leading-snug cursor-pointer hover:text-[#2C4A3E] ${
+        className={`text-[15px] font-bold text-[#1E1915] leading-snug cursor-pointer hover:text-[#2C4A3E] break-words ${
           isCompleted ? 'line-through text-[#8C7E72]' : ''
         }`}
       >

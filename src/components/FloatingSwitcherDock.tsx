@@ -43,7 +43,7 @@ export const FloatingSwitcherDock: React.FC<FloatingSwitcherDockProps> = ({
             onClick={() => setShowPicker(false)}
             aria-hidden="true"
           />
-          <div className="relative z-40 mb-2 bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-1.5 shadow-xl flex items-center gap-1 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative z-40 mb-2 max-w-[92vw] overflow-x-auto no-scrollbar bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-1.5 shadow-xl flex items-center gap-1 animate-in fade-in zoom-in-95 duration-150">
             {VIEWS.map((v) => {
               const isSelected = activeBoardView === v.id
               return (

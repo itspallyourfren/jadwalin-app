@@ -3,7 +3,7 @@ import React from 'react'
 import { Bell, Flame, Menu, Plus } from 'lucide-react'
 import { calcSeinfeldStreak } from '../engine/studyAndTimerEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
-import type { BoardFrameworkView, TimeBlockTag } from '../data/types'
+import type { BoardFrameworkView } from '../data/types'
 
 type TopHeaderBarProps = {
   isSimulatedMobile: boolean
@@ -20,14 +20,6 @@ const VIEW_TITLES: Record<BoardFrameworkView, string> = {
   IVY_LEE: 'Antrean Ivy Lee',
 }
 
-const TIME_FILTER_TAGS: Array<{ value: TimeBlockTag | 'ALL'; label: string }> = [
-  { value: 'ALL', label: 'Semua' },
-  { value: 'Pagi', label: 'Pagi' },
-  { value: 'Siang', label: 'Siang' },
-  { value: 'Sore', label: 'Sore' },
-  { value: 'Malam', label: 'Malam' },
-]
-
 export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
   isSimulatedMobile,
   onToggleSidebar,
@@ -36,8 +28,6 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
   onOpenNewTask,
 }) => {
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
-  const activeTimeFilter = useTrackerStore((s) => s.activeTimeFilter)
-  const setActiveTimeFilter = useTrackerStore((s) => s.setActiveTimeFilter)
   const completedDates = useTrackerStore((s) => s.completedDates)
   const streak = calcSeinfeldStreak(completedDates)
 
@@ -54,7 +44,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             type="button"
             onClick={onToggleSidebar}
             aria-label="Buka menu navigasi"
-            className="p-2 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-[#1E1915] transition-all cursor-pointer shrink-0"
+            className="w-10 h-10 min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-[#1E1915] transition-all cursor-pointer flex items-center justify-center shrink-0"
           >
             <Menu className="w-4 h-4" />
           </button>
@@ -66,27 +56,6 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
           </div>
         </div>
 
-        {/* Center: Compact Time Filter Pills (Pagi / Siang / Sore / Malam) */}
-        <div className="hidden sm:flex items-center gap-1 bg-[#F2ECE1]/80 p-0.5 rounded-xl border border-[#E2D9C8]/70">
-          {TIME_FILTER_TAGS.map((tf) => {
-            const active = activeTimeFilter === tf.value
-            return (
-              <button
-                key={tf.value}
-                type="button"
-                onClick={() => setActiveTimeFilter(tf.value)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                  active
-                    ? 'bg-[#FFFDF9] text-[#1E1915] shadow-2xs'
-                    : 'text-[#5C5148] hover:text-[#1E1915]'
-                }`}
-              >
-                {tf.label}
-              </button>
-            )
-          })}
-        </div>
-
         {/* Right: Plus Add Task + Streak + Notification Icon */}
         <div className="flex items-center gap-1.5 shrink-0">
           {onOpenNewTask && (
@@ -95,7 +64,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
               onClick={onOpenNewTask}
               aria-label="Tambah tugas baru"
               title="Tambah tugas baru"
-              className="p-2 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white transition-all cursor-pointer shrink-0 shadow-2xs"
+              className="w-10 h-10 min-w-[40px] rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
             >
               <Plus className="w-4 h-4 stroke-[2.75]" />
             </button>
@@ -105,7 +74,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             type="button"
             onClick={onOpenBackupModal}
             title="Rantai konsistensi harian"
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-xs font-bold text-[#1E1915] transition-all cursor-pointer"
+            className="min-h-[40px] flex items-center gap-1.5 px-3 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-xs font-bold text-[#1E1915] transition-all cursor-pointer"
           >
             <Flame
               className={`w-3.5 h-3.5 ${
@@ -120,7 +89,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             type="button"
             onClick={onOpenNotificationModal}
             aria-label="Pengingat notifikasi"
-            className="p-2 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915] transition-all cursor-pointer"
+            className="w-10 h-10 min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915] transition-all cursor-pointer flex items-center justify-center shrink-0"
           >
             <Bell className="w-4 h-4" />
           </button>

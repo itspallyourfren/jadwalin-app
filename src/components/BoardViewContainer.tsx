@@ -163,12 +163,18 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
 
                 {col.items.length === 0 ? (
                   <div className="bg-[#FFFDF9]/60 rounded-xl border border-dashed border-[#C9B99F] p-5 text-center space-y-2">
-                    <p className="text-xs font-medium text-[#8C7E72]">Kosong</p>
+                    <p className="text-xs font-semibold text-[#5C5148]">
+                      {col.status === 'IN_PROGRESS'
+                        ? 'Belum ada tugas di meja hari ini.'
+                        : col.status === 'BACKLOG'
+                        ? 'Laci tugas kosong. Catat tugas kuliah atau proyekmu di sini.'
+                        : 'Belum ada tugas selesai. Mulai cicil 1 langkah kecil!'}
+                    </p>
                     {col.status !== 'COMPLETED' && (
                       <button
                         type="button"
                         onClick={onOpenNewTask}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#2C4A3E] text-white text-xs font-semibold cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#2C4A3E] text-white text-xs font-bold cursor-pointer hover:bg-[#1E332B] transition-colors"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Tambah Tugas</span>

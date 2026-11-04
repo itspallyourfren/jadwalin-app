@@ -264,7 +264,11 @@ export function generateAdaptiveTaskPlan(
         isParetoCore: tmpl.isPareto,
         phaseName: phase.name,
         estimatedMinutes: stepMinutes,
-        starterTrigger: tmpl.starter,
+        starterTrigger:
+          tmpl.starter ||
+          (pIdx === 0 && sIdx === 0
+            ? 'Buka dokumen atau alat kerja untuk mulai 2 menit.'
+            : undefined),
       }
       allSteps.push(stepObj)
       return stepObj
