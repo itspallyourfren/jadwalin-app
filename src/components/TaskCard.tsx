@@ -55,8 +55,16 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
   return (
     <article
+      tabIndex={0}
+      role="button"
       onClick={() => onOpenDetail(task)}
-      className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 hover:border-[#C9B99F] hover:shadow-sm transition-all flex flex-col gap-2.5 cursor-pointer"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onOpenDetail(task)
+        }
+      }}
+      className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 hover:border-[#C9B99F] hover:shadow-sm focus:ring-2 focus:ring-[#2C4A3E]/40 focus:outline-hidden transition-all flex flex-col gap-2.5 cursor-pointer"
     >
       {/* Row 1: Context + Scale + Pin */}
       <div className="flex items-center justify-between gap-2">

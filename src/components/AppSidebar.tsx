@@ -1,4 +1,4 @@
-// src/components/AppSidebar.tsx - Hybrid Responsive Sidebar (Desktop Permanent / Mobile Slide-over Sheet)
+// src/components/AppSidebar.tsx - Upper Layer Overlay Sidebar with Dim Dashboard & Desktop Usability
 import React from 'react'
 import {
   Bell,
@@ -7,10 +7,13 @@ import {
   Grid2X2,
   HelpCircle,
   Kanban,
+  Keyboard,
   Layers,
   ListOrdered,
   PanelLeftClose,
   PanelLeftOpen,
+  Pin,
+  PinOff,
   ShieldCheck,
   Sparkles,
   Timer,
@@ -23,28 +26,36 @@ import { Sheet, SheetClose } from './ui/sheet'
 import type { BoardFrameworkView } from '../data/types'
 
 type AppSidebarProps = {
+  isMobile: boolean
   isMobileDrawerOpen: boolean
   onCloseMobileDrawer: () => void
-  isDesktopCollapsed: boolean
-  onToggleDesktopCollapse: () => void
+  isDesktopPinned?: boolean
+  onToggleDesktopPin?: () => void
+  isDesktopCollapsed?: boolean
+  onToggleDesktopCollapse?: () => void
   onOpenFocusTimer: () => void
   onOpenToolkit: () => void
   onOpenNotifications: () => void
   onOpenBackup: () => void
   onOpenDiagnostic: () => void
+  onOpenShortcutsHelp?: () => void
   onStartTour?: () => void
 }
 
 export const AppSidebar: React.FC<AppSidebarProps> = ({
+  isMobile,
   isMobileDrawerOpen,
   onCloseMobileDrawer,
-  isDesktopCollapsed,
+  isDesktopPinned = false,
+  onToggleDesktopPin,
+  isDesktopCollapsed = false,
   onToggleDesktopCollapse,
   onOpenFocusTimer,
   onOpenToolkit,
   onOpenNotifications,
   onOpenBackup,
   onOpenDiagnostic,
+  onOpenShortcutsHelp,
   onStartTour,
 }) => {
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
@@ -67,7 +78,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   }
 
   // Sidebar Menu Content Structure
-  const renderSidebarContent = (isCollapsed: boolean, isMobile: boolean) => (
+  const renderSidebarContent = (isCollapsed: boolean, isOverlayMode: boolean) => (
     <div className="flex flex-col h-full bg-[#FAF7F2] text-[#1E1915] select-none">
       {/* 1. Header: Logo & Branding */}
       <div className="h-14 px-3.5 border-b border-[#E2D9C8] flex items-center justify-between shrink-0">
@@ -77,7 +88,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             alt="Jadwal-In!"
             className="h-8 w-auto object-contain shrink-0"
           />
-          {(!isCollapsed || isMobile) && (
+          {(!isCollapsed || isOverlayMode) && (
             <div className="min-w-0">
               <span className="text-[11px] font-bold text-[#8C7E72] block truncate tracking-wide">
                 Pocket Planner Mahasiswa
@@ -86,25 +97,42 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           )}
         </div>
 
-        {isMobile ? (
-          <SheetClose onClick={onCloseMobileDrawer} />
-        ) : (
-          <button
-            type="button"
-            onClick={onToggleDesktopCollapse}
-            aria-label={isCollapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
-            className="p-1.5 rounded-lg text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
-          >
-            {isCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
-          </button>
-        )}
+        <div className="flex items-center gap-1">
+          {/* Desktop Pin Toggle (Available only when running on desktop) */}
+          {!isMobile && onToggleDesktopPin && (
+            <button
+              type="button"
+              onClick={onToggleDesktopPin}
+              title={isDesktopPinned ? 'Lepas sematan (Gunakan overlay redup)' : 'Sematkan ke bilah samping'}
+              aria-label={isDesktopPinned ? 'Lepas sematan' : 'Sematkan sidebar'}
+              className="p-1.5 rounded-lg text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
+            >
+              {isDesktopPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
+            </button>
+          )}
+
+          {isOverlayMode ? (
+            <SheetClose onClick={onCloseMobileDrawer} />
+          ) : (
+            onToggleDesktopCollapse && (
+              <button
+                type="button"
+                onClick={onToggleDesktopCollapse}
+                aria-label={isCollapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
+                className="p-1.5 rounded-lg text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
+              >
+                {isCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+              </button>
+            )
+          )}
+        </div>
       </div>
 
       {/* 2. Scrollable Navigation Sections */}
       <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-4">
         {/* Section A: Papan Kerja */}
         <div className="space-y-1">
-          {(!isCollapsed || isMobile) && (
+          {(!isCollapsed || isOverlayMode) && (
             <div className="px-2 pb-1 text-xs font-bold text-[#8C7E72] uppercase tracking-wider">
               Papan Kerja
             </div>
@@ -113,7 +141,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           <button
             type="button"
             onClick={() => handleSelectView('KANBAN')}
-            title="Papan Kanban (Hari Ini, Laci, Selesai)"
+            title="Papan Kanban [1]"
             className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               activeBoardView === 'KANBAN'
                 ? 'bg-[#2C4A3E] text-[#FAF7F2] shadow-2xs'
@@ -121,10 +149,10 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             }`}
           >
             <Kanban className="w-4 h-4 shrink-0" />
-            {(!isCollapsed || isMobile) && (
+            {(!isCollapsed || isOverlayMode) && (
               <span className="flex-1 text-left truncate">Papan Kanban</span>
             )}
-            {(!isCollapsed || isMobile) && (
+            {(!isCollapsed || isOverlayMode) && (
               <span
                 className={`text-xs px-1.5 py-0.2 rounded-md ${
                   activeBoardView === 'KANBAN'
@@ -140,7 +168,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           <button
             type="button"
             onClick={() => handleSelectView('EISENHOWER')}
-            title="Matriks Eisenhower (Penting vs Mendesak)"
+            title="Matriks Eisenhower [2]"
             className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               activeBoardView === 'EISENHOWER'
                 ? 'bg-[#2C4A3E] text-[#FAF7F2] shadow-2xs'
@@ -148,7 +176,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             }`}
           >
             <Grid2X2 className="w-4 h-4 shrink-0" />
-            {(!isCollapsed || isMobile) && (
+            {(!isCollapsed || isOverlayMode) && (
               <span className="flex-1 text-left truncate">Matriks Eisenhower</span>
             )}
           </button>
@@ -156,7 +184,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           <button
             type="button"
             onClick={() => handleSelectView('ONE_THREE_FIVE')}
-            title="The 1-3-5 Rule (1 Besar, 3 Sedang, 5 Kecil)"
+            title="The 1-3-5 Rule [3]"
             className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               activeBoardView === 'ONE_THREE_FIVE'
                 ? 'bg-[#2C4A3E] text-[#FAF7F2] shadow-2xs'
@@ -164,7 +192,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             }`}
           >
             <Layers className="w-4 h-4 shrink-0" />
-            {(!isCollapsed || isMobile) && (
+            {(!isCollapsed || isOverlayMode) && (
               <span className="flex-1 text-left truncate">Target 1-3-5</span>
             )}
           </button>
@@ -172,7 +200,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           <button
             type="button"
             onClick={() => handleSelectView('IVY_LEE')}
-            title="Antrean 6 Prioritas Ivy Lee"
+            title="Antrean Ivy Lee [4]"
             className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               activeBoardView === 'IVY_LEE'
                 ? 'bg-[#2C4A3E] text-[#FAF7F2] shadow-2xs'
@@ -180,7 +208,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             }`}
           >
             <ListOrdered className="w-4 h-4 shrink-0" />
-            {(!isCollapsed || isMobile) && (
+            {(!isCollapsed || isOverlayMode) && (
               <span className="flex-1 text-left truncate">Antrean Ivy Lee</span>
             )}
           </button>
@@ -188,7 +216,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
         {/* Section B: Ruang Fokus & Alat */}
         <div className="space-y-1 pt-1 border-t border-[#E2D9C8]/70">
-          {(!isCollapsed || isMobile) && (
+          {(!isCollapsed || isOverlayMode) && (
             <div className="px-2 pb-1 text-xs font-bold text-[#8C7E72] uppercase tracking-wider">
               Ruang Fokus
             </div>
@@ -200,12 +228,12 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               onOpenFocusTimer()
               onCloseMobileDrawer()
             }}
-            title="Timer Fokus (10m / Pomodoro / Flow)"
+            title="Timer Fokus [F / Spasi]"
             className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
           >
             <Timer className="w-4 h-4 text-[#D4532F] shrink-0" />
-            {(!isCollapsed || isMobile) && (
-              <span className="flex-1 text-left truncate">Timer Fokus</span>
+            {(!isCollapsed || isOverlayMode) && (
+              <span className="flex-1 text-left truncate">Timer Fokus [F]</span>
             )}
           </button>
 
@@ -215,12 +243,12 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               onOpenToolkit()
               onCloseMobileDrawer()
             }}
-            title="Panduan Teknik Produktivitas & Belajar"
+            title="Panduan Teknik Produktivitas & Belajar [T]"
             className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
           >
             <BookOpen className="w-4 h-4 text-[#2C4A3E] shrink-0" />
-            {(!isCollapsed || isMobile) && (
-              <span className="flex-1 text-left truncate">Panduan Teknik</span>
+            {(!isCollapsed || isOverlayMode) && (
+              <span className="flex-1 text-left truncate">Panduan Teknik [T]</span>
             )}
           </button>
 
@@ -230,14 +258,31 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               onOpenDiagnostic()
               onCloseMobileDrawer()
             }}
-            title="Diagnosis Gaya Prokrastinasi & Personalisasi"
+            title="Diagnosis Gaya Prokrastinasi & Personalisasi [D]"
             className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-[#B86B14] shrink-0" />
-            {(!isCollapsed || isMobile) && (
-              <span className="flex-1 text-left truncate">Diagnosis Gaya Belajar</span>
+            {(!isCollapsed || isOverlayMode) && (
+              <span className="flex-1 text-left truncate">Diagnosis Gaya Belajar [D]</span>
             )}
           </button>
+
+          {onOpenShortcutsHelp && (
+            <button
+              type="button"
+              onClick={() => {
+                onCloseMobileDrawer()
+                onOpenShortcutsHelp()
+              }}
+              title="Pintasan Tombol Keyboard Desktop [?]"
+              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
+            >
+              <Keyboard className="w-4 h-4 text-[#2C4A3E] shrink-0" />
+              {(!isCollapsed || isOverlayMode) && (
+                <span className="flex-1 text-left truncate">Tombol Pintas [?]</span>
+              )}
+            </button>
+          )}
 
           {onStartTour && (
             <button
@@ -250,7 +295,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#2C4A3E] bg-[#2C4A3E]/8 hover:bg-[#2C4A3E]/15 transition-colors cursor-pointer"
             >
               <HelpCircle className="w-4 h-4 text-[#2C4A3E] shrink-0" />
-              {(!isCollapsed || isMobile) && (
+              {(!isCollapsed || isOverlayMode) && (
                 <span className="flex-1 text-left truncate">Panduan Aplikasi (Tutorial)</span>
               )}
             </button>
@@ -259,7 +304,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
         {/* Section C: Pengaturan & Cadangan Data */}
         <div className="space-y-1 pt-1 border-t border-[#E2D9C8]/70">
-          {(!isCollapsed || isMobile) && (
+          {(!isCollapsed || isOverlayMode) && (
             <div className="px-2 pb-1 text-xs font-bold text-[#8C7E72] uppercase tracking-wider">
               Data &amp; Cadangan
             </div>
@@ -275,7 +320,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
           >
             <Bell className="w-4 h-4 text-[#5C5148] shrink-0" />
-            {(!isCollapsed || isMobile) && (
+            {(!isCollapsed || isOverlayMode) && (
               <span className="flex-1 text-left truncate">Pengingat HP</span>
             )}
           </button>
@@ -286,12 +331,12 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               onOpenBackup()
               onCloseMobileDrawer()
             }}
-            title="Cadangan & Pemulihan Data Lokal"
+            title="Cadangan & Pemulihan Data Lokal [B]"
             className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4 text-[#1F7A4C] shrink-0" />
-            {(!isCollapsed || isMobile) && (
-              <span className="flex-1 text-left truncate">Cadangan Data</span>
+            {(!isCollapsed || isOverlayMode) && (
+              <span className="flex-1 text-left truncate">Cadangan Data [B]</span>
             )}
           </button>
 
@@ -308,7 +353,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#C8432B] hover:bg-[#FDECE8] transition-colors cursor-pointer"
             >
               <Trash2 className="w-4 h-4 shrink-0" />
-              {(!isCollapsed || isMobile) && (
+              {(!isCollapsed || isOverlayMode) && (
                 <span className="flex-1 text-left truncate">Kosongkan Papan</span>
               )}
             </button>
@@ -330,7 +375,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             alt={charProfile.name}
             className="w-8 h-8 rounded-full object-cover border border-[#C9B99F] shrink-0"
           />
-          {(!isCollapsed || isMobile) && (
+          {(!isCollapsed || isOverlayMode) && (
             <div className="min-w-0 flex-1">
               <div className="text-xs font-bold text-[#1E1915] truncate">
                 {participantName}
@@ -347,21 +392,32 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
     </div>
   )
 
-  return (
-    <>
-      {/* Mobile Drawer Sheet */}
+  // 1. Mobile & Simulated Mobile: ALWAYS upper layer overlay sheet with dimmed dashboard (never squeeze content)
+  if (isMobile) {
+    return (
       <Sheet open={isMobileDrawerOpen} onClose={onCloseMobileDrawer} side="left">
         {renderSidebarContent(false, true)}
       </Sheet>
+    )
+  }
 
-      {/* Desktop Persistent Sidebar (Hidden on small mobile screens) */}
+  // 2. Desktop Mode: If user pinned the sidebar, render persistent rail.
+  if (isDesktopPinned) {
+    return (
       <aside
-        className={`hidden md:flex flex-col border-r border-[#E2D9C8] transition-all duration-200 shrink-0 ${
+        className={`flex flex-col border-r border-[#E2D9C8] transition-all duration-200 shrink-0 select-none ${
           isDesktopCollapsed ? 'w-16' : 'w-60 lg:w-64'
         }`}
       >
         {renderSidebarContent(isDesktopCollapsed, false)}
       </aside>
-    </>
+    )
+  }
+
+  // 3. Desktop Mode (Default): Upper layer overlay sheet with dimmed dashboard (preserves 100% full board width)
+  return (
+    <Sheet open={isMobileDrawerOpen} onClose={onCloseMobileDrawer} side="left">
+      {renderSidebarContent(false, true)}
+    </Sheet>
   )
 }

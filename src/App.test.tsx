@@ -1,7 +1,9 @@
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { App } from './App'
+import { AppSidebar } from './components/AppSidebar'
 import { FocusTimerModal } from './components/FocusTimerModal'
+import { KeyboardShortcutsHelpModal } from './components/KeyboardShortcutsHelpModal'
 import { NotificationAndRecoveryModal } from './components/NotificationAndRecoveryModal'
 import { ProcrastinationDiagnosticModal } from './components/ProcrastinationDiagnosticModal'
 import { TaskWorkspaceModal } from './components/TaskWorkspaceModal'
@@ -19,9 +21,34 @@ describe('App & Modals SSR Render Verification', () => {
     expect(htmlApp).toContain('Papan Tugas Masih Bersih')
     expect(htmlApp).toContain('Laci Tugas')
     expect(htmlApp).toContain('Hari Ini')
-    expect(htmlApp).toContain('Eisenhower')
-    expect(htmlApp).toContain('1-3-5')
-    expect(htmlApp).toContain('Ivy Lee')
+
+    // 1b. AppSidebar Open Mode (Overlay with Dim Dashboard)
+    const htmlSidebar = renderToString(
+      <AppSidebar
+        isMobile={false}
+        isMobileDrawerOpen={true}
+        onCloseMobileDrawer={() => {}}
+        onOpenFocusTimer={() => {}}
+        onOpenToolkit={() => {}}
+        onOpenNotifications={() => {}}
+        onOpenBackup={() => {}}
+        onOpenDiagnostic={() => {}}
+        onOpenShortcutsHelp={() => {}}
+      />
+    )
+    expect(htmlSidebar).toContain('Papan Kanban')
+    expect(htmlSidebar).toContain('Matriks Eisenhower')
+    expect(htmlSidebar).toContain('Target 1-3-5')
+    expect(htmlSidebar).toContain('Antrean Ivy Lee')
+    expect(htmlSidebar).toContain('Tombol Pintas [?]')
+
+    // 1c. KeyboardShortcutsHelpModal
+    const htmlShortcuts = renderToString(
+      <KeyboardShortcutsHelpModal onClose={() => {}} />
+    )
+    expect(htmlShortcuts).toContain('Pintasan Keyboard Desktop')
+    expect(htmlShortcuts).toContain('Papan Kanban')
+    expect(htmlShortcuts).toContain('Timer Fokus Cepat')
 
     // Add a test task for modal verification
     const testTaskId = store.addTask({

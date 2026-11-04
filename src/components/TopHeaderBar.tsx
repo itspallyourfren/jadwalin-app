@@ -1,6 +1,6 @@
-// src/components/TopHeaderBar.tsx - Sleek Minimal Top Bar (No Repetitive Buttons)
+// src/components/TopHeaderBar.tsx - Sleek Minimal Top Bar with Shortcut Hints & Navigation Triggers
 import React from 'react'
-import { Bell, Flame, Menu, Plus } from 'lucide-react'
+import { Bell, Flame, Keyboard, Menu, Plus } from 'lucide-react'
 import { calcSeinfeldStreak } from '../engine/studyAndTimerEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
 import type { BoardFrameworkView } from '../data/types'
@@ -11,6 +11,7 @@ type TopHeaderBarProps = {
   onOpenNotificationModal: () => void
   onOpenBackupModal: () => void
   onOpenNewTask?: () => void
+  onOpenShortcutsHelp?: () => void
 }
 
 const VIEW_TITLES: Record<BoardFrameworkView, string> = {
@@ -26,13 +27,14 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
   onOpenNotificationModal,
   onOpenBackupModal,
   onOpenNewTask,
+  onOpenShortcutsHelp,
 }) => {
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
   const completedDates = useTrackerStore((s) => s.completedDates)
   const streak = calcSeinfeldStreak(completedDates)
 
   return (
-    <header className="bg-[#FAF7F2] border-b border-[#E2D9C8]/80 shrink-0">
+    <header className="bg-[#FAF7F2] border-b border-[#E2D9C8]/80 shrink-0 select-none">
       <div
         className={`mx-auto ${
           isSimulatedMobile ? 'px-3 py-2' : 'max-w-6xl px-4 sm:px-6 py-2.5'
@@ -45,6 +47,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             type="button"
             onClick={onToggleSidebar}
             aria-label="Buka menu navigasi"
+            title="Buka menu navigasi [Tab]"
             className="w-10 h-10 min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-[#1E1915] transition-all cursor-pointer flex items-center justify-center shrink-0"
           >
             <Menu className="w-4 h-4" />
@@ -57,15 +60,31 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
           </div>
         </div>
 
-        {/* Right: Plus Add Task + Streak + Notification Icon */}
+        {/* Right: Keyboard Shortcuts + Plus Add Task + Streak + Notification Icon */}
         <div className="flex items-center gap-1.5 shrink-0">
+          {!isSimulatedMobile && onOpenShortcutsHelp && (
+            <button
+              type="button"
+              onClick={onOpenShortcutsHelp}
+              title="Daftar tombol pintas keyboard desktop [?]"
+              aria-label="Tombol pintas keyboard"
+              className="hidden sm:flex min-h-[40px] items-center gap-1.5 px-2.5 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-xs font-bold text-[#5C5148] hover:text-[#1E1915] transition-all cursor-pointer"
+            >
+              <Keyboard className="w-3.5 h-3.5 text-[#2C4A3E]" />
+              <span className="hidden md:inline">Pintasan</span>
+              <kbd className="px-1.5 py-0.2 rounded bg-[#FAF7F2] border border-[#C9B99F] text-[10px] font-black">
+                ?
+              </kbd>
+            </button>
+          )}
+
           {onOpenNewTask && (
             <button
               id="tutorial-add-task-btn"
               type="button"
               onClick={onOpenNewTask}
               aria-label="Tambah tugas baru"
-              title="Tambah tugas baru"
+              title="Tambah tugas baru [N]"
               className="w-10 h-10 min-w-[40px] rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
             >
               <Plus className="w-4 h-4 stroke-[2.75]" />
@@ -75,7 +94,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
           <button
             type="button"
             onClick={onOpenBackupModal}
-            title="Rantai konsistensi harian"
+            title="Rantai konsistensi harian & profil [B]"
             className="min-h-[40px] flex items-center gap-1.5 px-3 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-xs font-bold text-[#1E1915] transition-all cursor-pointer"
           >
             <Flame
@@ -91,6 +110,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             type="button"
             onClick={onOpenNotificationModal}
             aria-label="Pengingat notifikasi"
+            title="Pengingat notifikasi"
             className="w-10 h-10 min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915] transition-all cursor-pointer flex items-center justify-center shrink-0"
           >
             <Bell className="w-4 h-4" />

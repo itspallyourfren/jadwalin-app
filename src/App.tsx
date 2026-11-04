@@ -1,16 +1,18 @@
-// src/App.tsx - Revamped Application Shell with Hybrid Responsive Sidebar & Floating Action Dock
+// src/App.tsx - Revamped Application Shell with Upper Layer Overlay Sidebar & Desktop Keyboard Navigation
 import { useEffect, useState } from 'react'
 import { AppSidebar } from './components/AppSidebar'
 import { BoardViewContainer } from './components/BoardViewContainer'
 import { DeviceSimulatorWrapper } from './components/DeviceSimulatorWrapper'
 import { FloatingSwitcherDock } from './components/FloatingSwitcherDock'
 import { FocusTimerModal } from './components/FocusTimerModal'
+import { KeyboardShortcutsHelpModal } from './components/KeyboardShortcutsHelpModal'
 import { NotificationAndRecoveryModal } from './components/NotificationAndRecoveryModal'
 import { ProcrastinationDiagnosticModal } from './components/ProcrastinationDiagnosticModal'
 import { TaskWorkspaceModal } from './components/TaskWorkspaceModal'
 import { TechniqueToolkitModal } from './components/TechniqueToolkitModal'
 import { TopHeaderBar } from './components/TopHeaderBar'
 import { startAppTutorialTour } from './engine/appTourGuide'
+import { resolveKeyboardAction } from './engine/keyboardShortcuts'
 import { useTrackerStore } from './store/useTrackerStore'
 import type { TechniqueCatalogItem, TimerMode, TrackerTask } from './data/types'
 
@@ -19,8 +21,9 @@ export function App() {
   const setActiveBoardView = useTrackerStore((s) => s.setActiveBoardView)
   const recoverFromIndexedDbIfNeeded = useTrackerStore((s) => s.recoverFromIndexedDbIfNeeded)
 
-  // Sidebar States (Mobile Drawer vs Desktop Collapse)
+  // Sidebar States (Upper Layer Overlay by default, with optional Desktop Pinning)
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false)
+  const [isDesktopPinned, setIsDesktopPinned] = useState(false)
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false)
   const [isMobileViewport, setIsMobileViewport] = useState(
     () => typeof window !== 'undefined' && window.innerWidth < 768
@@ -55,6 +58,7 @@ export function App() {
   })
   const [showToolkitModal, setShowToolkitModal] = useState(false)
   const [showDiagnosticModal, setShowDiagnosticModal] = useState(false)
+  const [showShortcutsHelp, setShowShortcutsHelp] = useState(false)
   const [notifRecoveryTab, setNotifRecoveryTab] = useState<'NOTIFICATION' | 'RECOVERY' | null>(null)
 
   useEffect(() => {
@@ -125,6 +129,98 @@ export function App() {
     setTimerModalState({ open: true, task, mode: 'TEN_MINUTE_RULE' })
   }
 
+  // Global Keyboard Shortcuts Navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const action = resolveKeyboardAction(e.key, e.target, {
+        shiftKey: e.shiftKey,
+        ctrlKey: e.ctrlKey,
+        metaKey: e.metaKey,
+        code: e.code,
+      })
+
+      if (!action) return
+
+      switch (action) {
+        case 'CLOSE_MODAL_OR_SIDEBAR':
+          if (showShortcutsHelp) {
+            setShowShortcutsHelp(false)
+          } else if (workspaceModalState.open) {
+            setWorkspaceModalState((prev) => ({ ...prev, open: false }))
+          } else if (timerModalState.open) {
+            setTimerModalState((prev) => ({ ...prev, open: false }))
+          } else if (showToolkitModal) {
+            setShowToolkitModal(false)
+          } else if (showDiagnosticModal) {
+            setShowDiagnosticModal(false)
+          } else if (notifRecoveryTab !== null) {
+            setNotifRecoveryTab(null)
+          } else if (isMobileDrawerOpen) {
+            setIsMobileDrawerOpen(false)
+          }
+          break
+
+        case 'TOGGLE_SIDEBAR':
+          e.preventDefault()
+          setIsMobileDrawerOpen((prev) => !prev)
+          break
+
+        case 'SWITCH_VIEW_KANBAN':
+          setActiveBoardView('KANBAN')
+          break
+
+        case 'SWITCH_VIEW_EISENHOWER':
+          setActiveBoardView('EISENHOWER')
+          break
+
+        case 'SWITCH_VIEW_135':
+          setActiveBoardView('ONE_THREE_FIVE')
+          break
+
+        case 'SWITCH_VIEW_IVY_LEE':
+          setActiveBoardView('IVY_LEE')
+          break
+
+        case 'OPEN_NEW_TASK':
+          setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
+          break
+
+        case 'OPEN_FOCUS_TIMER':
+          handleStartFocusQuick()
+          break
+
+        case 'OPEN_TOOLKIT':
+          setShowToolkitModal(true)
+          break
+
+        case 'OPEN_DIAGNOSTIC':
+          setShowDiagnosticModal(true)
+          break
+
+        case 'OPEN_BACKUP':
+          setNotifRecoveryTab('RECOVERY')
+          break
+
+        case 'OPEN_SHORTCUTS_HELP':
+          setShowShortcutsHelp((prev) => !prev)
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [
+    showShortcutsHelp,
+    workspaceModalState.open,
+    timerModalState.open,
+    showToolkitModal,
+    showDiagnosticModal,
+    notifRecoveryTab,
+    isMobileDrawerOpen,
+    setActiveBoardView,
+    tasks,
+  ])
+
   return (
     <DeviceSimulatorWrapper
       onOpenTaskFromNotification={(taskId) =>
@@ -136,10 +232,13 @@ export function App() {
 
         return (
           <div className="flex-1 flex h-full overflow-hidden relative">
-            {/* Responsive Sidebar (Mobile Sheet Drawer + Desktop Persistent Rail) */}
+            {/* Upper Layer Overlay Sidebar with Dim Dashboard */}
             <AppSidebar
+              isMobile={isMobileEffective}
               isMobileDrawerOpen={isMobileDrawerOpen}
               onCloseMobileDrawer={() => setIsMobileDrawerOpen(false)}
+              isDesktopPinned={isDesktopPinned}
+              onToggleDesktopPin={() => setIsDesktopPinned((v) => !v)}
               isDesktopCollapsed={isDesktopCollapsed}
               onToggleDesktopCollapse={() => setIsDesktopCollapsed((v) => !v)}
               onOpenFocusTimer={() => handleStartFocusQuick()}
@@ -147,6 +246,7 @@ export function App() {
               onOpenNotifications={() => setNotifRecoveryTab('NOTIFICATION')}
               onOpenBackup={() => setNotifRecoveryTab('RECOVERY')}
               onOpenDiagnostic={() => setShowDiagnosticModal(true)}
+              onOpenShortcutsHelp={() => setShowShortcutsHelp(true)}
               onStartTour={() => startAppTutorialTour()}
             />
 
@@ -154,18 +254,13 @@ export function App() {
             <div className="flex-1 flex flex-col min-h-0 min-w-0 bg-[#FAF7F2] relative">
               <TopHeaderBar
                 isSimulatedMobile={isMobileEffective}
-                onToggleSidebar={() => {
-                  if (isMobileEffective) {
-                    setIsMobileDrawerOpen(true)
-                  } else {
-                    setIsDesktopCollapsed((v) => !v)
-                  }
-                }}
+                onToggleSidebar={() => setIsMobileDrawerOpen((prev) => !prev)}
                 onOpenNotificationModal={() => setNotifRecoveryTab('NOTIFICATION')}
                 onOpenBackupModal={() => setNotifRecoveryTab('RECOVERY')}
                 onOpenNewTask={() =>
                   setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
                 }
+                onOpenShortcutsHelp={() => setShowShortcutsHelp(true)}
               />
 
               <BoardViewContainer
@@ -180,62 +275,67 @@ export function App() {
                 onOpenDiagnostic={() => setShowDiagnosticModal(true)}
               />
 
-            {/* Sleek Floating Center Switcher Dock (Non-Repetitive Command Center) */}
-            <FloatingSwitcherDock
-              onOpenNewTask={() =>
-                setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
-              }
-              onOpenFocusTimer={() => handleStartFocusQuick()}
-            />
+              {/* Sleek Floating Center Switcher Dock (Non-Repetitive Command Center) */}
+              <FloatingSwitcherDock
+                onOpenNewTask={() =>
+                  setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
+                }
+                onOpenFocusTimer={() => handleStartFocusQuick()}
+              />
+            </div>
+
+            {/* Modals */}
+            {workspaceModalState.open && (
+              <TaskWorkspaceModal
+                taskId={workspaceModalState.taskId}
+                initialTab={workspaceModalState.initialTab}
+                onClose={() => setWorkspaceModalState((prev) => ({ ...prev, open: false }))}
+                onStartFocusFromModal={(task) => handleStartFocusQuick(task)}
+              />
+            )}
+
+            {timerModalState.open && (
+              <FocusTimerModal
+                initialTask={timerModalState.task}
+                initialMode={timerModalState.mode}
+                onClose={() => setTimerModalState((prev) => ({ ...prev, open: false }))}
+              />
+            )}
+
+            {showToolkitModal && (
+              <TechniqueToolkitModal
+                onClose={() => setShowToolkitModal(false)}
+                onActivateTechnique={handleActivateTechnique}
+              />
+            )}
+
+            {showDiagnosticModal && (
+              <ProcrastinationDiagnosticModal
+                onClose={() => setShowDiagnosticModal(false)}
+                onStartTourAfterDiagnosis={() => {
+                  setShowDiagnosticModal(false)
+                  setTimeout(() => {
+                    startAppTutorialTour()
+                  }, 350)
+                }}
+              />
+            )}
+
+            {notifRecoveryTab !== null && (
+              <NotificationAndRecoveryModal
+                initialTab={notifRecoveryTab}
+                onClose={() => setNotifRecoveryTab(null)}
+              />
+            )}
+
+            {showShortcutsHelp && (
+              <KeyboardShortcutsHelpModal
+                onClose={() => setShowShortcutsHelp(false)}
+              />
+            )}
           </div>
-
-          {/* Modals */}
-          {workspaceModalState.open && (
-            <TaskWorkspaceModal
-              taskId={workspaceModalState.taskId}
-              initialTab={workspaceModalState.initialTab}
-              onClose={() => setWorkspaceModalState((prev) => ({ ...prev, open: false }))}
-              onStartFocusFromModal={(task) => handleStartFocusQuick(task)}
-            />
-          )}
-
-          {timerModalState.open && (
-            <FocusTimerModal
-              initialTask={timerModalState.task}
-              initialMode={timerModalState.mode}
-              onClose={() => setTimerModalState((prev) => ({ ...prev, open: false }))}
-            />
-          )}
-
-          {showToolkitModal && (
-            <TechniqueToolkitModal
-              onClose={() => setShowToolkitModal(false)}
-              onActivateTechnique={handleActivateTechnique}
-            />
-          )}
-
-          {showDiagnosticModal && (
-            <ProcrastinationDiagnosticModal
-              onClose={() => setShowDiagnosticModal(false)}
-              onStartTourAfterDiagnosis={() => {
-                setShowDiagnosticModal(false)
-                // Small timeout to allow modal animation to exit cleanly before Driver.js highlights
-                setTimeout(() => {
-                  startAppTutorialTour()
-                }, 350)
-              }}
-            />
-          )}
-
-          {notifRecoveryTab !== null && (
-            <NotificationAndRecoveryModal
-              initialTab={notifRecoveryTab}
-              onClose={() => setNotifRecoveryTab(null)}
-            />
-          )}
-        </div>
-      )
-    }}
+        )
+      }}
     </DeviceSimulatorWrapper>
   )
 }
