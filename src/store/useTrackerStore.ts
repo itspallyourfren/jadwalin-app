@@ -5,6 +5,7 @@ import { DEFAULT_HABIT_REMINDER_CONFIG, IVY_LEE_MAX_ITEMS } from '../data/consta
 import { calcTaskProgress, generateChunkedSubtasks } from '../engine/boardFrameworksEngine'
 import { createImmediateSampleNotification } from '../engine/notificationScheduler'
 import { formatDateYmd } from '../engine/studyAndTimerEngine'
+import { setAudioEnabled, soundFx } from '../lib/audioService'
 import {
   fireInstantBrowserNotification,
   loadSnapshotFromIndexedDb,
@@ -59,6 +60,7 @@ export type TrackerStoreState = {
   lastBackupSyncedIso: string | null
   hasCompletedDiagnosis: boolean
   userProfile: UserProcrastinationProfile | null
+  soundEnabled: boolean
 
   // Actions
   setParticipantProfile: (name: string, characterId: CharacterId) => void
@@ -66,6 +68,8 @@ export type TrackerStoreState = {
   setActiveMobileKanbanTab: (tab: KanbanStatus) => void
   setActiveTimeFilter: (filter: TimeBlockTag | 'ALL') => void
   setIvyLeeSingleFocusMode: (enabled: boolean) => void
+  toggleSound: () => void
+  setSoundEnabled: (enabled: boolean) => void
 
   addTask: (input: NewTaskInput) => string
   updateTask: (taskId: string, patch: Partial<TrackerTask>) => void
@@ -144,6 +148,7 @@ export const useTrackerStore = create<TrackerStoreState>()(
         lastBackupSyncedIso: new Date().toISOString(),
         hasCompletedDiagnosis: false,
         userProfile: null,
+        soundEnabled: true,
 
         setParticipantProfile: (participantName, characterId) => {
           set({ participantName, characterId, lastBackupSyncedIso: new Date().toISOString() })
@@ -154,6 +159,16 @@ export const useTrackerStore = create<TrackerStoreState>()(
         setActiveMobileKanbanTab: (activeMobileKanbanTab) => set({ activeMobileKanbanTab }),
         setActiveTimeFilter: (activeTimeFilter) => set({ activeTimeFilter }),
         setIvyLeeSingleFocusMode: (ivyLeeSingleFocusMode) => set({ ivyLeeSingleFocusMode }),
+        toggleSound: () =>
+          set((s) => {
+            const next = !s.soundEnabled
+            setAudioEnabled(next)
+            return { soundEnabled: next }
+          }),
+        setSoundEnabled: (soundEnabled) => {
+          setAudioEnabled(soundEnabled)
+          set({ soundEnabled })
+        },
 
         addTask: (input) => {
           const id = `tsk-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
@@ -237,6 +252,7 @@ export const useTrackerStore = create<TrackerStoreState>()(
         },
 
         deleteTask: (taskId) => {
+          soundFx.delete()
           set((s) => ({
             tasks: s.tasks.filter((t) => t.id !== taskId),
             lastBackupSyncedIso: new Date().toISOString(),
@@ -255,6 +271,9 @@ export const useTrackerStore = create<TrackerStoreState>()(
         },
 
         moveTaskStatus: (taskId, status) => {
+          if (status === 'COMPLETED') {
+            soundFx.complete()
+          }
           set((s) => ({
             tasks: s.tasks.map((t) => {
               if (t.id !== taskId) return t
@@ -401,6 +420,16 @@ export const useTrackerStore = create<TrackerStoreState>()(
         },
 
         toggleSubtask: (taskId, subtaskId) => {
+          const currentTask = get().tasks.find((t) => t.id === taskId)
+          const targetSub = currentTask?.subtasks.find((s) => s.id === subtaskId)
+          if (targetSub) {
+            if (!targetSub.completed) {
+              soundFx.check()
+            } else {
+              soundFx.uncheck()
+            }
+          }
+
           set((s) => ({
             tasks: s.tasks.map((t) => {
               if (t.id !== taskId) return t
@@ -454,6 +483,7 @@ export const useTrackerStore = create<TrackerStoreState>()(
         },
 
         completeTaskVia85Rule: (taskId) => {
+          soundFx.complete()
           set((s) => ({
             tasks: s.tasks.map((t) =>
               t.id === taskId
@@ -521,6 +551,7 @@ export const useTrackerStore = create<TrackerStoreState>()(
         },
 
         triggerSampleNotification: (customTitle, customBody, relatedTaskId) => {
+          soundFx.notification()
           const s = get()
           const sample =
             customTitle && customBody

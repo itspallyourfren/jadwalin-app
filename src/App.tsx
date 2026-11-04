@@ -13,6 +13,7 @@ import { TechniqueToolkitModal } from './components/TechniqueToolkitModal'
 import { TopHeaderBar } from './components/TopHeaderBar'
 import { startAppTutorialTour } from './engine/appTourGuide'
 import { resolveKeyboardAction } from './engine/keyboardShortcuts'
+import { setAudioEnabled } from './lib/audioService'
 import { useTrackerStore } from './store/useTrackerStore'
 import type { TechniqueCatalogItem, TimerMode, TrackerTask } from './data/types'
 
@@ -62,7 +63,10 @@ export function App() {
   const [notifRecoveryTab, setNotifRecoveryTab] = useState<'NOTIFICATION' | 'RECOVERY' | null>(null)
 
   useEffect(() => {
-    void useTrackerStore.persist.rehydrate()
+    void (async () => {
+      await useTrackerStore.persist.rehydrate()
+      setAudioEnabled(useTrackerStore.getState().soundEnabled)
+    })()
     void recoverFromIndexedDbIfNeeded().then(() => {
       const hasDone = useTrackerStore.getState().hasCompletedDiagnosis
       if (!hasDone) {

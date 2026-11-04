@@ -1,7 +1,7 @@
 // src/components/TopHeaderBar.tsx - Sleek Minimal Top Bar with Tactile Animations & Shortcut Hints
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Bell, Flame, Keyboard, Menu, Plus } from 'lucide-react'
+import { Bell, Flame, Keyboard, Menu, Plus, Volume2, VolumeX } from 'lucide-react'
 import { calcSeinfeldStreak } from '../engine/studyAndTimerEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
 import type { BoardFrameworkView } from '../data/types'
@@ -32,6 +32,8 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
 }) => {
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
   const completedDates = useTrackerStore((s) => s.completedDates)
+  const soundEnabled = useTrackerStore((s) => s.soundEnabled)
+  const toggleSound = useTrackerStore((s) => s.toggleSound)
   const streak = calcSeinfeldStreak(completedDates)
 
   return (
@@ -115,6 +117,26 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
               strokeWidth={2}
             />
             <span>{streak.currentStreak} hr</span>
+          </motion.button>
+
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.92 }}
+            onClick={toggleSound}
+            aria-label={soundEnabled ? 'Matikan efek suara' : 'Aktifkan efek suara'}
+            title={soundEnabled ? 'Efek Suara UI: Aktif (Klik untuk bisukan)' : 'Efek Suara UI: Dibisukan (Klik untuk aktifkan)'}
+            className={`w-10 h-10 min-w-[40px] rounded-xl border transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs ${
+              soundEnabled
+                ? 'bg-[#FFFDF9] hover:bg-[#F2ECE1] border-[#E2D9C8] text-[#2C4A3E]'
+                : 'bg-[#F2ECE1] hover:bg-[#E2D9C8] border-[#C9B99F] text-[#8C7E72]'
+            }`}
+          >
+            {soundEnabled ? (
+              <Volume2 className="w-4 h-4" />
+            ) : (
+              <VolumeX className="w-4 h-4 text-[#8C7E72]" />
+            )}
           </motion.button>
 
           <motion.button

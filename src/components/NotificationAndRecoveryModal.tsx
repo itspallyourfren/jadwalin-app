@@ -40,6 +40,8 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
   const setParticipantProfile = useTrackerStore((s) => s.setParticipantProfile)
   const tasks = useTrackerStore((s) => s.tasks)
   const reminderConfig = useTrackerStore((s) => s.reminderConfig)
+  const soundEnabled = useTrackerStore((s) => s.soundEnabled)
+  const setSoundEnabled = useTrackerStore((s) => s.setSoundEnabled)
   const updateReminderConfig = useTrackerStore((s) => s.updateReminderConfig)
   const triggerSampleNotification = useTrackerStore((s) => s.triggerSampleNotification)
   const exportBackupPayload = useTrackerStore((s) => s.exportBackupPayload)
@@ -242,6 +244,27 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
 
           {activeTab === 'NOTIFICATION' ? (
             <>
+              {/* Sound & Audio Feedback Settings */}
+              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 flex items-center justify-between gap-3">
+                <div className="space-y-0.5">
+                  <div className="text-sm font-extrabold text-[#1E1915]">
+                    Efek Suara UI &amp; Notifikasi (uisfx)
+                  </div>
+                  <p className="text-xs text-[#5C5148]">
+                    Umpan balik audio lembut saat centang langkah, selesai sesi fokus, dan pengingat.
+                  </p>
+                </div>
+                <label className="flex items-center gap-1.5 text-xs font-extrabold cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={soundEnabled}
+                    onChange={(e) => setSoundEnabled(e.target.checked)}
+                    className="w-4 h-4 accent-[#2C4A3E]"
+                  />
+                  <span>{soundEnabled ? 'Aktif' : 'Bisu'}</span>
+                </label>
+              </div>
+
               {/* Status Izin Notifikasi Perangkat */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 flex items-center justify-between gap-3 flex-wrap">
                 <div className="space-y-0.5">

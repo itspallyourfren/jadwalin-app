@@ -20,6 +20,7 @@ import {
   getTimerDurationSeconds,
   recommendProductiveSwitchTask,
 } from '../engine/studyAndTimerEngine'
+import { soundFx } from '../lib/audioService'
 import { useTrackerStore } from '../store/useTrackerStore'
 import type { TimerMode, TrackerTask } from '../data/types'
 
@@ -154,10 +155,12 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
 
   useEffect(() => {
     if (fiveSecCountdown === null) return
+    soundFx.tick()
     if (fiveSecCountdown <= 1) {
       const t = setTimeout(() => {
         setFiveSecCountdown(null)
         setIsRunning(true)
+        soundFx.start()
       }, 800)
       return () => clearTimeout(t)
     }
@@ -236,6 +239,7 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
     ) {
       setFiveSecCountdown(5)
     } else {
+      soundFx.start()
       setIsRunning(true)
     }
   }

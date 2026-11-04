@@ -18,6 +18,8 @@ import {
   Sparkles,
   Timer,
   Trash2,
+  Volume2,
+  VolumeX,
 } from 'lucide-react'
 import { CHARACTER_PROFILES } from '../data/constants'
 import { calcSeinfeldStreak } from '../engine/studyAndTimerEngine'
@@ -65,6 +67,8 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   const participantName = useTrackerStore((s) => s.participantName)
   const characterId = useTrackerStore((s) => s.characterId)
   const completedDates = useTrackerStore((s) => s.completedDates)
+  const soundEnabled = useTrackerStore((s) => s.soundEnabled)
+  const toggleSound = useTrackerStore((s) => s.toggleSound)
   const gameCommitment = useTrackerStore((s) => s.gameCommitment)
 
   const charProfile = CHARACTER_PROFILES[characterId] ?? CHARACTER_PROFILES['CHR-01']
@@ -322,6 +326,24 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             <Bell className="w-4 h-4 text-[#5C5148] shrink-0" />
             {(!isCollapsed || isOverlayMode) && (
               <span className="flex-1 text-left truncate">Pengingat HP</span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={toggleSound}
+            title={soundEnabled ? 'Efek Suara UI: Aktif (Klik untuk bisukan)' : 'Efek Suara UI: Dibisukan (Klik untuk aktifkan)'}
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
+          >
+            {soundEnabled ? (
+              <Volume2 className="w-4 h-4 text-[#2C4A3E] shrink-0" />
+            ) : (
+              <VolumeX className="w-4 h-4 text-[#8C7E72] shrink-0" />
+            )}
+            {(!isCollapsed || isOverlayMode) && (
+              <span className="flex-1 text-left truncate">
+                {soundEnabled ? 'Efek Suara (Aktif)' : 'Efek Suara (Bisu)'}
+              </span>
             )}
           </button>
 
