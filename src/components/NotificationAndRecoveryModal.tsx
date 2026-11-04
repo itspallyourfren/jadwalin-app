@@ -175,7 +175,7 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
         <div className="px-5 py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img
-              src="/assets/logo/logo_jadwalin.webp"
+              src="./assets/logo/logo_jadwalin.webp"
               alt="Jadwal-In!"
               className="h-8 w-auto object-contain"
             />

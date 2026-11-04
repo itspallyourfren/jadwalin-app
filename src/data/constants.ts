@@ -112,16 +112,16 @@ export const DEFAULT_HABIT_REMINDER_CONFIG: HabitReminderConfig = {
 }
 
 export const CHARACTER_PROFILES: Record<CharacterId, { name: string; major: string; avatar: string }> = {
-  'CHR-01': { name: 'Raden', major: 'Ilmu Komunikasi', avatar: '/assets/char/avatars/avatar_chr_01_raden.webp' },
-  'CHR-02': { name: 'Nirmala', major: 'Manajemen Bisnis', avatar: '/assets/char/avatars/avatar_chr_02_nirmala.webp' },
-  'CHR-03': { name: 'Celyn', major: 'Desain Komunikasi Visual', avatar: '/assets/char/avatars/avatar_chr_03_celyn.webp' },
-  'CHR-04': { name: 'Fabian', major: 'Teknik Informatika', avatar: '/assets/char/avatars/avatar_chr_04_fabian.webp' },
-  'CHR-05': { name: 'Divan', major: 'Akuntansi', avatar: '/assets/char/avatars/avatar_chr_05_divan.webp' },
-  'CHR-06': { name: 'Sheva', major: 'Sastra Inggris', avatar: '/assets/char/avatars/avatar_chr_06_sheva.webp' },
-  'CHR-07': { name: 'Bhumi', major: 'Psikologi', avatar: '/assets/char/avatars/avatar_chr_07_bhumi.webp' },
-  'CHR-08': { name: 'Mahika', major: 'Kedokteran', avatar: '/assets/char/avatars/avatar_chr_08_mahika.webp' },
-  'CHR-09': { name: 'Rendra', major: 'Ilmu Hukum', avatar: '/assets/char/avatars/avatar_chr_09_rendra.webp' },
-  'CHR-10': { name: 'Rasheed', major: 'Robotika & AI', avatar: '/assets/char/avatars/avatar_chr_10_rasheed.webp' },
-  'CHR-11': { name: 'Nindya', major: 'Arsitektur', avatar: '/assets/char/avatars/avatar_chr_11_nindya.webp' },
-  'CHR-12': { name: 'Pia', major: 'Kimia Murni', avatar: '/assets/char/avatars/avatar_chr_12_pia.webp' },
+  'CHR-01': { name: 'Raden', major: 'Ilmu Komunikasi', avatar: './assets/char/avatars/avatar_chr_01_raden.webp' },
+  'CHR-02': { name: 'Nirmala', major: 'Manajemen Bisnis', avatar: './assets/char/avatars/avatar_chr_02_nirmala.webp' },
+  'CHR-03': { name: 'Celyn', major: 'Desain Komunikasi Visual', avatar: './assets/char/avatars/avatar_chr_03_celyn.webp' },
+  'CHR-04': { name: 'Fabian', major: 'Teknik Informatika', avatar: './assets/char/avatars/avatar_chr_04_fabian.webp' },
+  'CHR-05': { name: 'Divan', major: 'Akuntansi', avatar: './assets/char/avatars/avatar_chr_05_divan.webp' },
+  'CHR-06': { name: 'Sheva', major: 'Sastra Inggris', avatar: './assets/char/avatars/avatar_chr_06_sheva.webp' },
+  'CHR-07': { name: 'Bhumi', major: 'Psikologi', avatar: './assets/char/avatars/avatar_chr_07_bhumi.webp' },
+  'CHR-08': { name: 'Mahika', major: 'Kedokteran', avatar: './assets/char/avatars/avatar_chr_08_mahika.webp' },
+  'CHR-09': { name: 'Rendra', major: 'Ilmu Hukum', avatar: './assets/char/avatars/avatar_chr_09_rendra.webp' },
+  'CHR-10': { name: 'Rasheed', major: 'Robotika & AI', avatar: './assets/char/avatars/avatar_chr_10_rasheed.webp' },
+  'CHR-11': { name: 'Nindya', major: 'Arsitektur', avatar: './assets/char/avatars/avatar_chr_11_nindya.webp' },
+  'CHR-12': { name: 'Pia', major: 'Kimia Murni', avatar: './assets/char/avatars/avatar_chr_12_pia.webp' },
 }

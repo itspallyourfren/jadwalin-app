@@ -127,7 +127,7 @@ export function fireInstantBrowserNotification(title: string, body: string): voi
     try {
       new Notification(title, {
         body,
-        icon: '/assets/logo/logo_jadwalin.webp',
+        icon: './assets/logo/logo_jadwalin.webp',
       })
     } catch {
       // Service worker or mobile browser restriction; in-app banner still displays

@@ -84,7 +84,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
       <div className="h-14 px-3.5 border-b border-[#E2D9C8] flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
           <img
-            src="/assets/logo/logo_jadwalin.webp"
+            src="./assets/logo/logo_jadwalin.webp"
             alt="Jadwal-In!"
             className="h-8 w-auto object-contain shrink-0"
           />

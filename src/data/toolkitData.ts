@@ -12,7 +12,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Perencanaan & Prioritas',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_30_kanban_focus.webp',
+    cardAsset: './assets/cards/tek_30_kanban_focus.webp',
     shortSummary: 'Visualisasikan tugas dari Laci Tugas menuju Fokus Hari Ini hingga Selesai agar pikiran tidak penuh.',
     realWorldSteps: [
       'Catat semua tugas yang baru terpikirkan ke kolom Laci Tugas.',
@@ -28,7 +28,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Perencanaan & Prioritas',
     timeRequirement: 'Pagi',
-    cardAsset: '/assets/cards/tek_25_eisenhower_matrix.webp',
+    cardAsset: './assets/cards/tek_25_eisenhower_matrix.webp',
     shortSummary: 'Bagi tugas ke 4 kuadran agar kamu tidak sibuk mengerjakan hal sepele dan melupakan tugas berdampak besar.',
     realWorldSteps: [
       'Kuadran 1 (Penting & Mendesak): Kerjakan hari ini juga.',
@@ -45,7 +45,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Perencanaan & Prioritas',
     timeRequirement: 'Pagi',
-    cardAsset: '/assets/cards/tek_11_1_3_5.webp',
+    cardAsset: './assets/cards/tek_11_1_3_5.webp',
     shortSummary: 'Cegah overplanning harian dengan membatasi target hari ini pada 1 tugas besar, 3 sedang, dan 5 urusan kecil.',
     realWorldSteps: [
       'Pilih tepat 1 Tugas Besar/Tugas Akhir sebagai pencapaian utama hari ini.',
@@ -61,7 +61,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Perencanaan & Prioritas',
     timeRequirement: 'Malam',
-    cardAsset: '/assets/cards/tek_28_ivy_lee_method.webp',
+    cardAsset: './assets/cards/tek_28_ivy_lee_method.webp',
     shortSummary: 'Susun maksimal 6 tugas terpenting dari #1 sampai #6, lalu fokus kerjakan #1 sampai tuntas sebelum melirik #2.',
     realWorldSteps: [
       'Pilih maksimal 6 tugas paling krusial untuk diselesaikan.',
@@ -77,7 +77,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Perencanaan & Prioritas',
     timeRequirement: 'Pagi',
-    cardAsset: '/assets/cards/tek_09_eat_that_frog.webp',
+    cardAsset: './assets/cards/tek_09_eat_that_frog.webp',
     shortSummary: 'Tandai 1 tugas yang paling kamu hindari sebagai Prioritas Pagi Terberat. Begitu beres, sisa harimu terasa ringan.',
     realWorldSteps: [
       'Pasang pin "Prioritas Utama" pada 1 tugas paling penting di Fokus Hari Ini.',
@@ -92,7 +92,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Perencanaan & Prioritas',
     timeRequirement: 'Pagi',
-    cardAsset: '/assets/cards/tek_12_time_blocking.webp',
+    cardAsset: './assets/cards/tek_12_time_blocking.webp',
     shortSummary: 'Jangan biarkan tugas mengambang tanpa jam. Alokasikan tugas ke blok waktu Pagi, Siang, Sore, atau Malam.',
     realWorldSteps: [
       'Tandai setiap tugas dengan blok waktu (Pagi, Siang, Sore, atau Malam).',
@@ -107,7 +107,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Pendobrak Malas & Fokus',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_01_pomodoro.webp',
+    cardAsset: './assets/cards/tek_01_pomodoro.webp',
     shortSummary: 'Bekerja fokus penuh selama 25 menit tanpa gangguan, diikuti istirahat penyegaran 5 menit.',
     realWorldSteps: [
       'Pilih 1 tugas dan tekan tombol Mulai Fokus → Mode Pomodoro 25/5.',
@@ -123,7 +123,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Pendobrak Malas & Fokus',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_08_10_minute.webp',
+    cardAsset: './assets/cards/tek_08_10_minute.webp',
     shortSummary: 'Janji pada diri sendiri cukup kerjakan 10 menit saja. Setelah 10 menit lewat, hambatan memulai biasanya hilang.',
     realWorldSteps: [
       'Saat malas melanda, tekan tombol "Mulai 10 Menit Dulu".',
@@ -138,7 +138,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Pendobrak Malas & Fokus',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_31_5_second_rule.webp',
+    cardAsset: './assets/cards/tek_31_5_second_rule.webp',
     shortSummary: 'Hitung mundur 5-4-3-2-1 dan langsung buka dokumen tugas sebelum otak sempat mencari alasan menunda.',
     realWorldSteps: [
       'Setiap kali memulai timer 10-Minute Rule, ikuti hitung mundur 5-4-3-2-1 di layar.',
@@ -153,7 +153,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Pemecah Tugas & Anti-Perfeksionis',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_02_task_chunking.webp',
+    cardAsset: './assets/cards/tek_02_task_chunking.webp',
     shortSummary: 'Otak cenderung menunda tugas yang terlihat besar dan kabur. Pecah menjadi 3–5 langkah konkret yang mudah dicentang.',
     realWorldSteps: [
       'Buka detail tugas lalu klik tombol "Bantu Pecah Tugas".',
@@ -168,7 +168,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Pemecah Tugas & Anti-Perfeksionis',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_10_pareto.webp',
+    cardAsset: './assets/cards/tek_10_pareto.webp',
     shortSummary: '80% nilai tugas berasal dari 20% bagian intinya. Kerjakan bagian inti dulu sebelum memoles tampilan.',
     realWorldSteps: [
       'Di daftar sub-langkah tugas, beri tanda bintang "Inti" pada langkah yang paling krusial.',
@@ -183,7 +183,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_1_CORE',
     categoryLabel: 'Pemecah Tugas & Anti-Perfeksionis',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_06_85_rule.webp',
+    cardAsset: './assets/cards/tek_06_85_rule.webp',
     shortSummary: 'Perfeksionisme sering membuat tugas tak kunjung dikumpulkan. Saat progres mencapai 85%, beranikan diri menuntaskannya!',
     realWorldSteps: [
       'Cicil sub-langkah tugas hingga mencapai minimal 85%.',
@@ -202,7 +202,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Pemecah Tugas & Anti-Perfeksionis',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_04_zeigarnik.webp',
+    cardAsset: './assets/cards/tek_04_zeigarnik.webp',
     shortSummary: 'Otak selalu teringat pada tugas yang sudah dimulai sedikit. Buat langkah pertama sangat mudah (< 2 menit).',
     realWorldSteps: [
       'Saat memecah tugas, pastikan langkah #1 hanya berupa "Buka file & tulis judul/kerangka".',
@@ -217,7 +217,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Konsistensi & Kebiasaan',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_05_seinfeld.webp',
+    cardAsset: './assets/cards/tek_05_seinfeld.webp',
     shortSummary: 'Bangun rantai kebiasaan harian dengan menyelesaikan minimal 1 sesi fokus atau 1 sub-langkah setiap hari.',
     realWorldSteps: [
       'Pantau indikator Rantai Harian (Streak) di bagian atas aplikasi.',
@@ -232,7 +232,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Konsistensi & Kebiasaan',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_35_habit_stacking.webp',
+    cardAsset: './assets/cards/tek_35_habit_stacking.webp',
     shortSummary: 'Tempelkan kebiasaan membuka daftar tugas tepat setelah rutinitas harian yang sudah pasti kamu lakukan.',
     realWorldSteps: [
       'Buka menu Pengingat Notifikasi HP.',
@@ -247,7 +247,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Pendobrak Malas & Fokus',
     timeRequirement: 'Malam',
-    cardAsset: '/assets/cards/tek_07_ulysses.webp',
+    cardAsset: './assets/cards/tek_07_ulysses.webp',
     shortSummary: 'Buat pakta sebelum sesi fokus dimulai dengan menjauhkan sumber godaan (medsos/notifikasi chat).',
     realWorldSteps: [
       'Centang komitmen Ulysses Pact di layar persiapan sebelum timer fokus berjalan.',
@@ -261,7 +261,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Pendobrak Malas & Fokus',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_03_temptation_bundling.webp',
+    cardAsset: './assets/cards/tek_03_temptation_bundling.webp',
     shortSummary: 'Pasangkan aktivitas mengerjakan tugas yang membosankan dengan hal menyenangkan yang kamu sukai.',
     realWorldSteps: [
       'Siapkan minuman favorit atau playlist musik instrumental sebelum menekan tombol mulai timer.',
@@ -275,7 +275,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Pendobrak Malas & Fokus',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_29_flow_state_sprint.webp',
+    cardAsset: './assets/cards/tek_29_flow_state_sprint.webp',
     shortSummary: 'Saat konsentrasi sedang tinggi, gunakan sprint 45 menit agar alur kerjamu tidak terpotong terlalu cepat.',
     realWorldSteps: [
       'Pilih mode Flow Sprint 45 Menit di modal Timer Fokus.',
@@ -289,7 +289,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Pemecah Tugas & Anti-Perfeksionis',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_13_woop.webp',
+    cardAsset: './assets/cards/tek_13_woop.webp',
     shortSummary: 'Kenali hambatan internal sebelum terjadi dan siapkan rencana "Jika [hambatan], Maka [langkah solusi]".',
     realWorldSteps: [
       'Isi bagian Antisipasi Hambatan (WOOP) di dalam detail tugas yang terasa berat.',
@@ -303,7 +303,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Pemecah Tugas & Anti-Perfeksionis',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_14_premortem.webp',
+    cardAsset: './assets/cards/tek_14_premortem.webp',
     shortSummary: 'Bayangkan apa yang bisa membuat tugas ini gagal/terlambat, lalu pasang pengaman dari sekarang.',
     realWorldSteps: [
       'Catat potensi risiko utama di bagian WOOP & Premortem pada detail tugas.',
@@ -317,7 +317,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Pemecah Tugas & Anti-Perfeksionis',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_34_parkinson_law.webp',
+    cardAsset: './assets/cards/tek_34_parkinson_law.webp',
     shortSummary: 'Pekerjaan cenderung melar mengikuti waktu yang tersedia. Buat batas waktu pribadimu sendiri sebelum deadline asli.',
     realWorldSteps: [
       'Atur "Target Selesai Pribadi" 1–2 hari lebih awal dari tenggat waktu resmi di detail tugas.',
@@ -331,7 +331,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Pendobrak Malas & Fokus',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_26_structured_procrastination.webp',
+    cardAsset: './assets/cards/tek_26_structured_procrastination.webp',
     shortSummary: 'Saat mentok di tugas besar, jangan lari ke medsos—beralihlah menyicil tugas lain yang lebih ringan.',
     realWorldSteps: [
       'Klik tombol "Ganti Selingan Produktif" di modal timer saat kamu merasa jenuh.',
@@ -345,7 +345,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Pendobrak Malas & Fokus',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_19_interleaving.webp',
+    cardAsset: './assets/cards/tek_19_interleaving.webp',
     shortSummary: 'Selingi pengerjaan dua mata kuliah/kategori yang berbeda sifatnya agar tidak mengalami kejenuhan monoton.',
     realWorldSteps: [
       'Gunakan rekomendasi tugas selingan dari kategori berbeda setelah merampungkan 1 sesi fokus.',
@@ -359,7 +359,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_2_CONTEXTUAL',
     categoryLabel: 'Perencanaan & Prioritas',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_33_biological_prime_time.webp',
+    cardAsset: './assets/cards/tek_33_biological_prime_time.webp',
     shortSummary: 'Letakkan tugas berpikir berat di jam otakmu paling tajam, dan tugas administratif di jam energi menurun.',
     realWorldSteps: [
       'Sesuaikan tag waktu (Pagi/Siang/Sore/Malam) dengan jam produktif alami tubuhmu.',
@@ -377,7 +377,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_3_STUDY',
     categoryLabel: 'Metode Belajar Aktif',
     timeRequirement: 'Malam',
-    cardAsset: '/assets/cards/tek_17_sq3r.webp',
+    cardAsset: './assets/cards/tek_17_sq3r.webp',
     shortSummary: 'Pahami buku teks atau jurnal ilmiah lebih cepat dengan 5 langkah terstruktur.',
     realWorldSteps: [
       'Buka tab Ruang Belajar pada tugas berkategori Belajar & Ujian.',
@@ -392,7 +392,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_3_STUDY',
     categoryLabel: 'Metode Belajar Aktif',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_15_feynman.webp',
+    cardAsset: './assets/cards/tek_15_feynman.webp',
     shortSummary: 'Jika kamu belum bisa menjelaskannya dengan kalimat sederhana, berarti kamu belum benar-benar paham.',
     realWorldSteps: [
       'Tulis penjelasan konsep kuliah dengan bahasa sehari-hari di lembar Feynman pada detail tugas.',
@@ -406,7 +406,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_3_STUDY',
     categoryLabel: 'Metode Belajar Aktif',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_32_rubber_duck_debugging.webp',
+    cardAsset: './assets/cards/tek_32_rubber_duck_debugging.webp',
     shortSummary: 'Uraikan letak kebingunganmu kalimat demi kalimat seolah sedang bercerita ke teman di meja belajar.',
     realWorldSteps: [
       'Gunakan kolom penjelasan Feynman/Rubber Duck untuk mengurai logika yang macet.',
@@ -420,7 +420,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_3_STUDY',
     categoryLabel: 'Metode Belajar Aktif',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_18_blurting.webp',
+    cardAsset: './assets/cards/tek_18_blurting.webp',
     shortSummary: 'Baca materi 10 menit, tutup sumbernya, lalu tulis semua yang masih menempel di kepala.',
     realWorldSteps: [
       'Gunakan kolom Blurting di tab Ruang Belajar untuk menguji ingatan aktifmu.',
@@ -434,7 +434,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_3_STUDY',
     categoryLabel: 'Metode Belajar Aktif',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_16_recall.webp',
+    cardAsset: './assets/cards/tek_16_recall.webp',
     shortSummary: 'Belajar jauh lebih efektif dengan menguji diri sendiri dibanding sekadar membaca ulang berkali-kali.',
     realWorldSteps: [
       'Tambahkan daftar Pertanyaan & Jawaban penting di tab Ruang Belajar.',
@@ -448,7 +448,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     tier: 'TIER_3_STUDY',
     categoryLabel: 'Metode Belajar Aktif',
     timeRequirement: 'Bebas',
-    cardAsset: '/assets/cards/tek_20_leitner.webp',
+    cardAsset: './assets/cards/tek_20_leitner.webp',
     shortSummary: 'Kelompokkan flashcard ke Kotak 1 (Ulangi Besok), Kotak 2 (Cukup Paham), dan Kotak 3 (Kuasai).',
     realWorldSteps: [
       'Pindahkan status flashcard dari Kotak 1 menuju Kotak 3 setiap kali berhasil menjawab tanpa menyontek.',
