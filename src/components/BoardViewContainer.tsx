@@ -2,30 +2,29 @@
 import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  Check,
   CheckCircle2,
+  ChevronRight,
+  Columns2,
   Columns3,
-  Eye,
   FolderTree,
-  Play,
+  Maximize2,
+  Minimize2,
   Plus,
   Sparkles,
   TableProperties,
 } from 'lucide-react'
 import {
-  calcTaskProgress,
-  getIvyLeeQueue,
-  getOneThreeFiveAllocation,
-  groupTasksByEisenhower,
   groupTasksByKanbanCategory,
   groupTasksByKanbanStage,
   sortKanbanColumnTasks,
 } from '../engine/boardFrameworksEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
 import { TaskCard } from './TaskCard'
-import { TaskConditionDropdown } from './TaskConditionDropdown'
+import { KanbanSpreadsheetTable } from './KanbanSpreadsheetTable'
+import { EisenhowerView } from './EisenhowerView'
+import { OneThreeFiveView } from './OneThreeFiveView'
+import { IvyLeeView } from './IvyLeeView'
 import type {
-  EisenhowerQuadrant,
   KanbanGroupingMode,
   KanbanStatus,
   TaskCategory,
@@ -62,35 +61,79 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
   const setActiveMobileKanbanTab = useTrackerStore((s) => s.setActiveMobileKanbanTab)
   const activeTimeFilter = useTrackerStore((s) => s.activeTimeFilter)
   const setActiveTimeFilter = useTrackerStore((s) => s.setActiveTimeFilter)
-  const ivyLeeSingleFocusMode = useTrackerStore((s) => s.ivyLeeSingleFocusMode)
-  const setIvyLeeSingleFocusMode = useTrackerStore((s) => s.setIvyLeeSingleFocusMode)
-  const setTaskQuadrant = useTrackerStore((s) => s.setTaskQuadrant)
-  const setOneThreeFiveSlot = useTrackerStore((s) => s.setOneThreeFiveSlot)
-  const setIvyLeeRank = useTrackerStore((s) => s.setIvyLeeRank)
   const hasCompletedDiagnosis = useTrackerStore((s) => s.hasCompletedDiagnosis)
-  const moveTaskStatus = useTrackerStore((s) => s.moveTaskStatus)
 
   // Kanban Workflow Categorization & Spreadsheet Table States
   const [kanbanGrouping, setKanbanGrouping] = useState<KanbanGroupingMode>('STAGE')
+  const [stageViewMode, setStageViewMode] = useState<'COMPACT_3' | 'EXPANDED_5'>('COMPACT_3')
+  const [autoCollapseEmpty, setAutoCollapseEmpty] = useState(true)
+  const [manuallyExpanded, setManuallyExpanded] = useState<Record<string, boolean>>({})
+  const [activeSubFilter, setActiveSubFilter] = useState<'ALL' | KanbanStatus>('ALL')
   const [activeCategoryTab, setActiveCategoryTab] = useState<TaskCategory>('Kuliah & Tugas')
 
   const stageTasks = groupTasksByKanbanStage(tasks, activeTimeFilter)
   const categoryTasks = groupTasksByKanbanCategory(tasks, activeTimeFilter)
   const allFilteredTasks = sortKanbanColumnTasks(tasks, activeTimeFilter)
 
+  const toggleManualCollapse = (status: string) => {
+    setManuallyExpanded((prev) => ({
+      ...prev,
+      [status]: !prev[status],
+    }))
+  }
+
   const renderKanbanView = () => {
-    // 5 Stages of Academic Workflow
-    const stageColumns: Array<{
+    // Active tasks combined for 3-column spacious mode
+    const activeTasksList = [
+      ...stageTasks.IN_PROGRESS,
+      ...stageTasks.RESEARCH,
+      ...stageTasks.REVIEW,
+      ...stageTasks.BLOCKED,
+    ]
+
+    const filteredActiveTasks =
+      activeSubFilter === 'ALL'
+        ? activeTasksList
+        : activeTasksList.filter((t) => t.status === activeSubFilter)
+
+    // 3 Core Columns (Wide, spacious, non-cramped default)
+    const core3Columns = [
+      {
+        status: 'BACKLOG' as KanbanStatus,
+        title: 'Laci / Antrean',
+        shortTitle: 'Laci',
+        items: stageTasks.BACKLOG,
+        colorDot: '#8C7E72',
+      },
+      {
+        status: 'IN_PROGRESS' as KanbanStatus,
+        title: 'Pengerjaan Aktif',
+        shortTitle: 'Dikerjakan',
+        items: filteredActiveTasks,
+        totalItems: activeTasksList.length,
+        colorDot: '#B86B14',
+      },
+      {
+        status: 'COMPLETED' as KanbanStatus,
+        title: 'Selesai & Kumpul',
+        shortTitle: 'Selesai',
+        items: stageTasks.COMPLETED,
+        colorDot: '#1F7A4C',
+      },
+    ]
+
+    // 5 Stages in proper chronological sequence
+    const stage5Columns: Array<{
       status: KanbanStatus
       title: string
       shortTitle: string
       items: TrackerTask[]
       colorDot: string
     }> = [
-      { status: 'IN_PROGRESS', title: 'Pengerjaan Aktif', shortTitle: 'Dikerjakan', items: stageTasks.IN_PROGRESS, colorDot: '#B86B14' },
-      { status: 'RESEARCH', title: 'Riset & Bahan', shortTitle: 'Riset', items: stageTasks.RESEARCH, colorDot: '#2B59C3' },
-      { status: 'REVIEW', title: 'Review & Revisi', shortTitle: 'Review', items: stageTasks.REVIEW, colorDot: '#6B21A8' },
       { status: 'BACKLOG', title: 'Laci / Antrean', shortTitle: 'Laci', items: stageTasks.BACKLOG, colorDot: '#8C7E72' },
+      { status: 'RESEARCH', title: 'Riset & Bahan', shortTitle: 'Riset', items: stageTasks.RESEARCH, colorDot: '#2B59C3' },
+      { status: 'IN_PROGRESS', title: 'Pengerjaan Aktif', shortTitle: 'Dikerjakan', items: stageTasks.IN_PROGRESS, colorDot: '#B86B14' },
+      { status: 'REVIEW', title: 'Review & Revisi', shortTitle: 'Review', items: stageTasks.REVIEW, colorDot: '#6B21A8' },
       { status: 'COMPLETED', title: 'Selesai & Kumpul', shortTitle: 'Selesai', items: stageTasks.COMPLETED, colorDot: '#1F7A4C' },
     ]
 
@@ -105,9 +148,130 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
       { category: 'Pribadi & Kebiasaan', title: 'Pribadi & Kebiasaan', items: categoryTasks['Pribadi & Kebiasaan'] },
     ]
 
+    // Shared Section Renderer for Clean Deduplication
+    const renderStageSection = (
+      col: {
+        status: KanbanStatus
+        title: string
+        items: TrackerTask[]
+        colorDot: string
+      },
+      options?: {
+        subFilterContent?: React.ReactNode
+        onCollapse?: () => void
+        className?: string
+      }
+    ) => (
+      <section
+        key={col.status}
+        className={`${options?.className ?? ''} bg-[#F2ECE1]/65 rounded-2xl border border-[#E2D9C8] p-3 space-y-2.5`}
+      >
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span
+              className="w-2.5 h-2.5 rounded-full shrink-0"
+              style={{ backgroundColor: col.colorDot }}
+            />
+            <h2 className="text-xs sm:text-sm font-extrabold text-[#1E1915] truncate">
+              {col.title}
+            </h2>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#FFFDF9] text-[#5C5148]">
+              {col.items.length}
+            </span>
+            {options?.onCollapse && (
+              <button
+                type="button"
+                onClick={options.onCollapse}
+                title="Ciutkan tahap ini"
+                className="w-6 h-6 rounded-lg hover:bg-[#EADBCE] text-[#8C7E72] hover:text-[#1E1915] flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <Minimize2 className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {options?.subFilterContent}
+
+        {col.items.length === 0 ? (
+          <div className="bg-[#FFFDF9]/60 rounded-xl border border-dashed border-[#C9B99F] p-5 text-center space-y-2">
+            <p className="text-xs font-semibold text-[#5C5148]">
+              Belum ada tugas di tahap ini.
+            </p>
+            {tasks.length > 0 && col.status === 'IN_PROGRESS' && (
+              <button
+                type="button"
+                onClick={onOpenNewTask}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#2C4A3E] text-white text-xs font-bold cursor-pointer hover:bg-[#1E332B] transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Tambah Tugas</span>
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-2.5">
+            <AnimatePresence mode="popLayout">
+              {col.items.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onOpenDetail={onOpenDetail}
+                  onStartFocusTimer={onStartFocusTimer}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+      </section>
+    )
+
+    // Sleek Vertical Collapsed Ribbon for Empty Stages
+    const renderCollapsedRibbon = (col: {
+      status: KanbanStatus
+      title: string
+      items: TrackerTask[]
+      colorDot: string
+    }) => (
+      <motion.button
+        key={col.status}
+        type="button"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => toggleManualCollapse(col.status)}
+        title={`Buka tahap ${col.title} (${col.items.length} tugas)`}
+        className="w-11 sm:w-12 min-h-[360px] bg-[#F2ECE1]/65 hover:bg-[#EADBCE] rounded-2xl border border-[#E2D9C8] p-2 flex flex-col items-center justify-between cursor-pointer transition-colors shadow-2xs shrink-0 select-none"
+      >
+        <div className="flex flex-col items-center gap-2">
+          <span
+            className="w-2.5 h-2.5 rounded-full shrink-0 mt-1"
+            style={{ backgroundColor: col.colorDot }}
+          />
+          <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full bg-[#FFFDF9] text-[#5C5148] border border-[#E2D9C8]">
+            {col.items.length}
+          </span>
+        </div>
+
+        <div className="flex-1 flex items-center justify-center my-4 overflow-hidden">
+          <span
+            className="text-xs font-extrabold text-[#5C5148] tracking-wider whitespace-nowrap"
+            style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+          >
+            {col.title}
+          </span>
+        </div>
+
+        <div className="text-[#8C7E72] hover:text-[#1E1915] pb-1">
+          <ChevronRight className="w-3.5 h-3.5" />
+        </div>
+      </motion.button>
+    )
+
     return (
       <div className="space-y-3.5">
-        {/* 1. Kanban Grouping Toolbar (Spreadsheet vs Stage vs Category) */}
+        {/* 1. Kanban Grouping Toolbar */}
         <div className="flex items-center justify-between gap-2 flex-wrap pb-0.5">
           <div className="flex items-center gap-1 bg-[#F2ECE1] p-1 rounded-2xl border border-[#E2D9C8] overflow-x-auto no-scrollbar max-w-full">
             <button
@@ -150,128 +314,294 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
             </button>
           </div>
 
-          <div className="text-xs font-semibold text-[#8C7E72] hidden sm:block">
-            {allFilteredTasks.length} target tugas
-          </div>
+          {/* Sub-Mode Selector for Stage View (3 Kolom Lega vs 5 Alur Lengkap) */}
+          {kanbanGrouping === 'STAGE' && (
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <div className="flex items-center bg-[#F2ECE1] p-0.5 rounded-xl border border-[#E2D9C8]">
+                <button
+                  type="button"
+                  onClick={() => setStageViewMode('COMPACT_3')}
+                  title="Tampilan 3 Kolom Utama (Luas & Bebas Sesak)"
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 ${
+                    stageViewMode === 'COMPACT_3'
+                      ? 'bg-[#FFFDF9] text-[#1E1915] shadow-2xs'
+                      : 'text-[#5C5148] hover:text-[#1E1915]'
+                  }`}
+                >
+                  <Columns2 className="w-3.5 h-3.5" />
+                  <span>3 Kolom (Lega)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStageViewMode('EXPANDED_5')}
+                  title="Tampilan 5 Tahap Alur Lengkap (Skripsi/Proyek)"
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 ${
+                    stageViewMode === 'EXPANDED_5'
+                      ? 'bg-[#FFFDF9] text-[#1E1915] shadow-2xs'
+                      : 'text-[#5C5148] hover:text-[#1E1915]'
+                  }`}
+                >
+                  <Columns3 className="w-3.5 h-3.5" />
+                  <span>5 Alur Detail</span>
+                </button>
+              </div>
+
+              {stageViewMode === 'EXPANDED_5' && (
+                <button
+                  type="button"
+                  onClick={() => setAutoCollapseEmpty((prev) => !prev)}
+                  title={
+                    autoCollapseEmpty
+                      ? 'Sedang ciutkan tahap kosong. Klik untuk buka semua.'
+                      : 'Klik untuk ciutkan tahap kosong otomatis.'
+                  }
+                  className={`px-2.5 py-1 rounded-xl border text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 ${
+                    autoCollapseEmpty
+                      ? 'bg-[#FFFDF9] text-[#2C4A3E] border-[#2C4A3E]/30 shadow-2xs'
+                      : 'bg-[#F2ECE1] text-[#5C5148] border-[#E2D9C8]'
+                  }`}
+                >
+                  {autoCollapseEmpty ? (
+                    <Minimize2 className="w-3.5 h-3.5 text-[#2C4A3E]" />
+                  ) : (
+                    <Maximize2 className="w-3.5 h-3.5 text-[#5C5148]" />
+                  )}
+                  <span className="hidden sm:inline">
+                    {autoCollapseEmpty ? 'Tahap Kosong Diciutkan' : 'Buka Semua Tahap'}
+                  </span>
+                </button>
+              )}
+            </div>
+          )}
+
+          {kanbanGrouping !== 'STAGE' && (
+            <div className="text-xs font-semibold text-[#8C7E72] hidden sm:block">
+              {allFilteredTasks.length} target tugas
+            </div>
+          )}
         </div>
 
-        {/* 2A. MODE: STAGE (5 Columns of Academic Workflow) */}
+        {/* 2A. MODE: STAGE (Adaptive 3 Columns or Collapsible 5 Stages) */}
         {kanbanGrouping === 'STAGE' && (
           <div className="space-y-3.5">
-            {/* Mobile Segmented Tabs for 5 Stages */}
-            <div
-              className={`${
-                isSimulatedMobile ? 'flex' : 'flex md:hidden'
-              } bg-[#F2ECE1] p-1 rounded-2xl border border-[#E2D9C8] gap-1 overflow-x-auto no-scrollbar`}
-            >
-              {stageColumns.map((col) => {
-                const active = activeMobileKanbanTab === col.status
-                return (
-                  <motion.button
-                    key={col.status}
-                    type="button"
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => setActiveMobileKanbanTab(col.status)}
-                    className={`relative flex-1 min-w-[70px] min-h-[40px] py-1.5 px-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1 shrink-0 ${
-                      active ? 'text-[#1E1915]' : 'text-[#5C5148] hover:text-[#1E1915]'
-                    }`}
-                  >
-                    {active && (
-                      <motion.div
-                        layoutId="activeMobileKanbanTabPill"
-                        className="absolute inset-0 bg-[#FFFDF9] rounded-xl shadow-2xs border border-[#C9B99F]/50"
-                        transition={{ type: 'spring', damping: 26, stiffness: 350 }}
-                      />
-                    )}
-                    <span
-                      className="w-2 h-2 rounded-full relative z-10 shrink-0"
-                      style={{ backgroundColor: col.colorDot }}
-                    />
-                    <span className="relative z-10 truncate">{col.shortTitle}</span>
-                    <span
-                      className={`relative z-10 text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${
-                        active ? 'bg-[#2C4A3E] text-white' : 'bg-[#E2D9C8] text-[#5C5148]'
-                      }`}
-                    >
-                      {col.items.length}
-                    </span>
-                  </motion.button>
-                )
-              })}
-            </div>
+            {/* SUB-VIEW A: 3 CORE COLUMNS (Wide, Non-Cramped, Highly Focused) */}
+            {stageViewMode === 'COMPACT_3' && (
+              <div className="space-y-3.5">
+                {/* Mobile Segmented Tabs for 3 Core Stages */}
+                <div
+                  className={`${
+                    isSimulatedMobile ? 'flex' : 'flex md:hidden'
+                  } bg-[#F2ECE1] p-1 rounded-2xl border border-[#E2D9C8] gap-1 overflow-x-auto no-scrollbar`}
+                >
+                  {core3Columns.map((col) => {
+                    const active =
+                      activeMobileKanbanTab === col.status ||
+                      (col.status === 'IN_PROGRESS' &&
+                        activeMobileKanbanTab !== 'BACKLOG' &&
+                        activeMobileKanbanTab !== 'COMPLETED')
+                    return (
+                      <motion.button
+                        key={col.status}
+                        type="button"
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => setActiveMobileKanbanTab(col.status)}
+                        className={`relative flex-1 min-w-[80px] min-h-[40px] py-1.5 px-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shrink-0 ${
+                          active ? 'text-[#1E1915]' : 'text-[#5C5148] hover:text-[#1E1915]'
+                        }`}
+                      >
+                        {active && (
+                          <motion.div
+                            layoutId="activeMobileKanbanTabPill3"
+                            className="absolute inset-0 bg-[#FFFDF9] rounded-xl shadow-2xs border border-[#C9B99F]/50"
+                            transition={{ type: 'spring', damping: 26, stiffness: 350 }}
+                          />
+                        )}
+                        <span
+                          className="w-2 h-2 rounded-full relative z-10 shrink-0"
+                          style={{ backgroundColor: col.colorDot }}
+                        />
+                        <span className="relative z-10 truncate">{col.shortTitle}</span>
+                        <span
+                          className={`relative z-10 text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${
+                            active ? 'bg-[#2C4A3E] text-white' : 'bg-[#E2D9C8] text-[#5C5148]'
+                          }`}
+                        >
+                          {col.items.length}
+                        </span>
+                      </motion.button>
+                    )
+                  })}
+                </div>
 
-            {/* Desktop Stage Columns Grid */}
-            <div
-              className={
-                isSimulatedMobile
-                  ? 'grid grid-cols-1 gap-3'
-                  : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5 items-start'
-              }
-            >
-              {stageColumns.map((col) => {
-                const visibleOnMobile = activeMobileKanbanTab === col.status
-                return (
-                  <section
-                    key={col.status}
-                    className={`${
-                      isSimulatedMobile
+                {/* Desktop 3 Columns (Spacious ~33% width each) */}
+                <div
+                  className={
+                    isSimulatedMobile
+                      ? 'grid grid-cols-1 gap-3'
+                      : 'grid grid-cols-1 md:grid-cols-3 gap-3.5 items-start'
+                  }
+                >
+                  {core3Columns.map((col) => {
+                    const visibleOnMobile =
+                      activeMobileKanbanTab === col.status ||
+                      (col.status === 'IN_PROGRESS' &&
+                        activeMobileKanbanTab !== 'BACKLOG' &&
+                        activeMobileKanbanTab !== 'COMPLETED')
+
+                    const subFilterContent =
+                      col.status === 'IN_PROGRESS' && activeTasksList.length > 0 ? (
+                        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar pt-0.5 pb-0.5">
+                          <button
+                            type="button"
+                            onClick={() => setActiveSubFilter('ALL')}
+                            className={`px-2 py-0.5 rounded-lg text-[10px] font-bold cursor-pointer transition-colors ${
+                              activeSubFilter === 'ALL'
+                                ? 'bg-[#1E1915] text-white shadow-2xs'
+                                : 'bg-[#FFFDF9] text-[#5C5148] hover:text-[#1E1915] border border-[#E2D9C8]'
+                            }`}
+                          >
+                            Semua ({activeTasksList.length})
+                          </button>
+                          {stageTasks.RESEARCH.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setActiveSubFilter('RESEARCH')}
+                              className={`px-2 py-0.5 rounded-lg text-[10px] font-bold cursor-pointer transition-colors flex items-center gap-1 ${
+                                activeSubFilter === 'RESEARCH'
+                                  ? 'bg-[#2B59C3] text-white shadow-2xs'
+                                  : 'bg-[#FFFDF9] text-[#2B59C3] hover:bg-[#EBF1FF] border border-[#BDD4F8]'
+                              }`}
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#2B59C3]" />
+                              <span>Riset ({stageTasks.RESEARCH.length})</span>
+                            </button>
+                          )}
+                          {stageTasks.IN_PROGRESS.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setActiveSubFilter('IN_PROGRESS')}
+                              className={`px-2 py-0.5 rounded-lg text-[10px] font-bold cursor-pointer transition-colors flex items-center gap-1 ${
+                                activeSubFilter === 'IN_PROGRESS'
+                                  ? 'bg-[#B86B14] text-white shadow-2xs'
+                                  : 'bg-[#FFFDF9] text-[#B86B14] hover:bg-[#FEF3E2] border border-[#FAD6A5]'
+                              }`}
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#B86B14]" />
+                              <span>Eksekusi ({stageTasks.IN_PROGRESS.length})</span>
+                            </button>
+                          )}
+                          {stageTasks.REVIEW.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setActiveSubFilter('REVIEW')}
+                              className={`px-2 py-0.5 rounded-lg text-[10px] font-bold cursor-pointer transition-colors flex items-center gap-1 ${
+                                activeSubFilter === 'REVIEW'
+                                  ? 'bg-[#6B21A8] text-white shadow-2xs'
+                                  : 'bg-[#FFFDF9] text-[#6B21A8] hover:bg-[#F5EBFF] border border-[#E0C6FF]'
+                              }`}
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#6B21A8]" />
+                              <span>Revisi ({stageTasks.REVIEW.length})</span>
+                            </button>
+                          )}
+                        </div>
+                      ) : null
+
+                    return renderStageSection(col, {
+                      className: isSimulatedMobile
                         ? visibleOnMobile
                           ? 'block'
                           : 'hidden'
                         : visibleOnMobile
                         ? 'block'
-                        : 'hidden md:block'
-                    } bg-[#F2ECE1]/65 rounded-2xl border border-[#E2D9C8] p-3 space-y-2.5`}
-                  >
-                    <div className="flex items-center justify-between px-1">
-                      <div className="flex items-center gap-1.5 min-w-0">
+                        : 'hidden md:block',
+                      subFilterContent,
+                    })
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* SUB-VIEW B: 5 STAGES WITH SMART COLLAPSIBLE EMPTY RIBBONS */}
+            {stageViewMode === 'EXPANDED_5' && (
+              <div className="space-y-3.5">
+                {/* Mobile Segmented Tabs for 5 Stages */}
+                <div
+                  className={`${
+                    isSimulatedMobile ? 'flex' : 'flex md:hidden'
+                  } bg-[#F2ECE1] p-1 rounded-2xl border border-[#E2D9C8] gap-1 overflow-x-auto no-scrollbar`}
+                >
+                  {stage5Columns.map((col) => {
+                    const active = activeMobileKanbanTab === col.status
+                    return (
+                      <motion.button
+                        key={col.status}
+                        type="button"
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => setActiveMobileKanbanTab(col.status)}
+                        className={`relative flex-1 min-w-[70px] min-h-[40px] py-1.5 px-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1 shrink-0 ${
+                          active ? 'text-[#1E1915]' : 'text-[#5C5148] hover:text-[#1E1915]'
+                        }`}
+                      >
+                        {active && (
+                          <motion.div
+                            layoutId="activeMobileKanbanTabPill5"
+                            className="absolute inset-0 bg-[#FFFDF9] rounded-xl shadow-2xs border border-[#C9B99F]/50"
+                            transition={{ type: 'spring', damping: 26, stiffness: 350 }}
+                          />
+                        )}
                         <span
-                          className="w-2.5 h-2.5 rounded-full shrink-0"
+                          className="w-2 h-2 rounded-full relative z-10 shrink-0"
                           style={{ backgroundColor: col.colorDot }}
                         />
-                        <h2 className="text-xs sm:text-sm font-extrabold text-[#1E1915] truncate">
-                          {col.title}
-                        </h2>
-                      </div>
-                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#FFFDF9] text-[#5C5148]">
-                        {col.items.length}
-                      </span>
-                    </div>
+                        <span className="relative z-10 truncate">{col.shortTitle}</span>
+                        <span
+                          className={`relative z-10 text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${
+                            active ? 'bg-[#2C4A3E] text-white' : 'bg-[#E2D9C8] text-[#5C5148]'
+                          }`}
+                        >
+                          {col.items.length}
+                        </span>
+                      </motion.button>
+                    )
+                  })}
+                </div>
 
-                    {col.items.length === 0 ? (
-                      <div className="bg-[#FFFDF9]/60 rounded-xl border border-dashed border-[#C9B99F] p-5 text-center space-y-2">
-                        <p className="text-xs font-semibold text-[#5C5148]">
-                          Belum ada tugas di tahap ini.
-                        </p>
-                        {tasks.length > 0 && col.status === 'IN_PROGRESS' && (
-                          <button
-                            type="button"
-                            onClick={onOpenNewTask}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#2C4A3E] text-white text-xs font-bold cursor-pointer hover:bg-[#1E332B] transition-colors"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                            <span>Tambah Tugas</span>
-                          </button>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="space-y-2.5">
-                        <AnimatePresence mode="popLayout">
-                          {col.items.map((task) => (
-                            <TaskCard
-                              key={task.id}
-                              task={task}
-                              onOpenDetail={onOpenDetail}
-                              onStartFocusTimer={onStartFocusTimer}
-                            />
-                          ))}
-                        </AnimatePresence>
-                      </div>
-                    )}
-                  </section>
-                )
-              })}
-            </div>
+                {/* Desktop 5 Stages with Collapsible Ribbons */}
+                <div
+                  className={
+                    isSimulatedMobile
+                      ? 'grid grid-cols-1 gap-3'
+                      : 'flex gap-3 items-start overflow-x-auto no-scrollbar pb-3'
+                  }
+                >
+                  {stage5Columns.map((col) => {
+                    const visibleOnMobile = activeMobileKanbanTab === col.status
+                    const isCollapsed =
+                      !isSimulatedMobile &&
+                      autoCollapseEmpty &&
+                      col.items.length === 0 &&
+                      !manuallyExpanded[col.status]
+
+                    if (isCollapsed) {
+                      return renderCollapsedRibbon(col)
+                    }
+
+                    return renderStageSection(col, {
+                      className: isSimulatedMobile
+                        ? visibleOnMobile
+                          ? 'block'
+                          : 'hidden'
+                        : 'flex-1 min-w-[280px] max-w-[420px] shrink-0',
+                      onCollapse:
+                        !isSimulatedMobile && autoCollapseEmpty
+                          ? () => toggleManualCollapse(col.status)
+                          : undefined,
+                    })
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -375,432 +705,13 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
           </div>
         )}
 
-        {/* 2C. MODE: TABLE (Spreadsheet Cell Dropdown View) */}
+        {/* 2C. MODE: TABLE (Spreadsheet Database View) */}
         {kanbanGrouping === 'TABLE' && (
-          <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] overflow-hidden shadow-2xs">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="bg-[#F2ECE1] border-b border-[#E2D9C8] text-[#5C5148] font-bold">
-                    <th className="py-2.5 px-3.5">Tugas / Target</th>
-                    <th className="py-2.5 px-3">Mata Kuliah</th>
-                    <th className="py-2.5 px-3">Skala</th>
-                    <th className="py-2.5 px-3">Kondisi / Tahap (Dropdown)</th>
-                    <th className="py-2.5 px-3">Progres</th>
-                    <th className="py-2.5 px-3">Waktu</th>
-                    <th className="py-2.5 px-3 text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#E2D9C8]/60">
-                  {allFilteredTasks.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="py-8 text-center text-[#8C7E72]">
-                        Belum ada tugas yang tercatat.
-                      </td>
-                    </tr>
-                  ) : (
-                    allFilteredTasks.map((t) => {
-                      const pct = calcTaskProgress(t)
-                      const isDone = t.status === 'COMPLETED'
-                      return (
-                        <tr
-                          key={t.id}
-                          onClick={() => onOpenDetail(t)}
-                          className="hover:bg-[#FAF7F2] transition-colors cursor-pointer group"
-                        >
-                          <td className="py-3 px-3.5">
-                            <div className="font-bold text-[#1E1915] group-hover:text-[#2C4A3E] leading-snug">
-                              {t.title}
-                            </div>
-                            {t.subtasks.length > 0 && (
-                              <div className="text-[11px] text-[#8C7E72] mt-0.5">
-                                {t.subtasks.filter((s) => s.completed).length}/{t.subtasks.length} sub-langkah
-                              </div>
-                            )}
-                          </td>
-
-                          <td className="py-3 px-3 text-[#5C5148] font-medium whitespace-nowrap">
-                            {t.courseOrContext || '—'}
-                          </td>
-
-                          <td className="py-3 px-3 whitespace-nowrap">
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#F2ECE1] text-[#1E1915]">
-                              {t.scale}
-                            </span>
-                          </td>
-
-                          {/* Spreadsheet Dropdown Condition Cell */}
-                          <td className="py-3 px-3" onClick={(e) => e.stopPropagation()}>
-                            <TaskConditionDropdown
-                              currentStatus={t.status}
-                              onSelectStatus={(next) => moveTaskStatus(t.id, next)}
-                              size="sm"
-                            />
-                          </td>
-
-                          <td className="py-3 px-3 whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <div className="w-16 h-1.5 rounded-full bg-[#F2ECE1] overflow-hidden">
-                                <div
-                                  className={`h-full rounded-full ${
-                                    isDone ? 'bg-[#1F7A4C]' : pct >= 85 ? 'bg-[#1F7A4C]' : 'bg-[#2C4A3E]'
-                                  }`}
-                                  style={{ width: `${pct}%` }}
-                                />
-                              </div>
-                              <span className="text-[11px] font-bold text-[#5C5148] tabular-nums">
-                                {pct}%
-                              </span>
-                            </div>
-                          </td>
-
-                          <td className="py-3 px-3 text-[#8C7E72] whitespace-nowrap font-medium">
-                            {t.timeBlock !== 'Bebas' ? t.timeBlock : '—'}
-                          </td>
-
-                          <td className="py-3 px-3 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
-                            {!isDone ? (
-                              <button
-                                type="button"
-                                onClick={() => onStartFocusTimer(t)}
-                                className="px-2.5 py-1 rounded-lg bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold inline-flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
-                              >
-                                <Play className="w-3 h-3 fill-white" />
-                                <span>Fokus</span>
-                              </button>
-                            ) : (
-                              <span className="text-xs font-bold text-[#1F7A4C] inline-flex items-center gap-1">
-                                <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                                <span>Rampung</span>
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      )
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  const renderEisenhowerView = () => {
-    const grouped = groupTasksByEisenhower(tasks)
-    const quadrants: Array<{
-      key: EisenhowerQuadrant
-      title: string
-      badge: string
-      headerStyle: string
-      important: boolean
-      urgent: boolean
-    }> = [
-      {
-        key: 'DO_FIRST',
-        title: 'Penting & Mendesak',
-        badge: 'Kerjakan Segera',
-        headerStyle: 'text-[#C8432B] bg-[#FDECE8]',
-        important: true,
-        urgent: true,
-      },
-      {
-        key: 'SCHEDULE',
-        title: 'Penting · Tak Mendesak',
-        badge: 'Jadwalkan',
-        headerStyle: 'text-[#2B59C3] bg-[#EBF1FF]',
-        important: true,
-        urgent: false,
-      },
-      {
-        key: 'DELEGATE_FAST',
-        title: 'Kurang Penting · Mendesak',
-        badge: 'Cicil Cepat',
-        headerStyle: 'text-[#B86B14] bg-[#FEF3E2]',
-        important: false,
-        urgent: true,
-      },
-      {
-        key: 'SAVE_LATER',
-        title: 'Kurang Penting · Tak Mendesak',
-        badge: 'Simpan Nanti',
-        headerStyle: 'text-[#5C5148] bg-[#E2D9C8]/70',
-        important: false,
-        urgent: false,
-      },
-    ]
-
-    return (
-      <div
-        className={
-          isSimulatedMobile ? 'grid grid-cols-1 gap-3.5' : 'grid grid-cols-1 md:grid-cols-2 gap-4'
-        }
-      >
-        {quadrants.map((q) => (
-          <section
-            key={q.key}
-            className="bg-[#F2ECE1]/65 rounded-2xl border border-[#E2D9C8] p-3 space-y-2.5"
-          >
-            <div className="flex items-center justify-between px-1">
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-[#1E1915]">{q.title}</h3>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${q.headerStyle}`}>
-                  {q.badge}
-                </span>
-              </div>
-              <span className="text-xs font-bold text-[#5C5148]">{grouped[q.key].length}</span>
-            </div>
-
-            <div className="space-y-2.5">
-              {grouped[q.key].length === 0 ? (
-                <p className="text-xs text-[#8C7E72] py-4 text-center">Kosong</p>
-              ) : (
-                <AnimatePresence mode="popLayout">
-                  {grouped[q.key].map((task) => (
-                    <div key={task.id} className="space-y-1">
-                      <TaskCard
-                        task={task}
-                        onOpenDetail={onOpenDetail}
-                        onStartFocusTimer={onStartFocusTimer}
-                      />
-                      <div className="flex items-center gap-1 px-1 flex-wrap">
-                        {quadrants
-                          .filter((other) => other.key !== q.key)
-                          .map((other) => (
-                            <button
-                              key={other.key}
-                              type="button"
-                              onClick={() => setTaskQuadrant(task.id, other.important, other.urgent)}
-                              className="text-xs font-medium px-2 py-0.5 rounded-md bg-[#FFFDF9] hover:bg-[#1E1915] hover:text-white border border-[#E2D9C8] text-[#5C5148] transition-colors cursor-pointer"
-                            >
-                              → {other.badge}
-                            </button>
-                          ))}
-                      </div>
-                    </div>
-                  ))}
-                </AnimatePresence>
-              )}
-            </div>
-          </section>
-        ))}
-      </div>
-    )
-  }
-
-  const renderOneThreeFiveView = () => {
-    const alloc = getOneThreeFiveAllocation(tasks)
-    const sections = [
-      {
-        slot: 'LARGE_1' as const,
-        title: '1 Tugas Besar',
-        limit: 1,
-        items: alloc.large,
-      },
-      {
-        slot: 'MEDIUM_3' as const,
-        title: '3 Tugas Sedang',
-        limit: 3,
-        items: alloc.medium,
-      },
-      {
-        slot: 'SMALL_5' as const,
-        title: '5 Tugas Kecil',
-        limit: 5,
-        items: alloc.small,
-      },
-    ]
-
-    return (
-      <div className="space-y-4">
-        <div
-          className={
-            isSimulatedMobile ? 'grid grid-cols-1 gap-3.5' : 'grid grid-cols-1 md:grid-cols-3 gap-4'
-          }
-        >
-          {sections.map((sec) => (
-            <section
-              key={sec.slot}
-              className="bg-[#F2ECE1]/65 rounded-2xl border border-[#E2D9C8] p-3 space-y-2.5"
-            >
-              <div className="flex items-center justify-between px-1">
-                <h3 className="text-sm font-bold text-[#1E1915]">{sec.title}</h3>
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#FFFDF9] text-[#5C5148]">
-                  {sec.items.length}/{sec.limit}
-                </span>
-              </div>
-
-              <div className="space-y-2.5">
-                {sec.items.length === 0 ? (
-                  <p className="text-xs text-[#8C7E72] py-4 text-center">Belum dipilih</p>
-                ) : (
-                  <AnimatePresence mode="popLayout">
-                    {sec.items.map((task) => (
-                      <div key={task.id} className="space-y-1">
-                        <TaskCard
-                          task={task}
-                          onOpenDetail={onOpenDetail}
-                          onStartFocusTimer={onStartFocusTimer}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setOneThreeFiveSlot(task.id, null)}
-                          className="text-xs text-[#8C7E72] hover:text-[#1E1915] px-1 cursor-pointer"
-                        >
-                          Lepas dari slot
-                        </button>
-                      </div>
-                    ))}
-                  </AnimatePresence>
-                )}
-              </div>
-            </section>
-          ))}
-        </div>
-
-        {alloc.unassigned.length > 0 && (
-          <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 space-y-2">
-            <h3 className="text-xs font-bold text-[#5C5148] uppercase tracking-wider">
-              Pilih Tugas untuk Target Hari Ini (1-3-5)
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {alloc.unassigned.map((t) => (
-                <div
-                  key={t.id}
-                  className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] flex items-center justify-between gap-2"
-                >
-                  <span className="text-xs font-bold text-[#1E1915] truncate">{t.title}</span>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button
-                      type="button"
-                      disabled={alloc.isLargeFull}
-                      onClick={() => setOneThreeFiveSlot(t.id, 'LARGE_1')}
-                      title="Slot 1 Tugas Besar"
-                      className="px-2.5 py-1 rounded-lg bg-[#FDECE8] text-[#C8432B] text-xs font-bold disabled:opacity-40 cursor-pointer"
-                    >
-                      1B
-                    </button>
-                    <button
-                      type="button"
-                      disabled={alloc.isMediumFull}
-                      onClick={() => setOneThreeFiveSlot(t.id, 'MEDIUM_3')}
-                      title="Slot 3 Tugas Sedang"
-                      className="px-2.5 py-1 rounded-lg bg-[#FEF3E2] text-[#B86B14] text-xs font-bold disabled:opacity-40 cursor-pointer"
-                    >
-                      3S
-                    </button>
-                    <button
-                      type="button"
-                      disabled={alloc.isSmallFull}
-                      onClick={() => setOneThreeFiveSlot(t.id, 'SMALL_5')}
-                      title="Slot 5 Tugas Kecil"
-                      className="px-2.5 py-1 rounded-lg bg-[#EBF1FF] text-[#2B59C3] text-xs font-bold disabled:opacity-40 cursor-pointer"
-                    >
-                      5K
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  const renderIvyLeeView = () => {
-    const ivy = getIvyLeeQueue(tasks)
-    const visibleQueue = ivyLeeSingleFocusMode ? ivy.queued.slice(0, 1) : ivy.queued
-
-    return (
-      <div className="space-y-3.5 max-w-3xl mx-auto">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-sm font-bold text-[#1E1915]">
-            Antrean 6 Prioritas ({ivy.queued.length}/6)
-          </span>
-          <button
-            type="button"
-            onClick={() => setIvyLeeSingleFocusMode(!ivyLeeSingleFocusMode)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-colors cursor-pointer ${
-              ivyLeeSingleFocusMode
-                ? 'bg-[#1E1915] text-white border-[#1E1915]'
-                : 'bg-[#FFFDF9] text-[#1E1915] border-[#E2D9C8]'
-            }`}
-          >
-            <Eye className="w-3.5 h-3.5" />
-            <span>{ivyLeeSingleFocusMode ? 'Fokus #1: Aktif' : 'Fokus #1 Saja'}</span>
-          </button>
-        </div>
-
-        <div className="space-y-2.5">
-          <AnimatePresence mode="popLayout">
-            {visibleQueue.map((task) => (
-              <div key={task.id} className="space-y-1">
-                <TaskCard
-                  task={task}
-                  onOpenDetail={onOpenDetail}
-                  onStartFocusTimer={onStartFocusTimer}
-                />
-                <div className="flex items-center justify-between px-1">
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5, 6].map((r) => (
-                      <button
-                        key={r}
-                        type="button"
-                        onClick={() => setIvyLeeRank(task.id, r)}
-                        className={`w-7 h-7 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
-                          task.ivyLeeRank === r
-                            ? 'bg-[#1E1915] text-white shadow-2xs'
-                            : 'bg-[#FFFDF9] border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915]'
-                        }`}
-                      >
-                        {r}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIvyLeeRank(task.id, null)}
-                    className="text-xs text-[#8C7E72] hover:text-[#1E1915] cursor-pointer"
-                  >
-                    Lepas
-                  </button>
-                </div>
-              </div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {ivy.candidates.length > 0 && (
-          <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 space-y-2">
-            <h3 className="text-xs font-bold text-[#5C5148] uppercase tracking-wider">
-              Tambahkan ke Antrean
-            </h3>
-            <div className="space-y-1.5">
-              {ivy.candidates.map((t) => (
-                <div
-                  key={t.id}
-                  className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] flex items-center justify-between gap-2"
-                >
-                  <span className="text-xs font-bold text-[#1E1915] truncate">{t.title}</span>
-                  <div className="flex items-center gap-1 shrink-0">
-                    {[1, 2, 3, 4, 5, 6].map((r) => (
-                      <button
-                        key={r}
-                        type="button"
-                        onClick={() => setIvyLeeRank(t.id, r)}
-                        className="px-2.5 py-1 rounded-lg bg-[#FFFDF9] hover:bg-[#1E1915] hover:text-white border border-[#E2D9C8] text-xs font-semibold cursor-pointer"
-                      >
-                        #{r}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <KanbanSpreadsheetTable
+            tasks={allFilteredTasks}
+            onOpenDetail={onOpenDetail}
+            onStartFocusTimer={onStartFocusTimer}
+          />
         )}
       </div>
     )
@@ -895,9 +806,29 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
           transition={{ duration: 0.18, ease: 'easeOut' }}
         >
           {activeBoardView === 'KANBAN' && renderKanbanView()}
-          {activeBoardView === 'EISENHOWER' && renderEisenhowerView()}
-          {activeBoardView === 'ONE_THREE_FIVE' && renderOneThreeFiveView()}
-          {activeBoardView === 'IVY_LEE' && renderIvyLeeView()}
+          {activeBoardView === 'EISENHOWER' && (
+            <EisenhowerView
+              tasks={tasks}
+              isSimulatedMobile={isSimulatedMobile}
+              onOpenDetail={onOpenDetail}
+              onStartFocusTimer={onStartFocusTimer}
+            />
+          )}
+          {activeBoardView === 'ONE_THREE_FIVE' && (
+            <OneThreeFiveView
+              tasks={tasks}
+              isSimulatedMobile={isSimulatedMobile}
+              onOpenDetail={onOpenDetail}
+              onStartFocusTimer={onStartFocusTimer}
+            />
+          )}
+          {activeBoardView === 'IVY_LEE' && (
+            <IvyLeeView
+              tasks={tasks}
+              onOpenDetail={onOpenDetail}
+              onStartFocusTimer={onStartFocusTimer}
+            />
+          )}
         </motion.div>
       </AnimatePresence>
     </main>
