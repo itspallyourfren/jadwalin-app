@@ -327,7 +327,7 @@ function buildPhasesForDomain(
   timePressure: TimePressureLevel
 ): PhaseTemplate[] {
   const isSprint = preset === 'URGENT_SPRINT' || timePressure === 'URGENT'
-  const isDeep = preset === 'DEEP_DIVE' || scale === 'Tugas Akhir'
+  const isDeep = preset === 'DEEP_DIVE' || scale === 'Besar'
 
   switch (domain) {
     case 'WRITING_ACADEMIC':
@@ -686,7 +686,7 @@ function pickRecommendedTechniques(
       name: 'Prinsip Pareto (80/20)',
       why: '80% isi draf berasal dari 20% argumen inti. Tulis draf kasar terlebih dahulu sebelum memformat sitasi.',
     })
-  } else if (scale === 'Besar' || scale === 'Tugas Akhir') {
+  } else if (scale === 'Besar') {
     list.push({
       name: 'WOOP & Premortem Analysis',
       why: 'Antisipasi hambatan terbesar (seperti rasa jenuh atau distraksi medsos) dengan rencana Jika–Maka.',

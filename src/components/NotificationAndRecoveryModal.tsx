@@ -174,19 +174,19 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
     <div className="fixed inset-0 z-50 bg-black/55 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       <div className="bg-[#FAF7F2] w-full max-w-2xl rounded-3xl border border-[#C9B99F] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="px-5 py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+        <div className="px-4 sm:px-5 py-3.5 sm:py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
             <img
               src="./assets/logo/logo_jadwalin.webp"
               alt="Jadwal-In!"
-              className="h-8 w-auto object-contain"
+              className="h-7 sm:h-8 w-auto object-contain shrink-0"
             />
-            <div>
-              <h2 className="text-base font-extrabold text-[#1E1915]">
-                Pengingat HP &amp; Cadangan Pemulihan Lokal
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-base font-extrabold text-[#1E1915] truncate">
+                Pengingat &amp; Pemulihan<span className="hidden sm:inline"> HP Lokal</span>
               </h2>
-              <p className="text-xs text-[#5C5148]">
-                100% tersimpan aman di perangkatmu tanpa memerlukan cloud server.
+              <p className="text-[11px] sm:text-xs text-[#5C5148] truncate">
+                100% tersimpan aman di perangkatmu secara lokal.
               </p>
             </div>
           </div>
@@ -194,42 +194,42 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
             type="button"
             onClick={onClose}
             aria-label="Tutup modal"
-            className="w-10 h-10 min-w-[40px] flex items-center justify-center rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] sm:min-w-[40px] flex items-center justify-center rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="px-5 pt-3 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center gap-3">
+        <div className="px-3 sm:px-5 pt-2 sm:pt-3 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab('NOTIFICATION')}
-            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 flex items-center gap-1.5 cursor-pointer ${
+            className={`pb-2.5 px-2.5 sm:px-3 text-xs font-extrabold border-b-2 flex items-center gap-1.5 cursor-pointer shrink-0 ${
               activeTab === 'NOTIFICATION'
                 ? 'border-[#D4532F] text-[#1E1915]'
                 : 'border-transparent text-[#8C7E72]'
             }`}
           >
-            <BellRing className="w-3.5 h-3.5" />
-            <span>Pengingat Notifikasi HP &amp; Habit Stacking</span>
+            <BellRing className="w-3.5 h-3.5 shrink-0" />
+            <span>Notifikasi<span className="hidden sm:inline"> &amp; Habit Stacking</span></span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('RECOVERY')}
-            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 flex items-center gap-1.5 cursor-pointer ${
+            className={`pb-2.5 px-2.5 sm:px-3 text-xs font-extrabold border-b-2 flex items-center gap-1.5 cursor-pointer shrink-0 ${
               activeTab === 'RECOVERY'
                 ? 'border-[#2C4A3E] text-[#1E1915]'
                 : 'border-transparent text-[#8C7E72]'
             }`}
           >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Profil &amp; Cadangan Pemulihan HP</span>
+            <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+            <span>Profil &amp; Cadangan<span className="hidden sm:inline"> Pemulihan HP</span></span>
           </button>
         </div>
 
-        <div className="p-5 overflow-y-auto space-y-4">
+        <div className="p-3.5 sm:p-5 overflow-y-auto space-y-3.5 sm:space-y-4">
           {feedbackMessage && (
             <div
               className={`p-3 rounded-xl text-xs font-bold border ${

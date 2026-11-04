@@ -90,7 +90,7 @@ export const FloatingSwitcherDock: React.FC<FloatingSwitcherDockProps> = ({
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: 'spring', damping: 24, stiffness: 280 }}
-        className="w-max mx-auto bg-[#FFFDF9] text-[#1E1915] p-1.5 px-2 rounded-full shadow-lg border border-[#C9B99F] flex items-center gap-2"
+        className="w-max mx-auto bg-[#FFFDF9] text-[#1E1915] p-1 sm:p-1.5 px-1.5 sm:px-2 rounded-full shadow-lg border border-[#C9B99F] flex items-center gap-1.5 sm:gap-2"
       >
         {/* Left: View Switcher Trigger */}
         <motion.button
@@ -101,7 +101,7 @@ export const FloatingSwitcherDock: React.FC<FloatingSwitcherDockProps> = ({
           onClick={() => setShowPicker((prev) => !prev)}
           aria-label="Pilih tampilan papan"
           title={`Tampilan saat ini: ${currentView.label}. Klik untuk ganti.`}
-          className="min-h-[44px] px-3.5 rounded-full bg-[#F2ECE1] hover:bg-[#EADBCE] text-[#1E1915] text-xs font-extrabold flex items-center gap-1.5 transition-colors cursor-pointer border border-[#E2D9C8]"
+          className="min-h-[38px] sm:min-h-[44px] px-2.5 sm:px-3.5 rounded-full bg-[#F2ECE1] hover:bg-[#EADBCE] text-[#1E1915] text-[11px] sm:text-xs font-extrabold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer border border-[#E2D9C8]"
         >
           {currentView.icon}
           <span>{currentView.label}</span>
@@ -114,15 +114,16 @@ export const FloatingSwitcherDock: React.FC<FloatingSwitcherDockProps> = ({
 
         {/* Center: Dominant '+' Add Task Action with Spring Pop */}
         <motion.button
+          id="tutorial-add-task-btn"
           type="button"
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.9 }}
           onClick={onOpenNewTask}
           aria-label="Tambah Tugas Baru"
           title="Tambah tugas baru (Shortcut N)"
-          className="w-11 h-11 rounded-full bg-[#D4532F] hover:bg-[#B84322] text-white flex items-center justify-center shadow-sm transition-colors cursor-pointer shrink-0"
+          className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#D4532F] hover:bg-[#B84322] text-white flex items-center justify-center shadow-sm transition-colors cursor-pointer shrink-0"
         >
-          <Plus className="w-5 h-5 stroke-[2.75]" />
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.75]" />
         </motion.button>
 
         {/* Right: Quick Focus Trigger */}
@@ -134,7 +135,7 @@ export const FloatingSwitcherDock: React.FC<FloatingSwitcherDockProps> = ({
           onClick={onOpenFocusTimer}
           aria-label="Mulai Timer Fokus"
           title="Buka timer fokus 10 menit / Pomodoro (Shortcut F)"
-          className="min-h-[44px] px-3.5 rounded-full bg-[#F2ECE1] hover:bg-[#EADBCE] text-[#1E1915] text-xs font-extrabold flex items-center gap-1.5 transition-colors cursor-pointer border border-[#E2D9C8]"
+          className="min-h-[38px] sm:min-h-[44px] px-2.5 sm:px-3.5 rounded-full bg-[#F2ECE1] hover:bg-[#EADBCE] text-[#1E1915] text-[11px] sm:text-xs font-extrabold flex items-center gap-1 sm:gap-1.5 transition-colors cursor-pointer border border-[#E2D9C8]"
         >
           <Timer className="w-4 h-4 text-[#D4532F]" strokeWidth={2.2} />
           <span>Fokus</span>

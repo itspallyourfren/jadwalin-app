@@ -62,7 +62,7 @@ describe('procrastinationDiagnosticEngine', () => {
       diagnosedAtIso: new Date().toISOString(),
     })
     expect(thesisTask.title).toContain('Skripsi')
-    expect(thesisTask.scale).toBe('Tugas Akhir')
+    expect(thesisTask.scale).toBe('Besar')
 
     const examTask = generateStarterTaskForProfile({
       archetype: 'DISTRACTED',

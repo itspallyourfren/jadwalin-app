@@ -53,20 +53,20 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             onClick={onToggleSidebar}
             aria-label="Buka menu navigasi"
             title="Buka menu navigasi [Tab]"
-            className="w-10 h-10 min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-[#1E1915] transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
+            className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] sm:min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-[#1E1915] transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
           >
             <Menu className="w-4 h-4" />
           </motion.button>
 
           <div className="min-w-0">
-            <h1 className="text-sm font-extrabold text-[#1E1915] leading-none truncate">
+            <h1 className="text-xs sm:text-sm font-extrabold text-[#1E1915] leading-none truncate max-w-[110px] xs:max-w-[160px] sm:max-w-none">
               {VIEW_TITLES[activeBoardView]}
             </h1>
           </div>
         </div>
 
         {/* Right: Keyboard Shortcuts + Plus Add Task + Streak + Notification Icon */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
           {!isMobile && onOpenShortcutsHelp && (
             <motion.button
               type="button"
@@ -87,14 +87,13 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
 
           {onOpenNewTask && (
             <motion.button
-              id="tutorial-add-task-btn"
               type="button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.92 }}
               onClick={onOpenNewTask}
               aria-label="Tambah tugas baru"
               title="Tambah tugas baru [N]"
-              className="w-10 h-10 min-w-[40px] rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] text-white transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
+              className="hidden sm:flex w-10 h-10 min-w-[40px] rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] text-white transition-colors cursor-pointer items-center justify-center shrink-0 shadow-2xs"
             >
               <Plus className="w-4 h-4 stroke-[2.75]" />
             </motion.button>
@@ -106,7 +105,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             whileTap={{ scale: 0.94 }}
             onClick={onOpenBackupModal}
             title="Rantai konsistensi harian & profil [B]"
-            className="min-h-[40px] flex items-center gap-1.5 px-3 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-xs font-bold text-[#1E1915] transition-colors cursor-pointer shadow-2xs"
+            className="min-h-[36px] sm:min-h-[40px] flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-[11px] sm:text-xs font-bold text-[#1E1915] transition-colors cursor-pointer shadow-2xs"
           >
             <Flame
               className={`w-3.5 h-3.5 ${
@@ -126,7 +125,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             onClick={toggleSound}
             aria-label={soundEnabled ? 'Matikan efek suara' : 'Aktifkan efek suara'}
             title={soundEnabled ? 'Efek Suara UI: Aktif (Klik untuk bisukan)' : 'Efek Suara UI: Dibisukan (Klik untuk aktifkan)'}
-            className={`w-10 h-10 min-w-[40px] rounded-xl border transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs ${
+            className={`w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] sm:min-w-[40px] rounded-xl border transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs ${
               soundEnabled
                 ? 'bg-[#FFFDF9] hover:bg-[#F2ECE1] border-[#E2D9C8] text-[#2C4A3E]'
                 : 'bg-[#F2ECE1] hover:bg-[#E2D9C8] border-[#C9B99F] text-[#8C7E72]'
@@ -146,7 +145,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             onClick={onOpenNotificationModal}
             aria-label="Pengingat notifikasi"
             title="Pengingat notifikasi"
-            className="w-10 h-10 min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915] transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
+            className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] sm:min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915] transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
           >
             <Bell className="w-4 h-4" />
           </motion.button>

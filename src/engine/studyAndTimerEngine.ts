@@ -78,7 +78,6 @@ export function recommendProductiveSwitchTask(
     Kecil: 1,
     Sedang: 2,
     Besar: 3,
-    'Tugas Akhir': 4,
   }
 
   const scored = candidates.map((task) => {

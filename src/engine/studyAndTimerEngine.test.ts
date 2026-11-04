@@ -51,7 +51,7 @@ describe('studyAndTimerEngine', () => {
   })
 
   it('recommends a lighter or interleaved task for Structured Procrastination', () => {
-    const heavyTask = createStubTask({ id: 'heavy', scale: 'Tugas Akhir', category: 'Kuliah & Tugas' })
+    const heavyTask = createStubTask({ id: 'heavy', scale: 'Besar', category: 'Kuliah & Tugas' })
     const lightDiffCategory = createStubTask({
       id: 'light-interleaved',
       scale: 'Kecil',

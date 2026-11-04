@@ -119,27 +119,27 @@ export const TechniqueToolkitModal: React.FC<TechniqueToolkitModalProps> = ({
         className="bg-[#FAF7F2] w-full max-w-3xl rounded-3xl border border-[#C9B99F] shadow-2xl overflow-hidden flex flex-col max-h-[88vh]"
       >
         {/* Header */}
-        <div className="px-5 py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between shrink-0">
-          <div>
-            <h2 className="text-base font-extrabold text-[#1E1915]">
-              Panduan &amp; Katalog Teknik Produktivitas
+        <div className="px-4 sm:px-5 py-3 sm:py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between gap-2.5 shrink-0">
+          <div className="min-w-0">
+            <h2 className="text-sm sm:text-base font-extrabold text-[#1E1915] leading-tight truncate">
+              Katalog Teknik Produktivitas
             </h2>
-            <p className="text-xs text-[#5C5148] font-medium mt-0.5">
-              Metode sains perilaku terbukti untuk mengatasi prokrastinasi dan menjaga konsistensi.
+            <p className="text-[11px] sm:text-xs text-[#5C5148] font-medium mt-0.5 truncate">
+              Metode sains perilaku untuk mengatasi prokrastinasi &amp; menjaga konsistensi.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Tutup katalog teknik"
-            className="w-10 h-10 min-w-[40px] flex items-center justify-center rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] sm:min-w-[40px] flex items-center justify-center rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tier Filter Bar */}
-        <div className="px-5 py-2.5 bg-[#F2ECE1] border-b border-[#E2D9C8] flex items-center gap-1.5 overflow-x-auto shrink-0">
+        <div className="px-3 sm:px-5 py-2 sm:py-2.5 bg-[#F2ECE1] border-b border-[#E2D9C8] flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
           {TIER_FILTERS.map((tf) => (
             <button
               key={tf.id}

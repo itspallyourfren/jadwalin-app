@@ -6,8 +6,11 @@ export function startAppTutorialTour(onFinish?: () => void): Driver {
   const driverObj = driver({
     showProgress: true,
     animate: true,
-    allowClose: true,
-    overlayColor: 'rgba(30, 25, 21, 0.7)',
+    allowClose: false,
+    overlayClickBehavior: 'none',
+    disableActiveInteraction: true,
+    showButtons: ['next', 'previous'],
+    overlayColor: 'rgba(30, 25, 21, 0.75)',
     nextBtnText: 'Lanjut →',
     prevBtnText: '← Kembali',
     doneBtnText: 'Mulai Belajar! 🚀',
@@ -42,7 +45,7 @@ export function startAppTutorialTour(onFinish?: () => void): Driver {
           title: '➕ Tambah Target Tugas',
           description:
             'Klik tombol ini untuk mencatat tugas baru. Kamu bisa mengaktifkan dekomposisi otomatis agar tugas raksasa langsung dipecah menjadi langkah-langkah kecil.',
-          side: 'left',
+          side: 'top',
           align: 'center',
         },
       },

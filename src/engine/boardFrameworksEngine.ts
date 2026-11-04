@@ -39,7 +39,7 @@ export function resolveEisenhowerQuadrant(
   task: Pick<TrackerTask, 'isImportant' | 'deadlineIso' | 'internalDeadlineIso' | 'isUrgentOverride' | 'scale'>,
   nowMs: number = Date.now()
 ): EisenhowerQuadrant {
-  const important = task.isImportant || task.scale === 'Besar' || task.scale === 'Tugas Akhir'
+  const important = task.isImportant || task.scale === 'Besar'
   const urgent = isTaskUrgent(task, nowMs)
 
   if (important && urgent) return 'DO_FIRST'

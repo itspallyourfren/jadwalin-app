@@ -110,7 +110,7 @@ export function generateStarterTaskForProfile(profile: UserProcrastinationProfil
         title: 'Buka Draf Skripsi & Buat Kerangka 1 Sub-Bab',
         courseOrContext: 'Skripsi / Tugas Akhir',
         category: 'Kuliah & Tugas',
-        scale: 'Tugas Akhir',
+        scale: 'Besar',
         timeBlock: 'Pagi',
         isImportant: true,
         isEatThatFrog: true,

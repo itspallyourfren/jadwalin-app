@@ -189,12 +189,12 @@ export const useTrackerStore = create<TrackerStoreState>()(
             timeBlock: input.timeBlock ?? 'Pagi',
             deadlineIso: input.deadlineIso ?? null,
             internalDeadlineIso: input.internalDeadlineIso ?? null,
-            isImportant: input.isImportant ?? (scale === 'Besar' || scale === 'Tugas Akhir'),
+            isImportant: input.isImportant ?? (scale === 'Besar'),
             isUrgentOverride: null,
             isEatThatFrog: Boolean(input.isEatThatFrog),
             ivyLeeRank: null,
             oneThreeFiveSlot:
-              scale === 'Besar' || scale === 'Tugas Akhir'
+              scale === 'Besar'
                 ? 'LARGE_1'
                 : scale === 'Sedang'
                 ? 'MEDIUM_3'

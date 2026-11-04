@@ -3,7 +3,7 @@ import type { CharacterId, HabitReminderConfig, KanbanStatus, Phase, TaskScale }
 
 export const PHASES: readonly Phase[] = ['Pagi', 'Siang', 'Sore', 'Malam'] as const
 
-export const TASK_SCALES: readonly TaskScale[] = ['Kecil', 'Sedang', 'Besar', 'Tugas Akhir'] as const
+export const TASK_SCALES: readonly TaskScale[] = ['Kecil', 'Sedang', 'Besar'] as const
 
 export const CLUTCH_85_THRESHOLD = 85
 

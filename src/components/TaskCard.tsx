@@ -25,7 +25,6 @@ const SCALE_DOT: Record<TrackerTask['scale'], string> = {
   Kecil: 'text-[#2B59C3] bg-[#EBF1FF]',
   Sedang: 'text-[#B86B14] bg-[#FEF3E2]',
   Besar: 'text-[#C8432B] bg-[#FDECE8]',
-  'Tugas Akhir': 'text-[#6B21A8] bg-[#F5EBFF]',
 }
 
 export const TaskCard: React.FC<TaskCardProps> = ({
@@ -71,29 +70,29 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           onOpenDetail(task)
         }
       }}
-      className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 hover:border-[#C9B99F] hover:shadow-xs focus:ring-2 focus:ring-[#2C4A3E]/40 focus:outline-hidden transition-colors flex flex-col gap-2.5 cursor-pointer select-none"
+      className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3 sm:p-3.5 hover:border-[#C9B99F] hover:shadow-xs focus:ring-2 focus:ring-[#2C4A3E]/40 focus:outline-hidden transition-colors flex flex-col gap-2 sm:gap-2.5 cursor-pointer select-none"
     >
       {/* Row 1: Context + Scale + Pin */}
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-1.5 sm:gap-2">
         <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
           {task.courseOrContext && (
             <>
-              <span className="text-xs font-semibold text-[#5C5148] truncate max-w-[140px]">
+              <span className="text-[11px] sm:text-xs font-semibold text-[#5C5148] truncate max-w-[105px] xs:max-w-[140px]">
                 {task.courseOrContext}
               </span>
               <span className="text-[#C9B99F]">·</span>
             </>
           )}
-          <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${SCALE_DOT[task.scale]}`}>
+          <span className={`text-[11px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-md ${SCALE_DOT[task.scale]}`}>
             {task.scale}
           </span>
           {task.timeBlock !== 'Bebas' && (
-            <span className="text-xs font-semibold text-[#5C5148] px-1.5 py-0.5 bg-[#F2ECE1] rounded-md">
+            <span className="text-[11px] sm:text-xs font-semibold text-[#5C5148] px-1.5 py-0.5 bg-[#F2ECE1] rounded-md">
               {task.timeBlock}
             </span>
           )}
           {task.ivyLeeRank !== null && !isCompleted && (
-            <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-[#1E1915] text-white">
+            <span className="text-[11px] sm:text-xs font-bold px-1.5 py-0.5 rounded bg-[#1E1915] text-white">
               #{task.ivyLeeRank}
             </span>
           )}
@@ -110,13 +109,13 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             }}
             title="Prioritas Utama Hari Ini"
             aria-label="Prioritas Utama"
-            className={`w-8 h-8 rounded-lg transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
+            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
               task.isEatThatFrog
                 ? 'bg-[#FDECE8] text-[#D4532F]'
                 : 'text-[#8C7E72]/60 hover:text-[#1E1915] hover:bg-[#F2ECE1]'
             }`}
           >
-            <Flame className="w-4 h-4" strokeWidth={2} />
+            <Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2} />
           </motion.button>
         )}
       </div>
@@ -244,7 +243,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                 e.stopPropagation()
                 completeTaskVia85Rule(task.id)
               }}
-              className="min-h-[28px] px-2.5 py-0.5 rounded-lg bg-[#1F7A4C] hover:bg-[#18633C] text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer shadow-2xs"
+              className="min-h-[28px] px-2 py-0.5 rounded-lg bg-[#1F7A4C] hover:bg-[#18633C] text-white text-[10px] sm:text-[11px] font-bold flex items-center gap-1 cursor-pointer shadow-2xs"
               title="Progres sudah 85% — kumpulkan sekarang tanpa ragu (Aturan 85%)"
             >
               <Check className="w-3 h-3 stroke-[2.5]" />
@@ -262,7 +261,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
               e.stopPropagation()
               onStartFocusTimer(task)
             }}
-            className="min-h-[30px] px-3 py-1 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs shrink-0"
+            className="min-h-[28px] sm:min-h-[30px] px-2.5 sm:px-3 py-1 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-[11px] sm:text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs shrink-0"
           >
             <Play className="w-3 h-3 fill-white" />
             <span>Fokus</span>

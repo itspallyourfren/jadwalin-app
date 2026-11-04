@@ -126,7 +126,7 @@ describe('maps15DiagnosticEngine', () => {
 
     const task = generateTailoredStarterTask(profile, 'Rian')
     expect(task.title).toContain('Skripsi')
-    expect(task.scale).toBe('Tugas Akhir')
+    expect(task.scale).toBe('Besar')
     expect(task.subtasks).toHaveLength(3)
     expect(task.subtasks[0].isZeigarnikStarter).toBe(true)
     expect(task.woop.wish).toContain('Skripsi')

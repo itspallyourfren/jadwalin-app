@@ -2,7 +2,7 @@
 
 export type Phase = 'Pagi' | 'Siang' | 'Sore' | 'Malam'
 export type TimeBlockTag = Phase | 'Bebas'
-export type TaskScale = 'Kecil' | 'Sedang' | 'Besar' | 'Tugas Akhir'
+export type TaskScale = 'Kecil' | 'Sedang' | 'Besar'
 export type KanbanStatus =
   | 'BACKLOG'        // Laci / Antrean
   | 'RESEARCH'       // Riset & Bahan

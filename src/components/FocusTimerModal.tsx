@@ -308,21 +308,21 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Tutup timer"
-            className="w-10 h-10 min-w-[40px] flex items-center justify-center rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
+            className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] sm:min-w-[40px] flex items-center justify-center rounded-xl bg-[#F2ECE1] text-[#5C5148] hover:text-[#1E1915] cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-4 overflow-y-auto space-y-3.5">
+        <div className="p-3.5 sm:p-4 overflow-y-auto space-y-3 sm:space-y-3.5">
           {/* Mode Tabs */}
-          <div className="grid grid-cols-4 gap-1.5 bg-[#F2ECE1] p-1 rounded-xl border border-[#E2D9C8]">
+          <div className="grid grid-cols-4 gap-1 sm:gap-1.5 bg-[#F2ECE1] p-1 rounded-xl border border-[#E2D9C8]">
             {TIMER_MODES.map((m) => (
               <button
                 key={m.mode}
                 type="button"
                 onClick={() => switchMode(m.mode)}
-                className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                className={`py-1.5 px-1 sm:px-2 rounded-lg text-[11px] sm:text-xs font-bold transition-colors cursor-pointer text-center truncate ${
                   mode === m.mode
                     ? 'bg-[#FFFDF9] text-[#1E1915] shadow-2xs'
                     : 'text-[#5C5148] hover:text-[#1E1915]'

@@ -277,7 +277,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
             <button
               type="button"
               onClick={() => setKanbanGrouping('STAGE')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${
                 kanbanGrouping === 'STAGE'
                   ? 'bg-[#2C4A3E] text-white shadow-2xs'
                   : 'text-[#5C5148] hover:text-[#1E1915]'
@@ -290,7 +290,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
             <button
               type="button"
               onClick={() => setKanbanGrouping('CATEGORY')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${
                 kanbanGrouping === 'CATEGORY'
                   ? 'bg-[#2C4A3E] text-white shadow-2xs'
                   : 'text-[#5C5148] hover:text-[#1E1915]'
@@ -303,7 +303,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
             <button
               type="button"
               onClick={() => setKanbanGrouping('TABLE')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${
                 kanbanGrouping === 'TABLE'
                   ? 'bg-[#2C4A3E] text-white shadow-2xs'
                   : 'text-[#5C5148] hover:text-[#1E1915]'
@@ -314,9 +314,9 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
             </button>
           </div>
 
-          {/* Sub-Mode Selector for Stage View (3 Kolom Lega vs 5 Alur Lengkap) */}
+          {/* Sub-Mode Selector for Stage View (3 Kolom Lega vs 5 Alur Lengkap) - Hidden on Mobile */}
           {kanbanGrouping === 'STAGE' && (
-            <div className="flex items-center gap-1.5 flex-wrap">
+            <div className="hidden md:flex items-center gap-1.5 flex-wrap">
               <div className="flex items-center bg-[#F2ECE1] p-0.5 rounded-xl border border-[#E2D9C8]">
                 <button
                   type="button"
@@ -738,7 +738,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                 type="button"
                 whileTap={{ scale: 0.94 }}
                 onClick={() => setActiveTimeFilter(opt.value)}
-                className={`relative min-h-[36px] px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
+                className={`relative min-h-[32px] sm:min-h-[36px] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-colors shrink-0 cursor-pointer ${
                   active
                     ? 'text-white'
                     : 'text-[#5C5148] bg-[#F2ECE1]/70 hover:bg-[#F2ECE1] border border-[#E2D9C8]'
@@ -759,12 +759,12 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
       </div>
 
       {tasks.length === 0 && (
-        <div className="mb-4 bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-5 sm:p-6 text-center space-y-3 shadow-2xs">
-          <div className="w-12 h-12 rounded-2xl bg-[#E7F6EE] text-[#1F7A4C] mx-auto flex items-center justify-center">
-            <CheckCircle2 className="w-6 h-6 stroke-[2.2]" />
+        <div className="mb-4 bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 sm:p-6 text-center space-y-2.5 sm:space-y-3 shadow-2xs">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#E7F6EE] text-[#1F7A4C] mx-auto flex items-center justify-center">
+            <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-base font-extrabold text-[#1E1915]">Papan Tugas Masih Bersih</h2>
+            <h2 className="text-sm sm:text-base font-extrabold text-[#1E1915]">Papan Tugas Masih Bersih</h2>
             <p className="text-xs text-[#5C5148] max-w-sm mx-auto leading-relaxed font-medium">
               {!hasCompletedDiagnosis
                 ? 'Yuk ikuti diagnosis singkat 1 menit untuk mengenali gaya prokrastinasimu dan menyesuaikan fitur aplikasi secara otomatis.'
@@ -775,7 +775,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
             <button
               type="button"
               onClick={onOpenDiagnostic}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white text-xs font-extrabold cursor-pointer transition-all shadow-sm"
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white text-xs font-extrabold cursor-pointer transition-all shadow-sm"
             >
               <Sparkles className="w-4 h-4" />
               <span>
@@ -787,7 +787,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
             <button
               type="button"
               onClick={onOpenNewTask}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#C9B99F] active:scale-95 text-[#1E1915] text-xs font-extrabold cursor-pointer transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#C9B99F] active:scale-95 text-[#1E1915] text-xs font-extrabold cursor-pointer transition-all"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>Tambah Tugas Langsung</span>

@@ -345,7 +345,7 @@ export function generateTailoredStarterTask(
   if (goal === 'THESIS') {
     title = 'Draf Awal: Kerangka Bab Pendahuluan Skripsi'
     context = 'Skripsi & Tugas Akhir'
-    scale = 'Tugas Akhir'
+    scale = 'Besar'
   } else if (goal === 'EXAMS') {
     title = 'Rangkuman Materi & Pemetaan Topik Ujian'
     context = 'Persiapan Ujian'
@@ -394,7 +394,7 @@ export function generateTailoredStarterTask(
     isUrgentOverride: false,
     isEatThatFrog: true,
     ivyLeeRank: 1,
-    oneThreeFiveSlot: scale === 'Tugas Akhir' ? 'LARGE_1' : 'MEDIUM_3',
+    oneThreeFiveSlot: scale === 'Besar' ? 'LARGE_1' : 'MEDIUM_3',
     subtasks: starterSubs,
     manualProgress: 0,
     completedVia85Rule: false,

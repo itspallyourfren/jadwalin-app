@@ -48,7 +48,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     cardAsset: './assets/cards/tek_11_1_3_5.webp',
     shortSummary: 'Cegah overplanning harian dengan membatasi target hari ini pada 1 tugas besar, 3 sedang, dan 5 urusan kecil.',
     realWorldSteps: [
-      'Pilih tepat 1 Tugas Besar/Tugas Akhir sebagai pencapaian utama hari ini.',
+      'Pilih tepat 1 Tugas Besar sebagai pencapaian utama hari ini.',
       'Pilih maksimal 3 Tugas Sedang sebagai pendamping.',
       'Pilih hingga 5 Tugas Kecil yang bisa diselesaikan cepat di sela waktu.',
     ],
