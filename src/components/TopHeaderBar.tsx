@@ -7,7 +7,7 @@ import { useTrackerStore } from '../store/useTrackerStore'
 import type { BoardFrameworkView } from '../data/types'
 
 type TopHeaderBarProps = {
-  isSimulatedMobile: boolean
+  isMobile?: boolean
   onToggleSidebar: () => void
   onOpenNotificationModal: () => void
   onOpenBackupModal: () => void
@@ -23,7 +23,7 @@ const VIEW_TITLES: Record<BoardFrameworkView, string> = {
 }
 
 export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
-  isSimulatedMobile,
+  isMobile,
   onToggleSidebar,
   onOpenNotificationModal,
   onOpenBackupModal,
@@ -38,7 +38,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
     <header className="bg-[#FAF7F2] border-b border-[#E2D9C8]/80 shrink-0 select-none">
       <div
         className={`mx-auto ${
-          isSimulatedMobile ? 'px-3 py-2' : 'max-w-6xl px-4 sm:px-6 py-2.5'
+          isMobile ? 'px-3 py-2' : 'max-w-6xl px-4 sm:px-6 py-2.5'
         } flex items-center justify-between gap-2`}
       >
         {/* Left: Hamburger Menu (Sidebar Trigger) */}
@@ -65,7 +65,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
 
         {/* Right: Keyboard Shortcuts + Plus Add Task + Streak + Notification Icon */}
         <div className="flex items-center gap-1.5 shrink-0">
-          {!isSimulatedMobile && onOpenShortcutsHelp && (
+          {!isMobile && onOpenShortcutsHelp && (
             <motion.button
               type="button"
               whileHover={{ scale: 1.03 }}

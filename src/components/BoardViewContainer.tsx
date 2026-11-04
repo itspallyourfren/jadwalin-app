@@ -33,7 +33,7 @@ import type {
 } from '../data/types'
 
 type BoardViewContainerProps = {
-  isSimulatedMobile: boolean
+  isMobile?: boolean
   onOpenDetail: (task: TrackerTask) => void
   onStartFocusTimer: (task: TrackerTask) => void
   onOpenNewTask: () => void
@@ -49,7 +49,7 @@ const TIME_OPTIONS: Array<{ value: TimeBlockTag | 'ALL'; label: string }> = [
 ]
 
 export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
-  isSimulatedMobile,
+  isMobile,
   onOpenDetail,
   onStartFocusTimer,
   onOpenNewTask,
@@ -390,7 +390,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                 {/* Mobile Segmented Tabs for 3 Core Stages */}
                 <div
                   className={`${
-                    isSimulatedMobile ? 'flex' : 'flex md:hidden'
+                    isMobile ? 'flex' : 'flex md:hidden'
                   } bg-[#F2ECE1] p-1 rounded-2xl border border-[#E2D9C8] gap-1 overflow-x-auto no-scrollbar`}
                 >
                   {core3Columns.map((col) => {
@@ -436,7 +436,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                 {/* Desktop 3 Columns (Spacious ~33% width each) */}
                 <div
                   className={
-                    isSimulatedMobile
+                    isMobile
                       ? 'grid grid-cols-1 gap-3'
                       : 'grid grid-cols-1 md:grid-cols-3 gap-3.5 items-start'
                   }
@@ -508,7 +508,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                       ) : null
 
                     return renderStageSection(col, {
-                      className: isSimulatedMobile
+                      className: isMobile
                         ? visibleOnMobile
                           ? 'block'
                           : 'hidden'
@@ -528,7 +528,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                 {/* Mobile Segmented Tabs for 5 Stages */}
                 <div
                   className={`${
-                    isSimulatedMobile ? 'flex' : 'flex md:hidden'
+                    isMobile ? 'flex' : 'flex md:hidden'
                   } bg-[#F2ECE1] p-1 rounded-2xl border border-[#E2D9C8] gap-1 overflow-x-auto no-scrollbar`}
                 >
                   {stage5Columns.map((col) => {
@@ -570,7 +570,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                 {/* Desktop 5 Stages with Collapsible Ribbons */}
                 <div
                   className={
-                    isSimulatedMobile
+                    isMobile
                       ? 'grid grid-cols-1 gap-3'
                       : 'flex gap-3 items-start overflow-x-auto no-scrollbar pb-3'
                   }
@@ -578,7 +578,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                   {stage5Columns.map((col) => {
                     const visibleOnMobile = activeMobileKanbanTab === col.status
                     const isCollapsed =
-                      !isSimulatedMobile &&
+                      !isMobile &&
                       autoCollapseEmpty &&
                       col.items.length === 0 &&
                       !manuallyExpanded[col.status]
@@ -588,13 +588,13 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                     }
 
                     return renderStageSection(col, {
-                      className: isSimulatedMobile
+                      className: isMobile
                         ? visibleOnMobile
                           ? 'block'
                           : 'hidden'
                         : 'flex-1 min-w-[280px] max-w-[420px] shrink-0',
                       onCollapse:
-                        !isSimulatedMobile && autoCollapseEmpty
+                        !isMobile && autoCollapseEmpty
                           ? () => toggleManualCollapse(col.status)
                           : undefined,
                     })
@@ -611,7 +611,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
             {/* Mobile Segmented Tabs for 4 Categories */}
             <div
               className={`${
-                isSimulatedMobile ? 'flex' : 'flex md:hidden'
+                isMobile ? 'flex' : 'flex md:hidden'
               } bg-[#F2ECE1] p-1 rounded-2xl border border-[#E2D9C8] gap-1 overflow-x-auto no-scrollbar`}
             >
               {categoryColumns.map((col) => {
@@ -649,7 +649,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
             {/* Desktop Category Columns Grid */}
             <div
               className={
-                isSimulatedMobile
+                isMobile
                   ? 'grid grid-cols-1 gap-3'
                   : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 items-start'
               }
@@ -660,7 +660,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                   <section
                     key={col.category}
                     className={`${
-                      isSimulatedMobile
+                      isMobile
                         ? visibleOnMobile
                           ? 'block'
                           : 'hidden'
@@ -721,7 +721,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
     <main
       id="tutorial-board-container"
       className={`flex-1 overflow-y-auto ${
-        isSimulatedMobile ? 'px-3 py-2.5 pb-32' : 'max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 pb-28'
+        isMobile ? 'px-3 py-2.5 pb-32' : 'max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 pb-28'
       }`}
     >
       {/* Streamlined Time Block Filter Chips Bar (Zero Duplicate Framework Tabs) */}
@@ -809,7 +809,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
           {activeBoardView === 'EISENHOWER' && (
             <EisenhowerView
               tasks={tasks}
-              isSimulatedMobile={isSimulatedMobile}
+              isMobile={isMobile}
               onOpenDetail={onOpenDetail}
               onStartFocusTimer={onStartFocusTimer}
             />
@@ -817,7 +817,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
           {activeBoardView === 'ONE_THREE_FIVE' && (
             <OneThreeFiveView
               tasks={tasks}
-              isSimulatedMobile={isSimulatedMobile}
+              isMobile={isMobile}
               onOpenDetail={onOpenDetail}
               onStartFocusTimer={onStartFocusTimer}
             />

@@ -8,14 +8,14 @@ import { TaskCard } from './TaskCard'
 
 type EisenhowerViewProps = {
   tasks: readonly TrackerTask[]
-  isSimulatedMobile: boolean
+  isMobile?: boolean
   onOpenDetail: (task: TrackerTask) => void
   onStartFocusTimer: (task: TrackerTask) => void
 }
 
 export const EisenhowerView: React.FC<EisenhowerViewProps> = ({
   tasks,
-  isSimulatedMobile,
+  isMobile,
   onOpenDetail,
   onStartFocusTimer,
 }) => {
@@ -67,7 +67,7 @@ export const EisenhowerView: React.FC<EisenhowerViewProps> = ({
   return (
     <div
       className={
-        isSimulatedMobile ? 'grid grid-cols-1 gap-3.5' : 'grid grid-cols-1 md:grid-cols-2 gap-4'
+        isMobile ? 'grid grid-cols-1 gap-3.5' : 'grid grid-cols-1 md:grid-cols-2 gap-4'
       }
     >
       {quadrants.map((q) => (

@@ -71,7 +71,7 @@ export function startAppTutorialTour(onFinish?: () => void): Driver {
         popover: {
           title: '💡 Menu & Panduan Teknik',
           description:
-            'Buka menu navigasi untuk melihat katalog teknik sains perilaku, mengatur pengingat HP, atau mengulang tes profil prokrastinasimu kapan saja.',
+            'Buka menu navigasi untuk melihat katalog teknik sains perilaku, mengatur pengingat HP, atau mengulang diagnosis profil prokrastinasimu kapan saja.',
           side: 'bottom',
           align: 'start',
         },

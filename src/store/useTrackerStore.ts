@@ -51,7 +51,6 @@ export type TrackerStoreState = {
   activeMobileKanbanTab: KanbanStatus
   activeTimeFilter: TimeBlockTag | 'ALL'
   ivyLeeSingleFocusMode: boolean
-  desktopPreviewMode: 'PHONE_FRAME' | 'FULL_RESPONSIVE'
   tasks: TrackerTask[]
   completedDates: string[]
   reminderConfig: HabitReminderConfig
@@ -67,7 +66,6 @@ export type TrackerStoreState = {
   setActiveMobileKanbanTab: (tab: KanbanStatus) => void
   setActiveTimeFilter: (filter: TimeBlockTag | 'ALL') => void
   setIvyLeeSingleFocusMode: (enabled: boolean) => void
-  setDesktopPreviewMode: (mode: 'PHONE_FRAME' | 'FULL_RESPONSIVE') => void
 
   addTask: (input: NewTaskInput) => string
   updateTask: (taskId: string, patch: Partial<TrackerTask>) => void
@@ -138,7 +136,6 @@ export const useTrackerStore = create<TrackerStoreState>()(
         activeMobileKanbanTab: 'IN_PROGRESS',
         activeTimeFilter: 'ALL',
         ivyLeeSingleFocusMode: false,
-        desktopPreviewMode: 'FULL_RESPONSIVE',
         tasks: [],
         completedDates: [formatDateYmd()],
         reminderConfig: DEFAULT_HABIT_REMINDER_CONFIG,
@@ -157,7 +154,6 @@ export const useTrackerStore = create<TrackerStoreState>()(
         setActiveMobileKanbanTab: (activeMobileKanbanTab) => set({ activeMobileKanbanTab }),
         setActiveTimeFilter: (activeTimeFilter) => set({ activeTimeFilter }),
         setIvyLeeSingleFocusMode: (ivyLeeSingleFocusMode) => set({ ivyLeeSingleFocusMode }),
-        setDesktopPreviewMode: (desktopPreviewMode) => set({ desktopPreviewMode }),
 
         addTask: (input) => {
           const id = `tsk-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`

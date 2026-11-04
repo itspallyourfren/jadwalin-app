@@ -261,7 +261,7 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
           <button
             type="button"
             onClick={onClose}
-            aria-label="Tutup tes diagnosis"
+            aria-label="Tutup diagnosis"
             className="w-8 h-8 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] transition-colors cursor-pointer flex items-center justify-center shrink-0"
           >
             <span className="text-xs font-black">✕</span>

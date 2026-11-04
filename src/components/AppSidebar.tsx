@@ -349,7 +349,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                   onCloseMobileDrawer()
                 }
               }}
-              title="Kosongkan semua tugas untuk pengujian bersih"
+              title="Hapus semua tugas dari papan"
               className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#C8432B] hover:bg-[#FDECE8] transition-colors cursor-pointer"
             >
               <Trash2 className="w-4 h-4 shrink-0" />

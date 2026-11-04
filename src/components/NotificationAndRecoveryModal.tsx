@@ -242,7 +242,7 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
 
           {activeTab === 'NOTIFICATION' ? (
             <>
-              {/* Permission & Instant Simulator Card */}
+              {/* Status Izin Notifikasi Perangkat */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 flex items-center justify-between gap-3 flex-wrap">
                 <div className="space-y-0.5">
                   <div className="text-sm font-extrabold text-[#1E1915]">
@@ -259,17 +259,9 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                   <button
                     type="button"
                     onClick={handleRequestPermission}
-                    className="px-3 py-2 rounded-xl bg-[#2C4A3E] text-white text-xs font-bold cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] text-white text-xs font-bold transition-colors cursor-pointer"
                   >
                     Aktifkan Izin Notifikasi HP
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => triggerSampleNotification()}
-                    className="px-3 py-2 rounded-xl bg-[#D4532F] text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <BellRing className="w-3.5 h-3.5" />
-                    <span>Tes Simulasi Notifikasi</span>
                   </button>
                 </div>
               </div>

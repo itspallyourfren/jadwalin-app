@@ -8,14 +8,14 @@ import { TaskCard } from './TaskCard'
 
 type OneThreeFiveViewProps = {
   tasks: readonly TrackerTask[]
-  isSimulatedMobile: boolean
+  isMobile?: boolean
   onOpenDetail: (task: TrackerTask) => void
   onStartFocusTimer: (task: TrackerTask) => void
 }
 
 export const OneThreeFiveView: React.FC<OneThreeFiveViewProps> = ({
   tasks,
-  isSimulatedMobile,
+  isMobile,
   onOpenDetail,
   onStartFocusTimer,
 }) => {
@@ -47,7 +47,7 @@ export const OneThreeFiveView: React.FC<OneThreeFiveViewProps> = ({
     <div className="space-y-4">
       <div
         className={
-          isSimulatedMobile ? 'grid grid-cols-1 gap-3.5' : 'grid grid-cols-1 md:grid-cols-3 gap-4'
+          isMobile ? 'grid grid-cols-1 gap-3.5' : 'grid grid-cols-1 md:grid-cols-3 gap-4'
         }
       >
         {sections.map((sec) => (
