@@ -28,180 +28,6 @@ import type {
   WoopNote,
 } from '../data/types'
 
-function createStarterTasks(): TrackerTask[] {
-  const now = new Date()
-  const tomorrow = new Date(now.getTime() + 26 * 60 * 60 * 1000).toISOString()
-  const inFourDays = new Date(now.getTime() + 96 * 60 * 60 * 1000).toISOString()
-
-  return [
-    {
-      id: 'starter-1',
-      title: 'Susun Bab Pendahuluan & Rumusan Masalah',
-      courseOrContext: 'Metodologi Penelitian',
-      category: 'Kuliah & Tugas',
-      scale: 'Besar',
-      status: 'IN_PROGRESS',
-      timeBlock: 'Pagi',
-      deadlineIso: tomorrow,
-      internalDeadlineIso: null,
-      isImportant: true,
-      isUrgentOverride: true,
-      isEatThatFrog: true,
-      ivyLeeRank: 1,
-      oneThreeFiveSlot: 'LARGE_1',
-      subtasks: [
-        {
-          id: 'st-1-1',
-          title: 'Buka dokumen & tulis subjudul utama',
-          completed: true,
-          isParetoCore: false,
-          isZeigarnikStarter: true,
-        },
-        {
-          id: 'st-1-2',
-          title: 'Kumpulkan 3 jurnal referensi utama',
-          completed: true,
-          isParetoCore: false,
-        },
-        {
-          id: 'st-1-3',
-          title: 'Tulis rumusan masalah & tujuan riset',
-          completed: true,
-          isParetoCore: true,
-        },
-        {
-          id: 'st-1-4',
-          title: 'Lengkapi latar belakang data pendukung',
-          completed: false,
-          isParetoCore: true,
-        },
-      ],
-      manualProgress: 75,
-      completedVia85Rule: false,
-      woop: {
-        wish: 'Menyelesaikan draf Bab 1 tepat waktu tanpa begadang',
-        outcome: 'Pikiran tenang saat bimbingan dosen minggu ini',
-        obstacle: 'Sering terdistraksi ganti-ganti kalimat di paragraf pertama',
-        ifThenPlan: 'Jika mulai perfeksionis mengedit kalimat awal, maka lanjutkan tulis poin kasar sampai 85% dulu',
-      },
-      studyNotes: {
-        sq3r: { survey: false, question: '', read: false, recite: '', review: false },
-        feynmanExplanation: '',
-        blurtingDump: '',
-        flashcards: [],
-      },
-      focusMinutesLogged: 35,
-      pomodoroCount: 1,
-      reminderEnabled: true,
-      createdAtIso: now.toISOString(),
-      completedAtIso: null,
-    },
-    {
-      id: 'starter-2',
-      title: 'Rangkum Materi Kuis Psikologi Kognitif Bab 4',
-      courseOrContext: 'Psikologi Kognitif',
-      category: 'Belajar & Ujian',
-      scale: 'Sedang',
-      status: 'IN_PROGRESS',
-      timeBlock: 'Siang',
-      deadlineIso: inFourDays,
-      internalDeadlineIso: null,
-      isImportant: true,
-      isUrgentOverride: false,
-      isEatThatFrog: false,
-      ivyLeeRank: 2,
-      oneThreeFiveSlot: 'MEDIUM_3',
-      subtasks: [
-        {
-          id: 'st-2-1',
-          title: 'Baca subjudul & buat 3 pertanyaan inti',
-          completed: true,
-          isParetoCore: true,
-          isZeigarnikStarter: true,
-        },
-        {
-          id: 'st-2-2',
-          title: 'Tulis ringkasan memori kerja dengan bahasa sendiri',
-          completed: false,
-          isParetoCore: true,
-        },
-      ],
-      manualProgress: 50,
-      completedVia85Rule: false,
-      woop: { wish: '', outcome: '', obstacle: '', ifThenPlan: '' },
-      studyNotes: {
-        sq3r: {
-          survey: true,
-          question: 'Apa perbedaan kapasitas Working Memory vs Long-Term Memory?',
-          read: true,
-          recite: 'Working memory terbatas sekitar 7±2 chunk (Miller), sedangkan LTM menyimpan skema jangka panjang.',
-          review: false,
-        },
-        feynmanExplanation:
-          'Memori kerja itu ibarat meja belajar kecil tempat kita menaruh buku yang sedang dibuka sekarang, bukan lemari arsip besar.',
-        blurtingDump: '',
-        flashcards: [
-          {
-            id: 'fc-1',
-            question: 'Berapa batas rata-rata chunk pada Hukum Miller?',
-            answer: '7 ± 2 bongkahan informasi sekaligus.',
-            box: 2,
-          },
-        ],
-      },
-      focusMinutesLogged: 25,
-      pomodoroCount: 1,
-      reminderEnabled: true,
-      createdAtIso: now.toISOString(),
-      completedAtIso: null,
-    },
-    {
-      id: 'starter-3',
-      title: 'Balas Email Konfirmasi Jadwal Diskusi Kelompok',
-      courseOrContext: 'Organisasi Kampus',
-      category: 'Organisasi & Proyek',
-      scale: 'Kecil',
-      status: 'BACKLOG',
-      timeBlock: 'Sore',
-      deadlineIso: tomorrow,
-      internalDeadlineIso: null,
-      isImportant: false,
-      isUrgentOverride: true,
-      isEatThatFrog: false,
-      ivyLeeRank: 3,
-      oneThreeFiveSlot: 'SMALL_5',
-      subtasks: [
-        {
-          id: 'st-3-1',
-          title: 'Cek ketersediaan jam kosong di kalender',
-          completed: true,
-          isParetoCore: true,
-        },
-        {
-          id: 'st-3-2',
-          title: 'Kirim balasan singkat di grup/email',
-          completed: false,
-          isParetoCore: true,
-        },
-      ],
-      manualProgress: 50,
-      completedVia85Rule: false,
-      woop: { wish: '', outcome: '', obstacle: '', ifThenPlan: '' },
-      studyNotes: {
-        sq3r: { survey: false, question: '', read: false, recite: '', review: false },
-        feynmanExplanation: '',
-        blurtingDump: '',
-        flashcards: [],
-      },
-      focusMinutesLogged: 10,
-      pomodoroCount: 0,
-      reminderEnabled: true,
-      createdAtIso: now.toISOString(),
-      completedAtIso: null,
-    },
-  ]
-}
-
 export type NewTaskInput = {
   title: string
   courseOrContext: string
@@ -242,6 +68,7 @@ export type TrackerStoreState = {
   addTask: (input: NewTaskInput) => string
   updateTask: (taskId: string, patch: Partial<TrackerTask>) => void
   deleteTask: (taskId: string) => void
+  clearAllTasks: () => void
   moveTaskStatus: (taskId: string, status: KanbanStatus) => void
   toggleEatThatFrog: (taskId: string) => void
   setOneThreeFiveSlot: (taskId: string, slot: TrackerTask['oneThreeFiveSlot']) => void
@@ -282,6 +109,8 @@ function buildBackupSnapshot(state: TrackerStoreState): MobileBackupPayload {
   }
 }
 
+const fallbackMemoryStorage = new Map<string, string>()
+
 export const useTrackerStore = create<TrackerStoreState>()(
   persist(
     (set, get) => {
@@ -303,7 +132,7 @@ export const useTrackerStore = create<TrackerStoreState>()(
         activeTimeFilter: 'ALL',
         ivyLeeSingleFocusMode: false,
         desktopPreviewMode: 'FULL_RESPONSIVE',
-        tasks: createStarterTasks(),
+        tasks: [],
         completedDates: [formatDateYmd()],
         reminderConfig: DEFAULT_HABIT_REMINDER_CONFIG,
         gameCommitment: null,
@@ -325,6 +154,7 @@ export const useTrackerStore = create<TrackerStoreState>()(
           const id = `tsk-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
           const scale = input.scale
           const category = input.category
+          const targetStatus: KanbanStatus = input.status ?? 'IN_PROGRESS'
           const subtasks = input.autoChunk
             ? generateChunkedSubtasks(scale, category, input.title)
             : []
@@ -335,7 +165,7 @@ export const useTrackerStore = create<TrackerStoreState>()(
             courseOrContext: input.courseOrContext.trim() || 'Umum',
             category,
             scale,
-            status: input.status ?? 'IN_PROGRESS',
+            status: targetStatus,
             timeBlock: input.timeBlock ?? 'Pagi',
             deadlineIso: input.deadlineIso ?? null,
             internalDeadlineIso: input.internalDeadlineIso ?? null,
@@ -372,11 +202,23 @@ export const useTrackerStore = create<TrackerStoreState>()(
               : s.tasks
             return {
               tasks: [newTask, ...cleanedTasks],
+              activeMobileKanbanTab: targetStatus,
+              activeTimeFilter:
+                s.activeTimeFilter !== 'ALL' && s.activeTimeFilter !== newTask.timeBlock
+                  ? 'ALL'
+                  : s.activeTimeFilter,
               lastBackupSyncedIso: new Date().toISOString(),
             }
           })
           mirrorToIdb()
           void syncDeviceNotifications(get().tasks, get().reminderConfig)
+          get().triggerSampleNotification(
+            'Tugas Berhasil Disimpan',
+            `"${newTask.title}" siap dikerjakan di ${
+              targetStatus === 'BACKLOG' ? 'Laci Tugas' : 'Fokus Hari Ini'
+            }.`,
+            id
+          )
           return id
         },
 
@@ -396,6 +238,15 @@ export const useTrackerStore = create<TrackerStoreState>()(
           }))
           mirrorToIdb()
           void syncDeviceNotifications(get().tasks, get().reminderConfig)
+        },
+
+        clearAllTasks: () => {
+          set({
+            tasks: [],
+            lastBackupSyncedIso: new Date().toISOString(),
+          })
+          mirrorToIdb()
+          void syncDeviceNotifications([], get().reminderConfig)
         },
 
         moveTaskStatus: (taskId, status) => {
@@ -717,14 +568,24 @@ export const useTrackerStore = create<TrackerStoreState>()(
 
         recoverFromIndexedDbIfNeeded: async () => {
           const current = get()
-          if (current.tasks.length > 0) {
-            void saveSnapshotToIndexedDb(buildBackupSnapshot(current))
+          // Purge any legacy starter dummy tasks cached in memory/localStorage
+          if (current.tasks.some((t) => t.id.startsWith('starter-'))) {
+            const cleaned = current.tasks.filter((t) => !t.id.startsWith('starter-'))
+            set({ tasks: cleaned })
+          }
+
+          if (get().tasks.length > 0) {
+            void saveSnapshotToIndexedDb(buildBackupSnapshot(get()))
             return false
           }
+
           const idbBackup = await loadSnapshotFromIndexedDb()
           if (idbBackup && idbBackup.tasks.length > 0) {
-            get().importBackupPayload(idbBackup)
-            return true
+            const cleanTasks = idbBackup.tasks.filter((t) => !t.id.startsWith('starter-'))
+            if (cleanTasks.length > 0) {
+              get().importBackupPayload({ ...idbBackup, tasks: cleanTasks })
+              return true
+            }
           }
           return false
         },
@@ -732,19 +593,32 @@ export const useTrackerStore = create<TrackerStoreState>()(
     },
     {
       name: 'jadwalin-mobile-v1',
-      version: 1,
+      version: 2,
+      skipHydration: true,
+      migrate: (persistedState: unknown) => {
+        const state = (persistedState && typeof persistedState === 'object'
+          ? persistedState
+          : {}) as Partial<TrackerStoreState>
+        // Purge legacy starter tasks from existing persisted state
+        const tasks = Array.isArray(state.tasks)
+          ? state.tasks.filter((t: TrackerTask) => !t.id?.startsWith('starter-'))
+          : []
+        return {
+          ...state,
+          tasks,
+        }
+      },
       storage: createJSONStorage((): StateStorage => {
         if (typeof window !== 'undefined' && window.localStorage) {
           return window.localStorage
         }
-        const mem = new Map<string, string>()
         return {
-          getItem: (k) => mem.get(k) ?? null,
+          getItem: (k) => fallbackMemoryStorage.get(k) ?? null,
           setItem: (k, v) => {
-            mem.set(k, v)
+            fallbackMemoryStorage.set(k, v)
           },
           removeItem: (k) => {
-            mem.delete(k)
+            fallbackMemoryStorage.delete(k)
           },
         }
       }),

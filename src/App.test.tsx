@@ -11,22 +11,34 @@ import { useTrackerStore } from './store/useTrackerStore'
 describe('App & Modals SSR Render Verification', () => {
   it('renders App shell, Kanban board, and all interactive modals cleanly without runtime errors', () => {
     const store = useTrackerStore.getState()
-    const firstTask = store.tasks[0]
+    store.clearAllTasks()
 
-    // 1. Main App Shell & Kanban View
+    // 1. Main App Shell & Navigation
     const htmlApp = renderToString(<App />)
+    expect(htmlApp).toContain('Papan Tugas Masih Bersih')
     expect(htmlApp).toContain('Laci Tugas')
     expect(htmlApp).toContain('Hari Ini')
     expect(htmlApp).toContain('Eisenhower')
     expect(htmlApp).toContain('1-3-5')
     expect(htmlApp).toContain('Ivy Lee')
 
+    // Add a test task for modal verification
+    const testTaskId = store.addTask({
+      title: 'Susun Bab Pendahuluan & Rumusan Masalah',
+      courseOrContext: 'Metodologi Penelitian',
+      category: 'Kuliah & Tugas',
+      scale: 'Besar',
+      autoChunk: true,
+      isEatThatFrog: true,
+    })
+    const firstTask = useTrackerStore.getState().tasks.find((t) => t.id === testTaskId)!
+
     // 2. TaskWorkspaceModal (New & Existing)
     const htmlNewTask = renderToString(<TaskWorkspaceModal taskId={null} onClose={() => {}} />)
     expect(htmlNewTask).toContain('Tambah Target Tugas Baru')
 
     const htmlExistingTask = renderToString(
-      <TaskWorkspaceModal taskId={firstTask.id} onClose={() => {}} />
+      <TaskWorkspaceModal taskId={firstTask.id} task={firstTask} onClose={() => {}} />
     )
     expect(htmlExistingTask).toContain('Susun Bab Pendahuluan &amp; Rumusan Masalah')
     expect(htmlExistingTask).toContain('Daftar Sub-Langkah')
@@ -46,14 +58,14 @@ describe('App & Modals SSR Render Verification', () => {
 
     // 4b. TaskWorkspaceModal with STUDY and WOOP tabs
     const htmlStudy = renderToString(
-      <TaskWorkspaceModal taskId={firstTask.id} initialTab="STUDY" onClose={() => {}} />
+      <TaskWorkspaceModal taskId={firstTask.id} task={firstTask} initialTab="STUDY" onClose={() => {}} />
     )
     expect(htmlStudy).toContain('Checklist Membaca SQ3R')
     expect(htmlStudy).toContain('Metode Feynman')
     expect(htmlStudy).toContain('Sistem Leitner')
 
     const htmlWoop = renderToString(
-      <TaskWorkspaceModal taskId={firstTask.id} initialTab="WOOP" onClose={() => {}} />
+      <TaskWorkspaceModal taskId={firstTask.id} task={firstTask} initialTab="WOOP" onClose={() => {}} />
     )
     expect(htmlWoop).toContain('WOOP Framework')
 

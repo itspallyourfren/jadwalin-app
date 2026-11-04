@@ -27,6 +27,7 @@ import type {
 
 type TaskWorkspaceModalProps = {
   taskId: string | null // null = mode Tambah Tugas Baru
+  task?: TrackerTask | null
   initialTab?: 'STEPS' | 'WOOP' | 'STUDY'
   onClose: () => void
   onStartFocusFromModal?: (task: TrackerTask) => void
@@ -41,15 +42,27 @@ const CATEGORIES: readonly TaskCategory[] = [
 
 const TIME_BLOCKS: readonly TimeBlockTag[] = ['Pagi', 'Siang', 'Sore', 'Malam', 'Bebas']
 
+function parseSafeIso(val: string): string | null {
+  if (!val || !val.trim()) return null
+  try {
+    const d = new Date(val)
+    return isNaN(d.getTime()) ? null : d.toISOString()
+  } catch {
+    return null
+  }
+}
+
 export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   taskId,
+  task: propTask = null,
   initialTab = 'STEPS',
   onClose,
   onStartFocusFromModal,
 }) => {
-  const existingTask = useTrackerStore((s) =>
+  const storeTask = useTrackerStore((s) =>
     taskId ? s.tasks.find((t) => t.id === taskId) ?? null : null
   )
+  const existingTask = propTask ?? storeTask
   const addTask = useTrackerStore((s) => s.addTask)
   const updateTask = useTrackerStore((s) => s.updateTask)
   const deleteTask = useTrackerStore((s) => s.deleteTask)
@@ -80,6 +93,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   const [isImportant, setIsImportant] = useState(existingTask?.isImportant ?? true)
   const [isEatThatFrog, setIsEatThatFrog] = useState(existingTask?.isEatThatFrog ?? false)
   const [autoChunkOnCreate, setAutoChunkOnCreate] = useState(true)
+  const [titleError, setTitleError] = useState(false)
 
   // Tab saat membuka Tugas yang sudah ada
   const [activeTab, setActiveTab] = useState<'STEPS' | 'WOOP' | 'STUDY'>(initialTab)
@@ -87,20 +101,24 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   const [newSubtaskPareto, setNewSubtaskPareto] = useState(false)
   const [showSmartAssistant, setShowSmartAssistant] = useState(false)
 
-  const handleCreateSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!title.trim()) return
+  const handleCreateSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    const cleanTitle = title.trim()
+    if (!cleanTitle) {
+      setTitleError(true)
+      return
+    }
+    setTitleError(false)
+
     addTask({
-      title,
-      courseOrContext: courseOrContext || 'Umum',
+      title: cleanTitle,
+      courseOrContext: courseOrContext.trim() || 'Umum',
       category,
       scale,
       status,
       timeBlock,
-      deadlineIso: deadlineLocal ? new Date(deadlineLocal).toISOString() : null,
-      internalDeadlineIso: internalDeadlineLocal
-        ? new Date(internalDeadlineLocal).toISOString()
-        : null,
+      deadlineIso: parseSafeIso(deadlineLocal),
+      internalDeadlineIso: parseSafeIso(internalDeadlineLocal),
       isImportant,
       isEatThatFrog,
       autoChunk: autoChunkOnCreate,
@@ -117,10 +135,8 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
       scale,
       status,
       timeBlock,
-      deadlineIso: deadlineLocal ? new Date(deadlineLocal).toISOString() : null,
-      internalDeadlineIso: internalDeadlineLocal
-        ? new Date(internalDeadlineLocal).toISOString()
-        : null,
+      deadlineIso: parseSafeIso(deadlineLocal),
+      internalDeadlineIso: parseSafeIso(internalDeadlineLocal),
       isImportant,
     })
   }
@@ -154,12 +170,23 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
               </label>
               <input
                 type="text"
-                required
                 placeholder="Contoh: Susun Bab 2 Tinjauan Pustaka / Laporan Praktikum"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFDF9] border border-[#C9B99F] text-sm font-semibold text-[#1E1915] focus:outline-2 focus:outline-[#2C4A3E]"
+                onChange={(e) => {
+                  setTitle(e.target.value)
+                  if (titleError && e.target.value.trim()) setTitleError(false)
+                }}
+                className={`w-full px-3.5 py-2.5 rounded-xl bg-[#FFFDF9] border text-sm font-semibold text-[#1E1915] focus:outline-2 ${
+                  titleError
+                    ? 'border-[#C8432B] focus:outline-[#C8432B]'
+                    : 'border-[#C9B99F] focus:outline-[#2C4A3E]'
+                }`}
               />
+              {titleError && (
+                <p className="text-xs font-bold text-[#C8432B] mt-1">
+                  Judul tugas wajib diisi agar bisa disimpan ke papan.
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -335,15 +362,17 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="min-h-[42px] px-4 py-2 rounded-xl bg-[#F2ECE1] text-xs font-bold text-[#5C5148] cursor-pointer"
+                className="min-h-[44px] px-4 py-2 rounded-xl bg-[#F2ECE1] text-xs font-bold text-[#5C5148] cursor-pointer"
               >
                 Batal
               </button>
               <button
-                type="submit"
-                className="min-h-[42px] px-5 py-2 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] text-white text-xs font-extrabold cursor-pointer"
+                type="button"
+                onClick={() => handleCreateSubmit()}
+                className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 shadow-sm"
               >
-                Simpan Tugas ke Papan
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Simpan Tugas ke Papan</span>
               </button>
             </div>
           </form>

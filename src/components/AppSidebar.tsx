@@ -12,6 +12,7 @@ import {
   PanelLeftOpen,
   ShieldCheck,
   Timer,
+  Trash2,
 } from 'lucide-react'
 import { CHARACTER_PROFILES } from '../data/constants'
 import { calcSeinfeldStreak } from '../engine/studyAndTimerEngine'
@@ -43,6 +44,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
   const setActiveBoardView = useTrackerStore((s) => s.setActiveBoardView)
   const tasks = useTrackerStore((s) => s.tasks)
+  const clearAllTasks = useTrackerStore((s) => s.clearAllTasks)
   const participantName = useTrackerStore((s) => s.participantName)
   const characterId = useTrackerStore((s) => s.characterId)
   const completedDates = useTrackerStore((s) => s.completedDates)
@@ -257,6 +259,25 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               <span className="flex-1 text-left truncate">Cadangan Data</span>
             )}
           </button>
+
+          {tasks.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                if (window.confirm('Kosongkan semua daftar tugas di papan? Tindakan ini akan menghapus tugas saat ini agar papan bersih.')) {
+                  clearAllTasks()
+                  onCloseMobileDrawer()
+                }
+              }}
+              title="Kosongkan semua tugas untuk pengujian bersih"
+              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#C8432B] hover:bg-[#FDECE8] transition-colors cursor-pointer"
+            >
+              <Trash2 className="w-4 h-4 shrink-0" />
+              {(!isCollapsed || isMobile) && (
+                <span className="flex-1 text-left truncate">Kosongkan Papan</span>
+              )}
+            </button>
+          )}
         </div>
       </div>
 

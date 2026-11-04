@@ -37,29 +37,36 @@ export const FloatingSwitcherDock: React.FC<FloatingSwitcherDockProps> = ({
     <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 pointer-events-auto select-none">
       {/* Quick Board View Picker Popover */}
       {showPicker && (
-        <div className="mb-2 bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-1.5 shadow-xl flex items-center gap-1 animate-in fade-in zoom-in-95 duration-150">
-          {VIEWS.map((v) => {
-            const isSelected = activeBoardView === v.id
-            return (
-              <button
-                key={v.id}
-                type="button"
-                onClick={() => {
-                  setActiveBoardView(v.id)
-                  setShowPicker(false)
-                }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
-                  isSelected
-                    ? 'bg-[#2C4A3E] text-white shadow-2xs'
-                    : 'text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1]'
-                }`}
-              >
-                {v.icon}
-                <span>{v.label}</span>
-              </button>
-            )
-          })}
-        </div>
+        <>
+          <div
+            className="fixed inset-0 z-30"
+            onClick={() => setShowPicker(false)}
+            aria-hidden="true"
+          />
+          <div className="relative z-40 mb-2 bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-1.5 shadow-xl flex items-center gap-1 animate-in fade-in zoom-in-95 duration-150">
+            {VIEWS.map((v) => {
+              const isSelected = activeBoardView === v.id
+              return (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveBoardView(v.id)
+                    setShowPicker(false)
+                  }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#2C4A3E] text-white shadow-2xs'
+                      : 'text-[#5C5148] hover:text-[#1E1915] hover:bg-[#F2ECE1]'
+                  }`}
+                >
+                  {v.icon}
+                  <span>{v.label}</span>
+                </button>
+              )
+            })}
+          </div>
+        </>
       )}
 
       {/* Main Floating Island Dock */}

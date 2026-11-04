@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { useTrackerStore } from './useTrackerStore'
 
 describe('useTrackerStore', () => {
-  it('initializes with starter tasks and supports adding, chunking, and completing via 85% rule', () => {
+  it('initializes with a clean empty board and supports adding, auto-tab switching, and completing via 85% rule', () => {
     const store = useTrackerStore.getState()
-    expect(store.tasks.length).toBeGreaterThanOrEqual(3)
+    store.clearAllTasks()
+    expect(useTrackerStore.getState().tasks.length).toBe(0)
 
     const newId = store.addTask({
       title: 'Presentasi Akhir Semester',
@@ -15,10 +16,12 @@ describe('useTrackerStore', () => {
       isEatThatFrog: true,
     })
 
-    const added = useTrackerStore.getState().tasks.find((t) => t.id === newId)
+    const state = useTrackerStore.getState()
+    const added = state.tasks.find((t) => t.id === newId)
     expect(added).toBeDefined()
     expect(added?.isEatThatFrog).toBe(true)
     expect(added?.subtasks.length).toBeGreaterThanOrEqual(4)
+    expect(state.activeMobileKanbanTab).toBe('IN_PROGRESS')
 
     // Complete via 85% Rule
     useTrackerStore.getState().completeTaskVia85Rule(newId)

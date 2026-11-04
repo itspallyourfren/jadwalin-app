@@ -43,6 +43,7 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
   const exportBackupPayload = useTrackerStore((s) => s.exportBackupPayload)
   const importBackupPayload = useTrackerStore((s) => s.importBackupPayload)
   const importGameCommitment = useTrackerStore((s) => s.importGameCommitment)
+  const clearAllTasks = useTrackerStore((s) => s.clearAllTasks)
   const lastBackupSyncedIso = useTrackerStore((s) => s.lastBackupSyncedIso)
 
   const [permStatus, setPermStatus] = useState<string>('prompt')
@@ -538,6 +539,30 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                     </button>
                   </div>
                 </div>
+
+                {tasks.length > 0 && (
+                  <div className="pt-3 border-t border-[#E2D9C8] flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-[#C8432B]">Reset Data Papan</p>
+                      <p className="text-[11px] text-[#5C5148]">Kosongkan semua tugas untuk memulai pengujian dari lembar bersih.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm('Kosongkan semua daftar tugas? Semua tugas saat ini akan dihapus dari papan.')) {
+                          clearAllTasks()
+                          setFeedbackMessage({
+                            type: 'success',
+                            text: 'Papan tugas berhasil dikosongkan.',
+                          })
+                        }
+                      }}
+                      className="px-3.5 py-2 rounded-xl bg-[#FDECE8] hover:bg-[#F9D7D0] text-[#C8432B] text-xs font-bold transition-colors cursor-pointer"
+                    >
+                      Kosongkan Papan
+                    </button>
+                  </div>
+                )}
               </div>
             </>
           )}

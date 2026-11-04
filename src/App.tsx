@@ -20,6 +20,17 @@ export function App() {
   // Sidebar States (Mobile Drawer vs Desktop Collapse)
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false)
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false)
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < 768
+  )
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileViewport(window.innerWidth < 768)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Modals
   const [workspaceModalState, setWorkspaceModalState] = useState<{
@@ -44,6 +55,7 @@ export function App() {
   const [notifRecoveryTab, setNotifRecoveryTab] = useState<'NOTIFICATION' | 'RECOVERY' | null>(null)
 
   useEffect(() => {
+    void useTrackerStore.persist.rehydrate()
     void recoverFromIndexedDbIfNeeded()
   }, [recoverFromIndexedDbIfNeeded])
 
@@ -111,46 +123,51 @@ export function App() {
         setWorkspaceModalState({ open: true, taskId, initialTab: 'STEPS' })
       }
     >
-      {(isSimulatedMobile) => (
-        <div className="flex-1 flex h-full overflow-hidden relative">
-          {/* Responsive Sidebar (Mobile Sheet Drawer + Desktop Persistent Rail) */}
-          <AppSidebar
-            isMobileDrawerOpen={isMobileDrawerOpen}
-            onCloseMobileDrawer={() => setIsMobileDrawerOpen(false)}
-            isDesktopCollapsed={isDesktopCollapsed}
-            onToggleDesktopCollapse={() => setIsDesktopCollapsed((v) => !v)}
-            onOpenFocusTimer={() => handleStartFocusQuick()}
-            onOpenToolkit={() => setShowToolkitModal(true)}
-            onOpenNotifications={() => setNotifRecoveryTab('NOTIFICATION')}
-            onOpenBackup={() => setNotifRecoveryTab('RECOVERY')}
-          />
+      {(isSimulatedMobile) => {
+        const isMobileEffective = isSimulatedMobile || isMobileViewport
 
-          {/* Main Content Viewport */}
-          <div className="flex-1 flex flex-col min-h-0 min-w-0 bg-[#FAF7F2] relative">
-            <TopHeaderBar
-              isSimulatedMobile={isSimulatedMobile}
-              onToggleSidebar={() => {
-                if (isSimulatedMobile) {
-                  setIsMobileDrawerOpen(true)
-                } else {
-                  // In desktop, toggle collapse
-                  setIsDesktopCollapsed((v) => !v)
+        return (
+          <div className="flex-1 flex h-full overflow-hidden relative">
+            {/* Responsive Sidebar (Mobile Sheet Drawer + Desktop Persistent Rail) */}
+            <AppSidebar
+              isMobileDrawerOpen={isMobileDrawerOpen}
+              onCloseMobileDrawer={() => setIsMobileDrawerOpen(false)}
+              isDesktopCollapsed={isDesktopCollapsed}
+              onToggleDesktopCollapse={() => setIsDesktopCollapsed((v) => !v)}
+              onOpenFocusTimer={() => handleStartFocusQuick()}
+              onOpenToolkit={() => setShowToolkitModal(true)}
+              onOpenNotifications={() => setNotifRecoveryTab('NOTIFICATION')}
+              onOpenBackup={() => setNotifRecoveryTab('RECOVERY')}
+            />
+
+            {/* Main Content Viewport */}
+            <div className="flex-1 flex flex-col min-h-0 min-w-0 bg-[#FAF7F2] relative">
+              <TopHeaderBar
+                isSimulatedMobile={isMobileEffective}
+                onToggleSidebar={() => {
+                  if (isMobileEffective) {
+                    setIsMobileDrawerOpen(true)
+                  } else {
+                    setIsDesktopCollapsed((v) => !v)
+                  }
+                }}
+                onOpenNotificationModal={() => setNotifRecoveryTab('NOTIFICATION')}
+                onOpenBackupModal={() => setNotifRecoveryTab('RECOVERY')}
+                onOpenNewTask={() =>
+                  setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
                 }
-              }}
-              onOpenNotificationModal={() => setNotifRecoveryTab('NOTIFICATION')}
-              onOpenBackupModal={() => setNotifRecoveryTab('RECOVERY')}
-            />
+              />
 
-            <BoardViewContainer
-              isSimulatedMobile={isSimulatedMobile}
-              onOpenDetail={(task) =>
-                setWorkspaceModalState({ open: true, taskId: task.id, initialTab: 'STEPS' })
-              }
-              onStartFocusTimer={(task) => handleStartFocusQuick(task)}
-              onOpenNewTask={() =>
-                setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
-              }
-            />
+              <BoardViewContainer
+                isSimulatedMobile={isMobileEffective}
+                onOpenDetail={(task) =>
+                  setWorkspaceModalState({ open: true, taskId: task.id, initialTab: 'STEPS' })
+                }
+                onStartFocusTimer={(task) => handleStartFocusQuick(task)}
+                onOpenNewTask={() =>
+                  setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
+                }
+              />
 
             {/* Sleek Floating Center Switcher Dock (Non-Repetitive Command Center) */}
             <FloatingSwitcherDock
@@ -193,7 +210,8 @@ export function App() {
             />
           )}
         </div>
-      )}
+      )
+    }}
     </DeviceSimulatorWrapper>
   )
 }

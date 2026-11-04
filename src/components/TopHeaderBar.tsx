@@ -1,6 +1,6 @@
 // src/components/TopHeaderBar.tsx - Sleek Minimal Top Bar (No Repetitive Buttons)
 import React from 'react'
-import { Bell, Flame, Menu } from 'lucide-react'
+import { Bell, Flame, Menu, Plus } from 'lucide-react'
 import { calcSeinfeldStreak } from '../engine/studyAndTimerEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
 import type { BoardFrameworkView, TimeBlockTag } from '../data/types'
@@ -10,6 +10,7 @@ type TopHeaderBarProps = {
   onToggleSidebar: () => void
   onOpenNotificationModal: () => void
   onOpenBackupModal: () => void
+  onOpenNewTask?: () => void
 }
 
 const VIEW_TITLES: Record<BoardFrameworkView, string> = {
@@ -32,6 +33,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
   onToggleSidebar,
   onOpenNotificationModal,
   onOpenBackupModal,
+  onOpenNewTask,
 }) => {
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
   const activeTimeFilter = useTrackerStore((s) => s.activeTimeFilter)
@@ -52,7 +54,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             type="button"
             onClick={onToggleSidebar}
             aria-label="Buka menu navigasi"
-            className="p-2 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-[#1E1915] transition-colors cursor-pointer shrink-0"
+            className="p-2 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-[#1E1915] transition-all cursor-pointer shrink-0"
           >
             <Menu className="w-4 h-4" />
           </button>
@@ -85,13 +87,25 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
           })}
         </div>
 
-        {/* Right: Streak & Notification Icon */}
+        {/* Right: Plus Add Task + Streak + Notification Icon */}
         <div className="flex items-center gap-1.5 shrink-0">
+          {onOpenNewTask && (
+            <button
+              type="button"
+              onClick={onOpenNewTask}
+              aria-label="Tambah tugas baru"
+              title="Tambah tugas baru"
+              className="p-2 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white transition-all cursor-pointer shrink-0 shadow-2xs"
+            >
+              <Plus className="w-4 h-4 stroke-[2.75]" />
+            </button>
+          )}
+
           <button
             type="button"
             onClick={onOpenBackupModal}
             title="Rantai konsistensi harian"
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#FFFDF9] border border-[#E2D9C8] text-xs font-bold text-[#1E1915] cursor-pointer"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-xs font-bold text-[#1E1915] transition-all cursor-pointer"
           >
             <Flame
               className={`w-3.5 h-3.5 ${
@@ -106,7 +120,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
             type="button"
             onClick={onOpenNotificationModal}
             aria-label="Pengingat notifikasi"
-            className="p-2 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915] transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915] transition-all cursor-pointer"
           >
             <Bell className="w-4 h-4" />
           </button>

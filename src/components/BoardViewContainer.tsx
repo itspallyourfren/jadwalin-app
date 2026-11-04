@@ -1,6 +1,6 @@
 // src/components/BoardViewContainer.tsx - Clean, Spacious Multi-Framework Board
 import React from 'react'
-import { Eye, Grid2X2, Kanban, Layers, ListOrdered, Plus } from 'lucide-react'
+import { CheckCircle2, Eye, Grid2X2, Kanban, Layers, ListOrdered, Plus } from 'lucide-react'
 import {
   getIvyLeeQueue,
   getOneThreeFiveAllocation,
@@ -547,6 +547,30 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
           })}
         </div>
       </div>
+
+      {tasks.length === 0 && (
+        <div className="mb-4 bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-5 text-center space-y-3 shadow-2xs">
+          <div className="w-12 h-12 rounded-2xl bg-[#E7F6EE] text-[#1F7A4C] mx-auto flex items-center justify-center">
+            <CheckCircle2 className="w-6 h-6 stroke-[2.2]" />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-base font-extrabold text-[#1E1915]">Papan Tugas Masih Bersih</h2>
+            <p className="text-xs text-[#5C5148] max-w-sm mx-auto leading-relaxed font-medium">
+              Belum ada target tugas yang tercatat. Tambahkan tugas kuliah, skripsi, atau proyek pertamamu untuk mulai merapikan jadwal.
+            </p>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={onOpenNewTask}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white text-xs font-extrabold cursor-pointer transition-all shadow-sm"
+            >
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <span>Tambah Tugas Pertamamu</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {activeBoardView === 'KANBAN' && renderKanbanView()}
       {activeBoardView === 'EISENHOWER' && renderEisenhowerView()}
