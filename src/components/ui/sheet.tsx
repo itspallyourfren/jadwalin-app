@@ -1,5 +1,6 @@
-// src/components/ui/sheet.tsx - Accessible Slide-over Drawer Sheet (Upper Layer Overlay with Dim Backdrop)
+// src/components/ui/sheet.tsx - Accessible Slide-over Drawer Sheet (Upper Layer Overlay with Spring Animation & Dim Backdrop)
 import * as React from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '../../lib/utils'
 
@@ -30,32 +31,40 @@ export const Sheet: React.FC<SheetProps> = ({
     }
   }, [open, onClose])
 
-  if (!open) return null
-
   return (
-    <div className="absolute inset-0 z-50 flex overflow-hidden pointer-events-auto">
-      {/* Dimmed Backdrop - Dims the dashboard behind the drawer */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-[2px] transition-opacity cursor-pointer animate-in fade-in duration-200"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+    <AnimatePresence>
+      {open && (
+        <div className="absolute inset-0 z-50 flex overflow-hidden pointer-events-auto">
+          {/* Dimmed Backdrop - Smooth Fade In & Out */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="absolute inset-0 bg-black/50 backdrop-blur-[2px] cursor-pointer"
+            onClick={onClose}
+            aria-hidden="true"
+          />
 
-      {/* Drawer Panel - Upper Layer Content */}
-      <div
-        role="dialog"
-        aria-modal="true"
-        className={cn(
-          'relative z-50 flex h-full w-[280px] sm:w-[320px] max-w-[85vw] flex-col bg-[#FAF7F2] border-[#E2D9C8] shadow-2xl transition-transform duration-250 ease-out select-none',
-          side === 'left'
-            ? 'border-r animate-in slide-in-from-left'
-            : 'ml-auto border-l animate-in slide-in-from-right',
-          className
-        )}
-      >
-        {children}
-      </div>
-    </div>
+          {/* Drawer Panel - Fluid Spring Physics */}
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            initial={{ x: side === 'left' ? '-100%' : '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: side === 'left' ? '-100%' : '100%' }}
+            transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+            className={cn(
+              'relative z-50 flex h-full w-[280px] sm:w-[320px] max-w-[85vw] flex-col bg-[#FAF7F2] border-[#E2D9C8] shadow-2xl select-none',
+              side === 'left' ? 'border-r' : 'ml-auto border-l',
+              className
+            )}
+          >
+            {children}
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   )
 }
 

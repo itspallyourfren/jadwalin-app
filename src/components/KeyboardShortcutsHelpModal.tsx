@@ -1,5 +1,6 @@
-// src/components/KeyboardShortcutsHelpModal.tsx - Desktop Keyboard Shortcuts Cheat Sheet Modal
+// src/components/KeyboardShortcutsHelpModal.tsx - Desktop Keyboard Shortcuts Cheat Sheet Modal with Spring Animation
 import React, { useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { Command, Keyboard, X } from 'lucide-react'
 import { SHORTCUT_CATALOG, type KeyboardShortcutItem } from '../engine/keyboardShortcuts'
 
@@ -27,9 +28,14 @@ export const KeyboardShortcutsHelpModal: React.FC<KeyboardShortcutsHelpModalProp
       role="dialog"
       aria-modal="true"
       aria-labelledby="shortcuts-modal-title"
-      className="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4"
     >
-      <div className="bg-[#FAF7F2] w-full max-w-lg rounded-2xl border border-[#C9B99F] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+        className="bg-[#FAF7F2] w-full max-w-lg rounded-2xl border border-[#C9B99F] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+      >
         {/* Header */}
         <div className="px-5 py-3.5 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
@@ -112,7 +118,7 @@ export const KeyboardShortcutsHelpModal: React.FC<KeyboardShortcutsHelpModalProp
             Mengerti
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

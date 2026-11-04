@@ -1,5 +1,6 @@
-// src/components/FocusTimerModal.tsx - Dynamic Multi-Phase Focus & Break Cycle Timer
+// src/components/FocusTimerModal.tsx - Dynamic Multi-Phase Focus & Break Cycle Timer with Fluid Motion
 import React, { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import {
   Check,
   Coffee,
@@ -265,8 +266,13 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-[#FAF7F2] w-full max-w-lg rounded-2xl sm:rounded-3xl border border-[#C9B99F] shadow-xl overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+        className="bg-[#FAF7F2] w-full max-w-lg rounded-2xl sm:rounded-3xl border border-[#C9B99F] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+      >
         {/* Header */}
         <div className="px-5 py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
@@ -443,7 +449,11 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
                     </button>
                   )}
 
-                  <div className="text-5xl sm:text-6xl font-black text-[#1E1915] tracking-tight tabular-nums">
+                  <div
+                    className={`text-5xl sm:text-6xl font-black text-[#1E1915] tracking-tight tabular-nums transition-transform ${
+                      isRunning ? 'animate-pulse-subtle text-[#D4532F]' : ''
+                    }`}
+                  >
                     {formatSecondsMmSs(secondsLeft)}
                   </div>
 
@@ -597,7 +607,7 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

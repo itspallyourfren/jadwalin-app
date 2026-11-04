@@ -1,5 +1,6 @@
-// src/components/TaskWorkspaceModal.tsx - Add/Edit Task + Chunking, Pareto 80/20, Parkinson, WOOP, & Study Tools (SQ3R/Feynman/Blurting/Leitner)
+// src/components/TaskWorkspaceModal.tsx - Add/Edit Task + Chunking, Pareto 80/20, Parkinson, WOOP, & Study Tools with Fluid Motion
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 import {
   BookOpen,
   Brain,
@@ -145,8 +146,13 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   // Mode 1: Tambah Tugas Baru
   if (!existingTask) {
     return (
-      <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div className="bg-[#FAF7F2] w-full max-w-lg rounded-2xl sm:rounded-3xl border border-[#C9B99F] shadow-xl overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.94, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+          className="bg-[#FAF7F2] w-full max-w-lg rounded-2xl sm:rounded-3xl border border-[#C9B99F] shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+        >
           <div className="px-5 py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between shrink-0">
             <div>
               <h2 className="text-base sm:text-lg font-extrabold text-[#1E1915]">Tambah Tugas Baru</h2>
@@ -377,7 +383,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
               </button>
             </div>
           </form>
-        </div>
+        </motion.div>
       </div>
     )
   }
@@ -387,8 +393,13 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   const canClutch85 = isEligibleFor85Rule(existingTask)
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-[#FAF7F2] w-full max-w-2xl rounded-3xl border border-[#C9B99F] shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+        className="bg-[#FAF7F2] w-full max-w-2xl rounded-3xl border border-[#C9B99F] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+      >
         {/* Header */}
         <div className="px-5 py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-start justify-between gap-3 shrink-0">
           <div className="min-w-0 flex-1">
@@ -851,7 +862,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
             <span>Selesai &amp; Tutup</span>
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {showSmartAssistant && existingTask && (
         <SmartDecompositionModal

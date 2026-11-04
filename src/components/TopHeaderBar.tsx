@@ -1,5 +1,6 @@
-// src/components/TopHeaderBar.tsx - Sleek Minimal Top Bar with Shortcut Hints & Navigation Triggers
+// src/components/TopHeaderBar.tsx - Sleek Minimal Top Bar with Tactile Animations & Shortcut Hints
 import React from 'react'
+import { motion } from 'framer-motion'
 import { Bell, Flame, Keyboard, Menu, Plus } from 'lucide-react'
 import { calcSeinfeldStreak } from '../engine/studyAndTimerEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
@@ -42,16 +43,18 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
       >
         {/* Left: Hamburger Menu (Sidebar Trigger) */}
         <div className="flex items-center gap-2 min-w-0">
-          <button
+          <motion.button
             id="tutorial-sidebar-trigger"
             type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.92 }}
             onClick={onToggleSidebar}
             aria-label="Buka menu navigasi"
             title="Buka menu navigasi [Tab]"
-            className="w-10 h-10 min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-[#1E1915] transition-all cursor-pointer flex items-center justify-center shrink-0"
+            className="w-10 h-10 min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-[#1E1915] transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
           >
             <Menu className="w-4 h-4" />
-          </button>
+          </motion.button>
 
           <div className="min-w-0">
             <h1 className="text-sm font-extrabold text-[#1E1915] leading-none truncate">
@@ -63,58 +66,68 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
         {/* Right: Keyboard Shortcuts + Plus Add Task + Streak + Notification Icon */}
         <div className="flex items-center gap-1.5 shrink-0">
           {!isSimulatedMobile && onOpenShortcutsHelp && (
-            <button
+            <motion.button
               type="button"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.94 }}
               onClick={onOpenShortcutsHelp}
               title="Daftar tombol pintas keyboard desktop [?]"
               aria-label="Tombol pintas keyboard"
-              className="hidden sm:flex min-h-[40px] items-center gap-1.5 px-2.5 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-xs font-bold text-[#5C5148] hover:text-[#1E1915] transition-all cursor-pointer"
+              className="hidden sm:flex min-h-[40px] items-center gap-1.5 px-2.5 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-xs font-bold text-[#5C5148] hover:text-[#1E1915] transition-colors cursor-pointer shadow-2xs"
             >
               <Keyboard className="w-3.5 h-3.5 text-[#2C4A3E]" />
               <span className="hidden md:inline">Pintasan</span>
               <kbd className="px-1.5 py-0.2 rounded bg-[#FAF7F2] border border-[#C9B99F] text-[10px] font-black">
                 ?
               </kbd>
-            </button>
+            </motion.button>
           )}
 
           {onOpenNewTask && (
-            <button
+            <motion.button
               id="tutorial-add-task-btn"
               type="button"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.92 }}
               onClick={onOpenNewTask}
               aria-label="Tambah tugas baru"
               title="Tambah tugas baru [N]"
-              className="w-10 h-10 min-w-[40px] rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] active:scale-95 text-white transition-all cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
+              className="w-10 h-10 min-w-[40px] rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] text-white transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
             >
               <Plus className="w-4 h-4 stroke-[2.75]" />
-            </button>
+            </motion.button>
           )}
 
-          <button
+          <motion.button
             type="button"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.94 }}
             onClick={onOpenBackupModal}
             title="Rantai konsistensi harian & profil [B]"
-            className="min-h-[40px] flex items-center gap-1.5 px-3 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-xs font-bold text-[#1E1915] transition-all cursor-pointer"
+            className="min-h-[40px] flex items-center gap-1.5 px-3 rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-xs font-bold text-[#1E1915] transition-colors cursor-pointer shadow-2xs"
           >
             <Flame
               className={`w-3.5 h-3.5 ${
-                streak.isTodayCompleted ? 'text-[#D4532F]' : 'text-[#8C7E72]'
+                streak.isTodayCompleted
+                  ? 'text-[#D4532F] animate-flame-flicker'
+                  : 'text-[#8C7E72]'
               }`}
               strokeWidth={2}
             />
             <span>{streak.currentStreak} hr</span>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
             type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.92 }}
             onClick={onOpenNotificationModal}
             aria-label="Pengingat notifikasi"
             title="Pengingat notifikasi"
-            className="w-10 h-10 min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] active:scale-95 border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915] transition-all cursor-pointer flex items-center justify-center shrink-0"
+            className="w-10 h-10 min-w-[40px] rounded-xl bg-[#FFFDF9] hover:bg-[#F2ECE1] border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915] transition-colors cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
           >
             <Bell className="w-4 h-4" />
-          </button>
+          </motion.button>
         </div>
       </div>
     </header>

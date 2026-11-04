@@ -58,6 +58,51 @@ html, body {
   background: #8C7E72;
 }
 
+/* Tasteful Fluid Animations */
+@keyframes pulse-subtle {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.88;
+  }
+}
+
+@keyframes flame-flicker {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.08) rotate(-2deg);
+  }
+  75% {
+    transform: scale(0.96) rotate(2deg);
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2.4s ease-in-out infinite;
+}
+
+.animate-flame-flicker {
+  animation: flame-flicker 1.8s ease-in-out infinite;
+}
+
+.animate-float-gentle {
+  animation: float-gentle 3s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;

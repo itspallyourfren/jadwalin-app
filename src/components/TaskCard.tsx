@@ -1,5 +1,6 @@
-// src/components/TaskCard.tsx - Minimal, Scannable Task Card with Collapsible Checklist
+// src/components/TaskCard.tsx - Animated Scannable Task Card with Spring Physics & Tactile Interactions
 import React, { useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowRight,
   Calendar,
@@ -54,9 +55,16 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     : null
 
   return (
-    <article
+    <motion.article
+      layout
       tabIndex={0}
       role="button"
+      initial={{ opacity: 0, y: 10, scale: 0.99 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      whileHover={{ y: -2, transition: { duration: 0.15 } }}
+      whileTap={{ scale: 0.985 }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
       onClick={() => onOpenDetail(task)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -64,7 +72,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           onOpenDetail(task)
         }
       }}
-      className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 hover:border-[#C9B99F] hover:shadow-sm focus:ring-2 focus:ring-[#2C4A3E]/40 focus:outline-hidden transition-all flex flex-col gap-2.5 cursor-pointer"
+      className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 hover:border-[#C9B99F] hover:shadow-xs focus:ring-2 focus:ring-[#2C4A3E]/40 focus:outline-hidden transition-colors flex flex-col gap-2.5 cursor-pointer select-none"
     >
       {/* Row 1: Context + Scale + Pin */}
       <div className="flex items-center justify-between gap-2">
@@ -93,8 +101,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         </div>
 
         {!isCompleted && (
-          <button
+          <motion.button
             type="button"
+            whileHover={{ scale: 1.15 }}
+            whileTap={{ scale: 0.88 }}
             onClick={(e) => {
               e.stopPropagation()
               toggleEatThatFrog(task.id)
@@ -108,7 +118,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             }`}
           >
             <Flame className="w-4 h-4" strokeWidth={2} />
-          </button>
+          </motion.button>
         )}
       </div>
 
@@ -121,16 +131,18 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         {task.title}
       </h3>
 
-      {/* Row 3: Slim Progress Bar + Deadline + Collapsible Steps Trigger */}
+      {/* Row 3: Animated Progress Bar + Deadline + Collapsible Steps Trigger */}
       {!isCompleted && (
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <div className="flex-1 h-1.5 rounded-full bg-[#F2ECE1] overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-200 ${
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.45, ease: 'easeOut' }}
+                className={`h-full rounded-full ${
                   progress >= 85 ? 'bg-[#1F7A4C]' : 'bg-[#2C4A3E]'
                 }`}
-                style={{ width: `${progress}%` }}
               />
             </div>
             <span className="text-xs font-semibold text-[#5C5148] tabular-nums">{progress}%</span>
@@ -173,109 +185,127 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         </div>
       )}
 
-      {/* Expandable Inline Subtask Checklist (Hidden by Default to Keep Mobile Clean) */}
-      {expandSteps && task.subtasks.length > 0 && !isCompleted && (
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className="pt-1.5 pb-1 px-2.5 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] space-y-1.5"
-        >
-          {task.subtasks.map((sub) => (
-            <label
-              key={sub.id}
-              className="flex items-start gap-2 text-xs text-[#1E1915] cursor-pointer py-0.5"
-            >
-              <input
-                type="checkbox"
-                checked={sub.completed}
-                onChange={() => toggleSubtask(task.id, sub.id)}
-                className="mt-0.5 w-3.5 h-3.5 accent-[#2C4A3E] rounded cursor-pointer shrink-0"
-              />
-              <span
-                className={`flex-1 leading-snug ${
-                  sub.completed ? 'line-through text-[#8C7E72]' : 'font-medium'
-                }`}
-              >
-                {sub.title}
-              </span>
-              {sub.isParetoCore && (
-                <span title="Langkah inti" className="shrink-0 mt-0.5">
-                  <Star className="w-3.5 h-3.5 text-[#B86B14] fill-[#B86B14]" />
-                </span>
-              )}
-            </label>
-          ))}
-        </div>
-      )}
+      {/* Expandable Inline Subtask Checklist with Smooth Height Animation */}
+      <AnimatePresence>
+        {expandSteps && task.subtasks.length > 0 && !isCompleted && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.22, ease: 'easeInOut' }}
+            onClick={(e) => e.stopPropagation()}
+            className="overflow-hidden"
+          >
+            <div className="pt-1.5 pb-1 px-2.5 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] space-y-1.5">
+              {task.subtasks.map((sub) => (
+                <label
+                  key={sub.id}
+                  className="flex items-start gap-2 text-xs text-[#1E1915] cursor-pointer py-0.5"
+                >
+                  <input
+                    type="checkbox"
+                    checked={sub.completed}
+                    onChange={() => toggleSubtask(task.id, sub.id)}
+                    className="mt-0.5 w-3.5 h-3.5 accent-[#2C4A3E] rounded cursor-pointer shrink-0"
+                  />
+                  <span
+                    className={`flex-1 leading-snug ${
+                      sub.completed ? 'line-through text-[#8C7E72]' : 'font-medium'
+                    }`}
+                  >
+                    {sub.title}
+                  </span>
+                  {sub.isParetoCore && (
+                    <span title="Langkah inti" className="shrink-0 mt-0.5">
+                      <Star className="w-3.5 h-3.5 text-[#B86B14] fill-[#B86B14]" />
+                    </span>
+                  )}
+                </label>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Row 4: Clean Action Row */}
+      {/* Row 4: Clean Action Row with Tactile Buttons */}
       <div className="pt-2 border-t border-[#E2D9C8]/60 flex items-center justify-between gap-2 flex-wrap">
         {!isCompleted ? (
           <>
-            <button
+            <motion.button
               type="button"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.94 }}
               onClick={(e) => {
                 e.stopPropagation()
                 onStartFocusTimer(task)
               }}
-              className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
             >
               <Play className="w-3 h-3 fill-white" />
               <span>Fokus</span>
-            </button>
+            </motion.button>
 
             <div className="flex items-center gap-1.5 flex-wrap">
               {task.status === 'BACKLOG' ? (
-                <button
+                <motion.button
                   type="button"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.94 }}
                   onClick={(e) => {
                     e.stopPropagation()
                     moveTaskStatus(task.id, 'IN_PROGRESS')
                   }}
-                  className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] text-white text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                  className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] text-white text-xs font-semibold flex items-center gap-1 cursor-pointer shadow-2xs"
                 >
                   <span>Kerjakan Hari Ini</span>
                   <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                </motion.button>
               ) : (
                 <>
-                  <button
+                  <motion.button
                     type="button"
+                    whileHover={{ scale: 1.08 }}
+                    whileTap={{ scale: 0.9 }}
                     onClick={(e) => {
                       e.stopPropagation()
                       moveTaskStatus(task.id, 'BACKLOG')
                     }}
                     title="Simpan ke Laci"
                     aria-label="Simpan ke Laci"
-                    className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-[#8C7E72] hover:text-[#1E1915] hover:bg-[#F2ECE1] text-xs font-medium flex items-center gap-1 cursor-pointer"
+                    className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-[#8C7E72] hover:text-[#1E1915] hover:bg-[#F2ECE1] text-xs font-medium flex items-center gap-1 cursor-pointer transition-colors"
                   >
                     <Undo2 className="w-4 h-4" />
-                  </button>
+                  </motion.button>
 
                   {canClutch85 ? (
-                    <button
+                    <motion.button
                       type="button"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.94 }}
                       onClick={(e) => {
                         e.stopPropagation()
                         completeTaskVia85Rule(task.id)
                       }}
-                      className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#1F7A4C] hover:bg-[#18633C] text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
+                      className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#1F7A4C] hover:bg-[#18633C] text-white text-xs font-bold flex items-center gap-1 cursor-pointer shadow-2xs"
                       title="Progres sudah 85% — kumpulkan sekarang tanpa ragu"
                     >
-                      <Check className="w-3.5 h-3.5" />
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                       <span>Selesai Cukup</span>
-                    </button>
+                    </motion.button>
                   ) : (
-                    <button
+                    <motion.button
                       type="button"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.94 }}
                       onClick={(e) => {
                         e.stopPropagation()
                         moveTaskStatus(task.id, 'COMPLETED')
                       }}
-                      className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#E7F6EE] hover:bg-[#D1EEDE] text-[#1F7A4C] text-xs font-bold flex items-center gap-1 cursor-pointer"
+                      className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#E7F6EE] hover:bg-[#D1EEDE] text-[#1F7A4C] text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
                     >
-                      <Check className="w-3.5 h-3.5" />
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                       <span>Selesai</span>
-                    </button>
+                    </motion.button>
                   )}
                 </>
               )}
@@ -299,6 +329,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           </div>
         )}
       </div>
-    </article>
+    </motion.article>
   )
 }

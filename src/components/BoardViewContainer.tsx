@@ -1,5 +1,6 @@
-// src/components/BoardViewContainer.tsx - Clean, Spacious Multi-Framework Board
+// src/components/BoardViewContainer.tsx - Clean, Spacious Multi-Framework Board with Fluid Animations
 import React from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { CheckCircle2, Eye, Plus, Sparkles } from 'lucide-react'
 import {
   getIvyLeeQueue,
@@ -89,7 +90,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
 
     return (
       <div className="space-y-3.5">
-        {/* Segmented Tab Switcher on Mobile */}
+        {/* Segmented Tab Switcher on Mobile with Smooth Sliding Pill */}
         <div
           className={`${
             isSimulatedMobile ? 'flex' : 'flex md:hidden'
@@ -98,25 +99,33 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
           {mobileTabsOrder.map((col) => {
             const active = activeMobileKanbanTab === col.status
             return (
-              <button
+              <motion.button
                 key={col.status}
                 type="button"
+                whileTap={{ scale: 0.96 }}
                 onClick={() => setActiveMobileKanbanTab(col.status)}
-                className={`flex-1 min-h-[42px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                className={`relative flex-1 min-h-[42px] py-2 px-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
                   active
-                    ? 'bg-[#FFFDF9] text-[#1E1915] shadow-xs'
+                    ? 'text-[#1E1915]'
                     : 'text-[#5C5148] hover:text-[#1E1915]'
                 }`}
               >
-                <span>{col.title}</span>
+                {active && (
+                  <motion.div
+                    layoutId="activeMobileKanbanTabPill"
+                    className="absolute inset-0 bg-[#FFFDF9] rounded-xl shadow-2xs border border-[#C9B99F]/50"
+                    transition={{ type: 'spring', damping: 26, stiffness: 350 }}
+                  />
+                )}
+                <span className="relative z-10">{col.title}</span>
                 <span
-                  className={`text-[11px] px-1.5 py-0.2 rounded-full font-extrabold ${
+                  className={`relative z-10 text-[11px] px-1.5 py-0.2 rounded-full font-extrabold ${
                     active ? 'bg-[#2C4A3E] text-white' : 'bg-[#E2D9C8] text-[#5C5148]'
                   }`}
                 >
                   {col.items.length}
                 </span>
-              </button>
+              </motion.button>
             )
           })}
         </div>
@@ -173,14 +182,16 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                   </div>
                 ) : (
                   <div className="space-y-2.5">
-                    {col.items.map((task) => (
-                      <TaskCard
-                        key={task.id}
-                        task={task}
-                        onOpenDetail={onOpenDetail}
-                        onStartFocusTimer={onStartFocusTimer}
-                      />
-                    ))}
+                    <AnimatePresence mode="popLayout">
+                      {col.items.map((task) => (
+                        <TaskCard
+                          key={task.id}
+                          task={task}
+                          onOpenDetail={onOpenDetail}
+                          onStartFocusTimer={onStartFocusTimer}
+                        />
+                      ))}
+                    </AnimatePresence>
                   </div>
                 )}
               </section>
@@ -260,29 +271,31 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
               {grouped[q.key].length === 0 ? (
                 <p className="text-xs text-[#8C7E72] py-4 text-center">Kosong</p>
               ) : (
-                grouped[q.key].map((task) => (
-                  <div key={task.id} className="space-y-1">
-                    <TaskCard
-                      task={task}
-                      onOpenDetail={onOpenDetail}
-                      onStartFocusTimer={onStartFocusTimer}
-                    />
-                    <div className="flex items-center gap-1 px-1 flex-wrap">
-                      {quadrants
-                        .filter((other) => other.key !== q.key)
-                        .map((other) => (
-                          <button
-                            key={other.key}
-                            type="button"
-                            onClick={() => setTaskQuadrant(task.id, other.important, other.urgent)}
-                            className="text-xs font-medium px-2 py-0.5 rounded-md bg-[#FFFDF9] hover:bg-[#1E1915] hover:text-white border border-[#E2D9C8] text-[#5C5148] transition-colors cursor-pointer"
-                          >
-                            → {other.badge}
-                          </button>
-                        ))}
+                <AnimatePresence mode="popLayout">
+                  {grouped[q.key].map((task) => (
+                    <div key={task.id} className="space-y-1">
+                      <TaskCard
+                        task={task}
+                        onOpenDetail={onOpenDetail}
+                        onStartFocusTimer={onStartFocusTimer}
+                      />
+                      <div className="flex items-center gap-1 px-1 flex-wrap">
+                        {quadrants
+                          .filter((other) => other.key !== q.key)
+                          .map((other) => (
+                            <button
+                              key={other.key}
+                              type="button"
+                              onClick={() => setTaskQuadrant(task.id, other.important, other.urgent)}
+                              className="text-xs font-medium px-2 py-0.5 rounded-md bg-[#FFFDF9] hover:bg-[#1E1915] hover:text-white border border-[#E2D9C8] text-[#5C5148] transition-colors cursor-pointer"
+                            >
+                              → {other.badge}
+                            </button>
+                          ))}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+                </AnimatePresence>
               )}
             </div>
           </section>
@@ -337,22 +350,24 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                 {sec.items.length === 0 ? (
                   <p className="text-xs text-[#8C7E72] py-4 text-center">Belum dipilih</p>
                 ) : (
-                  sec.items.map((task) => (
-                    <div key={task.id} className="space-y-1">
-                      <TaskCard
-                        task={task}
-                        onOpenDetail={onOpenDetail}
-                        onStartFocusTimer={onStartFocusTimer}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setOneThreeFiveSlot(task.id, null)}
-                        className="text-xs text-[#8C7E72] hover:text-[#1E1915] px-1 cursor-pointer"
-                      >
-                        Lepas dari slot
-                      </button>
-                    </div>
-                  ))
+                  <AnimatePresence mode="popLayout">
+                    {sec.items.map((task) => (
+                      <div key={task.id} className="space-y-1">
+                        <TaskCard
+                          task={task}
+                          onOpenDetail={onOpenDetail}
+                          onStartFocusTimer={onStartFocusTimer}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setOneThreeFiveSlot(task.id, null)}
+                          className="text-xs text-[#8C7E72] hover:text-[#1E1915] px-1 cursor-pointer"
+                        >
+                          Lepas dari slot
+                        </button>
+                      </div>
+                    ))}
+                  </AnimatePresence>
                 )}
               </div>
             </section>
@@ -434,40 +449,42 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
         </div>
 
         <div className="space-y-2.5">
-          {visibleQueue.map((task) => (
-            <div key={task.id} className="space-y-1">
-              <TaskCard
-                task={task}
-                onOpenDetail={onOpenDetail}
-                onStartFocusTimer={onStartFocusTimer}
-              />
-              <div className="flex items-center justify-between px-1">
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5, 6].map((r) => (
-                    <button
-                      key={r}
-                      type="button"
-                      onClick={() => setIvyLeeRank(task.id, r)}
-                      className={`w-7 h-7 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
-                        task.ivyLeeRank === r
-                          ? 'bg-[#1E1915] text-white shadow-2xs'
-                          : 'bg-[#FFFDF9] border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915]'
-                      }`}
-                    >
-                      {r}
-                    </button>
-                  ))}
+          <AnimatePresence mode="popLayout">
+            {visibleQueue.map((task) => (
+              <div key={task.id} className="space-y-1">
+                <TaskCard
+                  task={task}
+                  onOpenDetail={onOpenDetail}
+                  onStartFocusTimer={onStartFocusTimer}
+                />
+                <div className="flex items-center justify-between px-1">
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5, 6].map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setIvyLeeRank(task.id, r)}
+                        className={`w-7 h-7 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
+                          task.ivyLeeRank === r
+                            ? 'bg-[#1E1915] text-white shadow-2xs'
+                            : 'bg-[#FFFDF9] border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915]'
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIvyLeeRank(task.id, null)}
+                    className="text-xs text-[#8C7E72] hover:text-[#1E1915] cursor-pointer"
+                  >
+                    Lepas
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIvyLeeRank(task.id, null)}
-                  className="text-xs text-[#8C7E72] hover:text-[#1E1915] cursor-pointer"
-                >
-                  Lepas
-                </button>
               </div>
-            </div>
-          ))}
+            ))}
+          </AnimatePresence>
         </div>
 
         {ivy.candidates.length > 0 && (
@@ -519,18 +536,26 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
           {TIME_OPTIONS.map((opt) => {
             const active = activeTimeFilter === opt.value
             return (
-              <button
+              <motion.button
                 key={opt.value}
                 type="button"
+                whileTap={{ scale: 0.94 }}
                 onClick={() => setActiveTimeFilter(opt.value)}
-                className={`min-h-[36px] px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
+                className={`relative min-h-[36px] px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
                   active
-                    ? 'bg-[#1E1915] text-white shadow-2xs'
+                    ? 'text-white'
                     : 'text-[#5C5148] bg-[#F2ECE1]/70 hover:bg-[#F2ECE1] border border-[#E2D9C8]'
                 }`}
               >
-                {opt.label}
-              </button>
+                {active && (
+                  <motion.div
+                    layoutId="activeTimeFilterPill"
+                    className="absolute inset-0 bg-[#1E1915] rounded-xl shadow-2xs"
+                    transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+                  />
+                )}
+                <span className="relative z-10">{opt.label}</span>
+              </motion.button>
             )
           })}
         </div>
@@ -574,10 +599,21 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
         </div>
       )}
 
-      {activeBoardView === 'KANBAN' && renderKanbanView()}
-      {activeBoardView === 'EISENHOWER' && renderEisenhowerView()}
-      {activeBoardView === 'ONE_THREE_FIVE' && renderOneThreeFiveView()}
-      {activeBoardView === 'IVY_LEE' && renderIvyLeeView()}
+      {/* Animated Multi-Framework Board Switcher */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeBoardView}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.18, ease: 'easeOut' }}
+        >
+          {activeBoardView === 'KANBAN' && renderKanbanView()}
+          {activeBoardView === 'EISENHOWER' && renderEisenhowerView()}
+          {activeBoardView === 'ONE_THREE_FIVE' && renderOneThreeFiveView()}
+          {activeBoardView === 'IVY_LEE' && renderIvyLeeView()}
+        </motion.div>
+      </AnimatePresence>
     </main>
   )
 }

@@ -1,5 +1,6 @@
-// src/components/TechniqueToolkitModal.tsx - Clean, Professional Productivity Methods Catalog
+// src/components/TechniqueToolkitModal.tsx - Clean, Professional Productivity Methods Catalog with Spring Motion
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 import {
   ArrowUpRight,
   BookOpen,
@@ -110,8 +111,13 @@ export const TechniqueToolkitModal: React.FC<TechniqueToolkitModalProps> = ({
       : TECHNIQUE_CATALOG.filter((t) => t.tier === selectedTier)
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-[#FAF7F2] w-full max-w-3xl rounded-3xl border border-[#C9B99F] shadow-xl overflow-hidden flex flex-col max-h-[88vh]">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+        className="bg-[#FAF7F2] w-full max-w-3xl rounded-3xl border border-[#C9B99F] shadow-2xl overflow-hidden flex flex-col max-h-[88vh]"
+      >
         {/* Header */}
         <div className="px-5 py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between shrink-0">
           <div>
@@ -196,7 +202,7 @@ export const TechniqueToolkitModal: React.FC<TechniqueToolkitModalProps> = ({
             )
           })}
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }
