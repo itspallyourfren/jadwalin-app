@@ -15,6 +15,7 @@ import {
   Pin,
   PinOff,
   ShieldCheck,
+  Smartphone,
   Sparkles,
   Timer,
   Trash2,
@@ -23,6 +24,7 @@ import {
 } from 'lucide-react'
 import { CHARACTER_PROFILES } from '../data/constants'
 import { calcSeinfeldStreak } from '../engine/studyAndTimerEngine'
+import { usePwaInstall } from '../hooks/usePwaInstall'
 import { useTrackerStore } from '../store/useTrackerStore'
 import { Sheet, SheetClose } from './ui/sheet'
 import type { BoardFrameworkView } from '../data/types'
@@ -70,6 +72,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   const soundEnabled = useTrackerStore((s) => s.soundEnabled)
   const toggleSound = useTrackerStore((s) => s.toggleSound)
   const gameCommitment = useTrackerStore((s) => s.gameCommitment)
+  const { isInstalled, installApp } = usePwaInstall()
 
   const charProfile = CHARACTER_PROFILES[characterId] ?? CHARACTER_PROFILES['CHR-01']
   const streak = calcSeinfeldStreak(completedDates)
@@ -346,6 +349,29 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               </span>
             )}
           </button>
+
+          {!isInstalled && (
+            <button
+              type="button"
+              onClick={async () => {
+                const res = await installApp()
+                if (res === 'accepted') {
+                  onCloseMobileDrawer()
+                } else if (res === 'unsupported') {
+                  alert(
+                    'Cara Pasang di Android:\n1. Buka menu Chrome (ikon titik 3 di kanan atas)\n2. Pilih "Pasang aplikasi" atau "Install app"\n3. Aplikasi Jadwal-In! akan otomatis terunduh sebagai WebAPK mandiri.'
+                  )
+                }
+              }}
+              title="Pasang aplikasi Jadwal-In! di layar utama HP (WebAPK mandiri)"
+              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#2C4A3E] bg-[#E8EFE9] hover:bg-[#D5E4D7] transition-colors cursor-pointer"
+            >
+              <Smartphone className="w-4 h-4 text-[#2C4A3E] shrink-0" />
+              {(!isCollapsed || isOverlayMode) && (
+                <span className="flex-1 text-left truncate">Pasang Aplikasi (PWA)</span>
+              )}
+            </button>
+          )}
 
           <button
             type="button"
