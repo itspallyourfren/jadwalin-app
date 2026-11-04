@@ -85,7 +85,7 @@ describe('App & Modals SSR Render Verification', () => {
     )
     expect(htmlDiagnostic).toContain('Kondisi &amp; Perasaan Pribadi')
     expect(htmlDiagnostic).toContain('Nama Panggilanmu')
-    expect(htmlDiagnostic).toContain('Lanjut ke Asesmen MAPS-15')
+    expect(htmlDiagnostic).toContain('Lanjut ke Cek Pola Belajar')
 
     // 5. NotificationAndRecoveryModal
     const htmlNotif = renderToString(
