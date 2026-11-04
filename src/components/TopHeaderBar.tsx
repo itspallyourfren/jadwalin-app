@@ -41,6 +41,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
         {/* Left: Hamburger Menu (Sidebar Trigger) */}
         <div className="flex items-center gap-2 min-w-0">
           <button
+            id="tutorial-sidebar-trigger"
             type="button"
             onClick={onToggleSidebar}
             aria-label="Buka menu navigasi"
@@ -60,6 +61,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
         <div className="flex items-center gap-1.5 shrink-0">
           {onOpenNewTask && (
             <button
+              id="tutorial-add-task-btn"
               type="button"
               onClick={onOpenNewTask}
               aria-label="Tambah tugas baru"

@@ -5,6 +5,7 @@ import {
   BookOpen,
   Flame,
   Grid2X2,
+  HelpCircle,
   Kanban,
   Layers,
   ListOrdered,
@@ -31,6 +32,7 @@ type AppSidebarProps = {
   onOpenNotifications: () => void
   onOpenBackup: () => void
   onOpenDiagnostic: () => void
+  onStartTour?: () => void
 }
 
 export const AppSidebar: React.FC<AppSidebarProps> = ({
@@ -43,6 +45,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   onOpenNotifications,
   onOpenBackup,
   onOpenDiagnostic,
+  onStartTour,
 }) => {
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
   const setActiveBoardView = useTrackerStore((s) => s.setActiveBoardView)
@@ -76,11 +79,8 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           />
           {(!isCollapsed || isMobile) && (
             <div className="min-w-0">
-              <span className="text-sm font-extrabold text-[#1E1915] block truncate leading-none">
-                Jadwal-In!
-              </span>
-              <span className="text-xs text-[#5C5148] font-medium block truncate mt-0.5">
-                Pocket Planner
+              <span className="text-[11px] font-bold text-[#8C7E72] block truncate tracking-wide">
+                Pocket Planner Mahasiswa
               </span>
             </div>
           )}
@@ -238,6 +238,23 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               <span className="flex-1 text-left truncate">Diagnosis Gaya Belajar</span>
             )}
           </button>
+
+          {onStartTour && (
+            <button
+              type="button"
+              onClick={() => {
+                onCloseMobileDrawer()
+                onStartTour()
+              }}
+              title="Panduan Interaktif Penggunaan Aplikasi (Tutorial)"
+              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-[#2C4A3E] bg-[#2C4A3E]/8 hover:bg-[#2C4A3E]/15 transition-colors cursor-pointer"
+            >
+              <HelpCircle className="w-4 h-4 text-[#2C4A3E] shrink-0" />
+              {(!isCollapsed || isMobile) && (
+                <span className="flex-1 text-left truncate">Panduan Aplikasi (Tutorial)</span>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Section C: Pengaturan & Cadangan Data */}

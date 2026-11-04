@@ -77,6 +77,7 @@ export const FloatingSwitcherDock: React.FC<FloatingSwitcherDockProps> = ({
       >
         {/* Left: View Switcher Trigger */}
         <button
+          id="tutorial-framework-dock"
           type="button"
           onClick={() => setShowPicker((prev) => !prev)}
           aria-label="Pilih tampilan papan"
@@ -105,6 +106,7 @@ export const FloatingSwitcherDock: React.FC<FloatingSwitcherDockProps> = ({
 
         {/* Right: Quick Focus Timer Trigger */}
         <button
+          id="tutorial-focus-timer-btn"
           type="button"
           onClick={onOpenFocusTimer}
           aria-label="Mulai Timer Fokus"

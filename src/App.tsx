@@ -10,6 +10,7 @@ import { ProcrastinationDiagnosticModal } from './components/ProcrastinationDiag
 import { TaskWorkspaceModal } from './components/TaskWorkspaceModal'
 import { TechniqueToolkitModal } from './components/TechniqueToolkitModal'
 import { TopHeaderBar } from './components/TopHeaderBar'
+import { startAppTutorialTour } from './engine/appTourGuide'
 import { useTrackerStore } from './store/useTrackerStore'
 import type { TechniqueCatalogItem, TimerMode, TrackerTask } from './data/types'
 
@@ -146,6 +147,7 @@ export function App() {
               onOpenNotifications={() => setNotifRecoveryTab('NOTIFICATION')}
               onOpenBackup={() => setNotifRecoveryTab('RECOVERY')}
               onOpenDiagnostic={() => setShowDiagnosticModal(true)}
+              onStartTour={() => startAppTutorialTour()}
             />
 
             {/* Main Content Viewport */}
@@ -215,6 +217,13 @@ export function App() {
           {showDiagnosticModal && (
             <ProcrastinationDiagnosticModal
               onClose={() => setShowDiagnosticModal(false)}
+              onStartTourAfterDiagnosis={() => {
+                setShowDiagnosticModal(false)
+                // Small timeout to allow modal animation to exit cleanly before Driver.js highlights
+                setTimeout(() => {
+                  startAppTutorialTour()
+                }, 350)
+              }}
             />
           )}
 

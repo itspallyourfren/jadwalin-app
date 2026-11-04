@@ -54,7 +54,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     : null
 
   return (
-    <article className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 hover:border-[#C9B99F] transition-colors flex flex-col gap-2.5">
+    <article
+      onClick={() => onOpenDetail(task)}
+      className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 hover:border-[#C9B99F] hover:shadow-sm transition-all flex flex-col gap-2.5 cursor-pointer"
+    >
       {/* Row 1: Context + Scale + Pin */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
@@ -84,7 +87,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         {!isCompleted && (
           <button
             type="button"
-            onClick={() => toggleEatThatFrog(task.id)}
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleEatThatFrog(task.id)
+            }}
             title="Prioritas Utama Hari Ini"
             aria-label="Prioritas Utama"
             className={`w-8 h-8 rounded-lg transition-colors cursor-pointer flex items-center justify-center shrink-0 ${
@@ -100,8 +106,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
       {/* Row 2: Task Title */}
       <h3
-        onClick={() => onOpenDetail(task)}
-        className={`text-[15px] font-bold text-[#1E1915] leading-snug cursor-pointer hover:text-[#2C4A3E] break-words ${
+        className={`text-[15px] font-bold text-[#1E1915] leading-snug hover:text-[#2C4A3E] break-words ${
           isCompleted ? 'line-through text-[#8C7E72]' : ''
         }`}
       >
@@ -128,7 +133,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
               {task.subtasks.length > 0 && (
                 <button
                   type="button"
-                  onClick={() => setExpandSteps((v) => !v)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setExpandSteps((v) => !v)
+                  }}
                   className="font-semibold text-[#2C4A3E] hover:underline flex items-center gap-0.5 cursor-pointer"
                 >
                   <span>
@@ -159,7 +167,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
       {/* Expandable Inline Subtask Checklist (Hidden by Default to Keep Mobile Clean) */}
       {expandSteps && task.subtasks.length > 0 && !isCompleted && (
-        <div className="pt-1.5 pb-1 px-2.5 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] space-y-1.5">
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="pt-1.5 pb-1 px-2.5 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] space-y-1.5"
+        >
           {task.subtasks.map((sub) => (
             <label
               key={sub.id}
@@ -194,7 +205,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           <>
             <button
               type="button"
-              onClick={() => onStartFocusTimer(task)}
+              onClick={(e) => {
+                e.stopPropagation()
+                onStartFocusTimer(task)
+              }}
               className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Play className="w-3 h-3 fill-white" />
@@ -205,7 +219,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
               {task.status === 'BACKLOG' ? (
                 <button
                   type="button"
-                  onClick={() => moveTaskStatus(task.id, 'IN_PROGRESS')}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    moveTaskStatus(task.id, 'IN_PROGRESS')
+                  }}
                   className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] text-white text-xs font-semibold flex items-center gap-1 cursor-pointer"
                 >
                   <span>Kerjakan Hari Ini</span>
@@ -215,7 +232,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                 <>
                   <button
                     type="button"
-                    onClick={() => moveTaskStatus(task.id, 'BACKLOG')}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      moveTaskStatus(task.id, 'BACKLOG')
+                    }}
                     title="Simpan ke Laci"
                     aria-label="Simpan ke Laci"
                     className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-[#8C7E72] hover:text-[#1E1915] hover:bg-[#F2ECE1] text-xs font-medium flex items-center gap-1 cursor-pointer"
@@ -226,7 +246,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                   {canClutch85 ? (
                     <button
                       type="button"
-                      onClick={() => completeTaskVia85Rule(task.id)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        completeTaskVia85Rule(task.id)
+                      }}
                       className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#1F7A4C] hover:bg-[#18633C] text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
                       title="Progres sudah 85% — kumpulkan sekarang tanpa ragu"
                     >
@@ -236,7 +259,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                   ) : (
                     <button
                       type="button"
-                      onClick={() => moveTaskStatus(task.id, 'COMPLETED')}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        moveTaskStatus(task.id, 'COMPLETED')
+                      }}
                       className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#E7F6EE] hover:bg-[#D1EEDE] text-[#1F7A4C] text-xs font-bold flex items-center gap-1 cursor-pointer"
                     >
                       <Check className="w-3.5 h-3.5" />
@@ -254,7 +280,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             </span>
             <button
               type="button"
-              onClick={() => moveTaskStatus(task.id, 'IN_PROGRESS')}
+              onClick={(e) => {
+                e.stopPropagation()
+                moveTaskStatus(task.id, 'IN_PROGRESS')
+              }}
               className="text-[#8C7E72] hover:text-[#1E1915] font-medium cursor-pointer"
             >
               Buka kembali

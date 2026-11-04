@@ -100,6 +100,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   const [newSubtaskText, setNewSubtaskText] = useState('')
   const [newSubtaskPareto, setNewSubtaskPareto] = useState(false)
   const [showSmartAssistant, setShowSmartAssistant] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const handleCreateSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault()
@@ -806,17 +807,37 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
 
         {/* Footer */}
         <div className="px-5 py-3.5 bg-[#FFFDF9] border-t border-[#E2D9C8] flex items-center justify-between shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              deleteTask(existingTask.id)
-              onClose()
-            }}
-            className="px-3 py-2 rounded-xl text-xs font-bold text-[#C8432B] hover:bg-[#FDECE8] flex items-center gap-1 cursor-pointer"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Hapus Tugas</span>
-          </button>
+          {showDeleteConfirm ? (
+            <div className="flex items-center gap-1.5 animate-in fade-in">
+              <span className="text-xs font-bold text-[#C8432B]">Yakin hapus?</span>
+              <button
+                type="button"
+                onClick={() => {
+                  deleteTask(existingTask.id)
+                  onClose()
+                }}
+                className="px-2.5 py-1.5 rounded-lg bg-[#C8432B] hover:bg-[#A8321D] text-white text-xs font-black cursor-pointer shadow-xs transition-colors"
+              >
+                Ya, Hapus
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-2.5 py-1.5 rounded-lg bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#5C5148] text-xs font-bold cursor-pointer transition-colors"
+              >
+                Batal
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="px-3 py-2 rounded-xl text-xs font-bold text-[#C8432B] hover:bg-[#FDECE8] flex items-center gap-1 cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Hapus Tugas</span>
+            </button>
+          )}
 
           <button
             type="button"

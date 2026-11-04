@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import {
   BellRing,
   Check,
+  ChevronDown,
+  ChevronUp,
   Copy,
   Download,
   ShieldCheck,
@@ -52,6 +54,8 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
   const [nameInput, setNameInput] = useState(participantName)
   const [selectedChar, setSelectedChar] = useState<CharacterId>(characterId)
 
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false)
+  const [showAdvancedWorkshop, setShowAdvancedWorkshop] = useState(false)
   const [copiedRecoveryCode, setCopiedRecoveryCode] = useState(false)
   const [pasteRecoveryInput, setPasteRecoveryInput] = useState('')
   const [pasteGameCodeInput, setPasteGameCodeInput] = useState('')
@@ -381,16 +385,22 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
             <>
               {/* Profile & Avatar */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
-                <h3 className="text-sm font-extrabold text-[#1E1915]">
-                  Identitas Peserta &amp; Avatar Karakter
-                </h3>
-                <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-extrabold text-[#1E1915]">
+                    Profil Mahasiswa
+                  </h3>
+                  <span className="text-[11px] font-bold text-[#8C7E72]">
+                    Tersimpan di HP
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
                   <input
                     type="text"
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
                     placeholder="Nama panggilanmu..."
-                    className="flex-1 px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#C9B99F] text-xs font-bold"
+                    className="flex-1 px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#C9B99F] text-xs font-bold text-[#1E1915]"
                   />
                   <button
                     type="button"
@@ -398,101 +408,117 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                       setParticipantProfile(nameInput.trim() || 'Peserta Jadwal-In', selectedChar)
                       setFeedbackMessage({
                         type: 'success',
-                        text: 'Profil peserta berhasil diperbarui dan dicadangkan otomatis!',
+                        text: 'Profil peserta berhasil diperbarui!',
                       })
                     }}
-                    className="px-4 py-2 rounded-xl bg-[#2C4A3E] text-white text-xs font-extrabold cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl bg-[#2C4A3E] text-white text-xs font-extrabold cursor-pointer hover:bg-[#233B32] transition-colors"
                   >
-                    Simpan Profil
+                    Simpan
                   </button>
                 </div>
 
-                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 pt-1">
-                  {(Object.keys(CHARACTER_PROFILES) as CharacterId[]).map((cid) => {
-                    const prof = CHARACTER_PROFILES[cid]
-                    const active = selectedChar === cid
-                    return (
-                      <button
-                        key={cid}
-                        type="button"
-                        onClick={() => setSelectedChar(cid)}
-                        className={`p-2 rounded-xl border flex flex-col items-center gap-1 cursor-pointer ${
-                          active
-                            ? 'bg-[#2C4A3E] text-white border-[#2C4A3E]'
-                            : 'bg-[#FAF7F2] text-[#1E1915] border-[#E2D9C8]'
-                        }`}
-                      >
-                        <img
-                          src={prof.avatar}
-                          alt={prof.name}
-                          className="w-8 h-8 rounded-full object-cover"
-                        />
-                        <span className="text-xs font-bold truncate max-w-full">{prof.name}</span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Jembatan Kode Komitmen Pelatihan (JI-R1|...) */}
-              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-2.5">
-                <div className="flex items-center gap-1.5 text-sm font-extrabold text-[#1E1915]">
-                  <Sparkles className="w-4 h-4 text-[#D4532F]" />
-                  <span>Hubungkan Kode Komitmen Pelatihan</span>
-                </div>
-                <p className="text-xs text-[#5C5148]">
-                  Tempel kode komitmen pelatihan (contoh: <code>JI-R1|...</code>) dari sesi workshop untuk memuat Rencana Jika–Maka dan 3 metode pilihanmu.
-                </p>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Tempel kode JI-R1|... di sini"
-                    value={pasteGameCodeInput}
-                    onChange={(e) => setPasteGameCodeInput(e.target.value)}
-                    className="flex-1 px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#C9B99F] text-xs font-mono"
-                  />
+                {/* Collapsible Avatar Picker */}
+                <div className="pt-1">
                   <button
                     type="button"
-                    onClick={handleImportGameCommitment}
-                    className="px-4 py-2 rounded-xl bg-[#D4532F] text-white text-xs font-extrabold cursor-pointer"
+                    onClick={() => setShowAvatarPicker((prev) => !prev)}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] hover:border-[#C9B99F] transition-colors cursor-pointer"
                   >
-                    Muat Komitmen
+                    <div className="flex items-center gap-2.5">
+                      <img
+                        src={CHARACTER_PROFILES[selectedChar]?.avatar}
+                        alt={CHARACTER_PROFILES[selectedChar]?.name}
+                        className="w-8 h-8 rounded-full object-cover border border-[#C9B99F]"
+                      />
+                      <div className="text-left">
+                        <span className="text-xs font-black text-[#1E1915] block">
+                          Avatar: {CHARACTER_PROFILES[selectedChar]?.name || 'Pilih Karakter'}
+                        </span>
+                        <span className="text-[10px] text-[#8C7E72]">
+                          {showAvatarPicker ? 'Tutup galeri karakter' : 'Ketuk untuk mengganti avatar'}
+                        </span>
+                      </div>
+                    </div>
+                    {showAvatarPicker ? (
+                      <ChevronUp className="w-4 h-4 text-[#8C7E72]" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-[#8C7E72]" />
+                    )}
                   </button>
+
+                  {showAvatarPicker && (
+                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 pt-2.5">
+                      {(Object.keys(CHARACTER_PROFILES) as CharacterId[]).map((cid) => {
+                        const prof = CHARACTER_PROFILES[cid]
+                        const active = selectedChar === cid
+                        return (
+                          <button
+                            key={cid}
+                            type="button"
+                            onClick={() => {
+                              setSelectedChar(cid)
+                              setParticipantProfile(nameInput.trim() || 'Peserta Jadwal-In', cid)
+                              setShowAvatarPicker(false)
+                              setFeedbackMessage({
+                                type: 'success',
+                                text: `Avatar diubah menjadi ${prof.name}`,
+                              })
+                            }}
+                            className={`p-2 rounded-xl border flex flex-col items-center gap-1 cursor-pointer transition-all ${
+                              active
+                                ? 'bg-[#2C4A3E] text-white border-[#2C4A3E] shadow-xs'
+                                : 'bg-[#FFFDF9] text-[#1E1915] border-[#E2D9C8] hover:bg-[#FAF7F2]'
+                            }`}
+                          >
+                            <img
+                              src={prof.avatar}
+                              alt={prof.name}
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                            <span className="text-[11px] font-bold truncate max-w-full">{prof.name}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* 3 Lapis Pemulihan Lokal di HP (Dual Storage + Kode Teks JDW-MOB + File JSON) */}
+              {/* Cadangan Cepat di HP (Paling Sering Digunakan) */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <div>
-                    <h3 className="text-sm font-extrabold text-[#1E1915]">
-                      Cadangan &amp; Pemulihan Data di HP (Tanpa Cloud)
-                    </h3>
-                    <p className="text-xs text-[#5C5148]">
-                      Otomatis tersinkron ke <code>localStorage</code> + <code>IndexedDB</code> (Terakhir:{' '}
-                      {lastBackupSyncedIso
-                        ? new Date(lastBackupSyncedIso).toLocaleTimeString('id-ID')
-                        : 'Baru saja'}
-                      ).
-                    </p>
-                  </div>
+                <div className="flex items-center justify-between flex-wrap gap-1">
+                  <h3 className="text-sm font-extrabold text-[#1E1915]">
+                    Cadangan &amp; Pemulihan Lokal HP
+                  </h3>
+                  <span className="text-[11px] text-[#8C7E72]">
+                    Sync:{' '}
+                    {lastBackupSyncedIso
+                      ? new Date(lastBackupSyncedIso).toLocaleTimeString('id-ID', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })
+                      : 'Baru saja'}
+                  </span>
                 </div>
+                <p className="text-xs text-[#5C5148] leading-relaxed">
+                  Data tugasmu tersimpan offline di peramban HP ini. Buat salinan cadangan sebelum membersihkan cache peramban.
+                </p>
 
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
                     type="button"
                     onClick={handleCopyRecoveryCode}
-                    className="px-3.5 py-2 rounded-xl bg-[#2C4A3E] text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer"
+                    className="flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-xs"
                   >
                     {copiedRecoveryCode ? (
                       <>
-                        <Check className="w-4 h-4" />
-                        <span>Kode Teks Tersalin!</span>
+                        <Check className="w-4 h-4 text-emerald-300" />
+                        <span>Kode Tersalin!</span>
                       </>
                     ) : (
                       <>
                         <Copy className="w-4 h-4" />
-                        <span>Salin Kode Pemulihan (Simpan ke WA/Catatan)</span>
+                        <span>Salin Kode Teks</span>
                       </>
                     )}
                   </button>
@@ -500,67 +526,137 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                   <button
                     type="button"
                     onClick={handleDownloadJson}
-                    className="px-3.5 py-2 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                    className="flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                   >
-                    <Download className="w-4 h-4" />
-                    <span>Unduh File Backup (.json)</span>
+                    <Download className="w-4 h-4 text-[#5C5148]" />
+                    <span>Unduh File (.json)</span>
                   </button>
-
-                  <label className="px-3.5 py-2 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-bold flex items-center gap-1.5 cursor-pointer">
-                    <Upload className="w-4 h-4" />
-                    <span>Pulihkan dari File (.json)</span>
-                    <input
-                      type="file"
-                      accept=".json,application/json"
-                      onChange={handleUploadJsonFile}
-                      className="hidden"
-                    />
-                  </label>
                 </div>
+              </div>
 
-                <div className="pt-2 border-t border-[#E2D9C8] space-y-2">
-                  <label className="block text-xs font-bold text-[#5C5148]">
-                    Pulihkan dari Kode Teks Pemulihan (<code>JDW-MOB|v1|...</code>):
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Tempel kode JDW-MOB|v1|... yang pernah kamu simpan"
-                      value={pasteRecoveryInput}
-                      onChange={(e) => setPasteRecoveryInput(e.target.value)}
-                      className="flex-1 px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#C9B99F] text-xs font-mono"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleRestoreFromTextCode}
-                      className="px-4 py-2 rounded-xl bg-[#1E1915] text-white text-xs font-extrabold cursor-pointer"
-                    >
-                      Pulihkan Data
-                    </button>
-                  </div>
-                </div>
-
-                {tasks.length > 0 && (
-                  <div className="pt-3 border-t border-[#E2D9C8] flex items-center justify-between">
+              {/* Opsi Lanjutan: Pemulihan Manual & Kode Pelatihan Workshop (Disembunyikan Rapi) */}
+              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setShowAdvancedWorkshop((prev) => !prev)}
+                  className="w-full p-4 flex items-center justify-between text-left hover:bg-[#FAF7F2] transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#8C7E72]" />
                     <div>
-                      <p className="text-xs font-bold text-[#C8432B]">Reset Data Papan</p>
-                      <p className="text-[11px] text-[#5C5148]">Kosongkan semua tugas untuk memulai pengujian dari lembar bersih.</p>
+                      <span className="text-xs font-black text-[#1E1915] block">
+                        Opsi Pemulihan Manual &amp; Pelatihan
+                      </span>
+                      <span className="text-[10px] text-[#8C7E72]">
+                        Pulihkan dari file/kode, jembatan workshop, &amp; reset
+                      </span>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (window.confirm('Kosongkan semua daftar tugas? Semua tugas saat ini akan dihapus dari papan.')) {
-                          clearAllTasks()
-                          setFeedbackMessage({
-                            type: 'success',
-                            text: 'Papan tugas berhasil dikosongkan.',
-                          })
-                        }
-                      }}
-                      className="px-3.5 py-2 rounded-xl bg-[#FDECE8] hover:bg-[#F9D7D0] text-[#C8432B] text-xs font-bold transition-colors cursor-pointer"
-                    >
-                      Kosongkan Papan
-                    </button>
+                  </div>
+                  {showAdvancedWorkshop ? (
+                    <ChevronUp className="w-4 h-4 text-[#8C7E72]" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-[#8C7E72]" />
+                  )}
+                </button>
+
+                {showAdvancedWorkshop && (
+                  <div className="p-4 pt-1 border-t border-[#E2D9C8]/70 space-y-4 bg-[#FAF7F2]/40">
+                    {/* Restore File */}
+                    <div className="space-y-1.5">
+                      <span className="text-xs font-bold text-[#1E1915] block">
+                        1. Pulihkan dari File Cadangan
+                      </span>
+                      <label className="w-full px-3.5 py-2 rounded-xl bg-[#FFFDF9] border border-[#C9B99F] hover:bg-[#F2ECE1] text-[#1E1915] text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors">
+                        <Upload className="w-4 h-4 text-[#5C5148]" />
+                        <span>Pilih File Backup (.json)</span>
+                        <input
+                          type="file"
+                          accept=".json,application/json"
+                          onChange={handleUploadJsonFile}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+
+                    {/* Restore from Code */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-[#1E1915]">
+                        2. Pulihkan dari Kode Teks (<code>JDW-MOB|v1|...</code>)
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Tempel kode JDW-MOB|v1|..."
+                          value={pasteRecoveryInput}
+                          onChange={(e) => setPasteRecoveryInput(e.target.value)}
+                          className="flex-1 px-3 py-2 rounded-xl bg-[#FFFDF9] border border-[#C9B99F] text-xs font-mono"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleRestoreFromTextCode}
+                          className="px-3.5 py-2 rounded-xl bg-[#1E1915] text-white text-xs font-extrabold cursor-pointer"
+                        >
+                          Pulihkan
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Hubungkan Kode Pelatihan */}
+                    <div className="space-y-1.5 pt-2 border-t border-[#E2D9C8]/60">
+                      <label className="block text-xs font-bold text-[#1E1915]">
+                        3. Hubungkan Kode Pelatihan (<code>JI-R1|...</code>)
+                      </label>
+                      <p className="text-[11px] text-[#5C5148]">
+                        Tempel kode komitmen dari web workshop Jadwal-In untuk menyinkronkan 3 metode pilihanmu.
+                      </p>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Tempel kode JI-R1|..."
+                          value={pasteGameCodeInput}
+                          onChange={(e) => setPasteGameCodeInput(e.target.value)}
+                          className="flex-1 px-3 py-2 rounded-xl bg-[#FFFDF9] border border-[#C9B99F] text-xs font-mono"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleImportGameCommitment}
+                          className="px-3.5 py-2 rounded-xl bg-[#D4532F] text-white text-xs font-extrabold cursor-pointer"
+                        >
+                          Muat
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Reset Papan */}
+                    {tasks.length > 0 && (
+                      <div className="pt-3 border-t border-[#E2D9C8]/60 flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-bold text-[#C8432B]">Reset Data Papan</p>
+                          <p className="text-[10px] text-[#8C7E72]">
+                            Hapus semua tugas untuk mulai dari lembar bersih.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                'Kosongkan semua daftar tugas? Semua tugas saat ini akan dihapus dari papan.'
+                              )
+                            ) {
+                              clearAllTasks()
+                              setFeedbackMessage({
+                                type: 'success',
+                                text: 'Papan tugas berhasil dikosongkan.',
+                              })
+                            }
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-[#FDECE8] hover:bg-[#F9D7D0] text-[#C8432B] text-xs font-bold transition-colors cursor-pointer"
+                        >
+                          Kosongkan Papan
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

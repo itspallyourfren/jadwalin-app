@@ -7,7 +7,6 @@ import {
   groupTasksByEisenhower,
   sortKanbanColumnTasks,
 } from '../engine/boardFrameworksEngine'
-import { getArchetypeMetadata } from '../engine/procrastinationDiagnosticEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
 import { TaskCard } from './TaskCard'
 import type {
@@ -52,7 +51,6 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
   const setOneThreeFiveSlot = useTrackerStore((s) => s.setOneThreeFiveSlot)
   const setIvyLeeRank = useTrackerStore((s) => s.setIvyLeeRank)
   const hasCompletedDiagnosis = useTrackerStore((s) => s.hasCompletedDiagnosis)
-  const userProfile = useTrackerStore((s) => s.userProfile)
 
   const backlogTasks = sortKanbanColumnTasks(
     tasks.filter((t) => t.status === 'BACKLOG'),
@@ -507,12 +505,13 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
 
   return (
     <main
+      id="tutorial-board-container"
       className={`flex-1 overflow-y-auto ${
         isSimulatedMobile ? 'px-3 py-2.5 pb-32' : 'max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 pb-28'
       }`}
     >
       {/* Streamlined Time Block Filter Chips Bar (Zero Duplicate Framework Tabs) */}
-      <div className="mb-3 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar py-0.5">
+      <div id="tutorial-time-filters" className="mb-3 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar py-0.5">
         <div className="flex items-center gap-1.5 shrink-0">
           <span className="text-xs font-extrabold text-[#5C5148] mr-1 hidden sm:inline">
             Waktu:
@@ -535,18 +534,6 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
             )
           })}
         </div>
-
-        {hasCompletedDiagnosis && userProfile && (
-          <button
-            type="button"
-            onClick={onOpenDiagnostic}
-            className="text-xs font-bold text-[#2C4A3E] hover:underline flex items-center gap-1.5 shrink-0 cursor-pointer py-1.5 px-2.5 rounded-xl bg-[#FFFDF9] border border-[#E2D9C8] hover:bg-[#F2ECE1]"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#D4532F]" />
-            <span className="hidden sm:inline">Profil:</span>
-            <span>{getArchetypeMetadata(userProfile.archetype).title}</span>
-          </button>
-        )}
       </div>
 
       {tasks.length === 0 && (

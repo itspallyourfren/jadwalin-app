@@ -48,7 +48,7 @@ describe('App & Modals SSR Render Verification', () => {
       <FocusTimerModal initialTask={firstTask} initialMode="TEN_MINUTE_RULE" onClose={() => {}} />
     )
     expect(htmlTimer).toContain('Mulai 10m')
-    expect(htmlTimer).toContain('Jauhkan HP')
+    expect(htmlTimer).toContain('Fase Fokus Belajar')
 
     // 4. TechniqueToolkitModal
     const htmlToolkit = renderToString(
@@ -87,6 +87,6 @@ describe('App & Modals SSR Render Verification', () => {
     const htmlRecov = renderToString(
       <NotificationAndRecoveryModal initialTab="RECOVERY" onClose={() => {}} />
     )
-    expect(htmlRecov).toContain('Cadangan &amp; Pemulihan Data di HP')
+    expect(htmlRecov).toContain('Cadangan &amp; Pemulihan Lokal HP')
   })
 })

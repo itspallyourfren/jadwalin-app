@@ -6,9 +6,11 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  HelpCircle,
   Layers,
   Sparkles,
   Target,
+  User,
   X,
   Zap,
 } from 'lucide-react'
@@ -25,15 +27,21 @@ import type {
 
 type ProcrastinationDiagnosticModalProps = {
   onClose: () => void
+  onStartTourAfterDiagnosis?: () => void
 }
 
 export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticModalProps> = ({
   onClose,
+  onStartTourAfterDiagnosis,
 }) => {
   const saveDiagnosisResult = useTrackerStore((s) => s.saveDiagnosisResult)
   const existingProfile = useTrackerStore((s) => s.userProfile)
+  const participantName = useTrackerStore((s) => s.participantName)
+  const characterId = useTrackerStore((s) => s.characterId)
+  const setParticipantProfile = useTrackerStore((s) => s.setParticipantProfile)
 
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
+  const [userName, setUserName] = useState<string>(participantName || '')
   const [obstacle, setObstacle] = useState<ProcrastinationArchetype>(
     existingProfile?.archetype ?? 'OVERWHELMED'
   )
@@ -52,10 +60,20 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
   })
   const meta = getArchetypeMetadata(evaluatedProfile.archetype)
 
-  const handleFinish = () => {
+  const handleFinish = (startTour: boolean) => {
+    if (userName.trim()) {
+      setParticipantProfile(userName.trim(), characterId)
+    }
     saveDiagnosisResult(evaluatedProfile, createStarterTask)
     onClose()
+    if (startTour && onStartTourAfterDiagnosis) {
+      setTimeout(() => {
+        onStartTourAfterDiagnosis()
+      }, 300)
+    }
   }
+
+  const displayName = userName.trim() || 'Teman Belajar'
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
@@ -68,10 +86,10 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
             </div>
             <div>
               <h2 className="text-base font-extrabold text-[#1E1915]">
-                {step < 4 ? 'Diagnosis Gaya Belajar & Prokrastinasi' : 'Hasil Profil & Personalisasi'}
+                {step < 4 ? 'Diagnosis Gaya Belajar & Prokrastinasi' : 'Hasil Analisis & Profil Belajar'}
               </h2>
               <p className="text-xs text-[#5C5148] font-medium">
-                {step < 4 ? `Langkah ${step} dari 3` : 'Aplikasi disesuaikan otomatis untukmu'}
+                {step < 4 ? `Langkah ${step} dari 3` : `Disusun khusus untuk ${displayName}`}
               </p>
             </div>
           </div>
@@ -97,15 +115,30 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
 
         {/* Body Content */}
         <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
-          {/* STEP 1: Hambatan Utama */}
+          {/* STEP 1: Nama & Hambatan Utama */}
           {step === 1 && (
             <div className="space-y-3.5">
-              <div className="space-y-1">
+              {/* Personalized Name Input */}
+              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 space-y-1.5">
+                <label className="flex items-center gap-1.5 text-xs font-extrabold text-[#1E1915]">
+                  <User className="w-3.5 h-3.5 text-[#2C4A3E]" />
+                  <span>Nama Panggilanmu:</span>
+                </label>
+                <input
+                  type="text"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  placeholder="Contoh: Raden / Nadia / Sarah"
+                  className="w-full px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#C9B99F] text-xs font-bold text-[#1E1915] focus:outline-2 focus:outline-[#2C4A3E]"
+                />
+              </div>
+
+              <div className="space-y-1 pt-1">
                 <span className="text-xs font-bold text-[#D4532F] uppercase tracking-wider">
                   Pemicu Utama
                 </span>
                 <h3 className="text-sm sm:text-base font-extrabold text-[#1E1915]">
-                  Saat kamu mulai menunda tugas kuliah/skripsi, apa yang paling sering kamu rasakan?
+                  Halo {displayName}! Saat mulai menunda tugas kuliah/skripsi, apa yang paling sering kamu rasakan?
                 </h3>
                 <p className="text-xs text-[#5C5148]">
                   Pilih kondisi yang paling menggambarkan alasan mengapa tugasmu belum disentuh.
@@ -281,9 +314,9 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
                   },
                   {
                     id: 'POMODORO' as const,
-                    title: '25 Menit (Pomodoro)',
+                    title: 'Pomodoro (Siklus Rehat)',
                     badge: 'Klasik Teratur',
-                    desc: '25 menit kerja fokus penuh, diselingi 5 menit rehat untuk stamina berkelanjutan.',
+                    desc: 'Fokus penuh diselingi jeda istirahat sejenak untuk stamina berkelanjutan.',
                   },
                   {
                     id: 'FLOW' as const,
@@ -343,7 +376,7 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#2C4A3E]/30 p-4 sm:p-5 space-y-3 shadow-xs">
                 <div className="flex items-center gap-2">
                   <span className="px-2.5 py-1 rounded-full bg-[#2C4A3E]/10 text-[#2C4A3E] text-xs font-black uppercase tracking-wider">
-                    Profil Belajarmu
+                    Profil Belajar {displayName}
                   </span>
                   <span className="text-xs text-[#8C7E72] font-semibold">{meta.subtitle}</span>
                 </div>
@@ -418,12 +451,20 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
                   </span>
                 </div>
               </label>
+
+              {/* Re-test info note */}
+              <div className="p-3 rounded-xl bg-[#F2ECE1]/60 border border-[#E2D9C8] flex items-start gap-2 text-xs text-[#5C5148]">
+                <HelpCircle className="w-4 h-4 text-[#8C7E72] shrink-0 mt-0.5" />
+                <span>
+                  Profil diagnosis ini tersimpan aman di perangkatmu. Kamu bisa mengulang atau memperbaruinya kapan saja melalui menu <strong>Sidebar &rarr; Diagnosis Gaya Belajar</strong>.
+                </span>
+              </div>
             </div>
           )}
         </div>
 
         {/* Footer Navigation */}
-        <div className="px-5 py-3.5 bg-[#FFFDF9] border-t border-[#E2D9C8] flex items-center justify-between shrink-0">
+        <div className="px-5 py-3.5 bg-[#FFFDF9] border-t border-[#E2D9C8] flex items-center justify-between shrink-0 flex-wrap gap-2">
           {step > 1 && step < 4 ? (
             <button
               type="button"
@@ -464,14 +505,23 @@ export const ProcrastinationDiagnosticModal: React.FC<ProcrastinationDiagnosticM
               <Sparkles className="w-4 h-4" />
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={handleFinish}
-              className="px-6 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#20372E] text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-all"
-            >
-              <span>Terapkan &amp; Mulai Bekerja</span>
-              <CheckCircle2 className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleFinish(false)}
+                className="px-4 py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-bold cursor-pointer transition-colors"
+              >
+                Terapkan Langsung
+              </button>
+              <button
+                type="button"
+                onClick={() => handleFinish(true)}
+                className="px-5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#20372E] text-white text-xs font-extrabold flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-all"
+              >
+                <span>Terapkan &amp; Ikuti Tur Panduan 🚀</span>
+                <CheckCircle2 className="w-4 h-4" />
+              </button>
+            </div>
           )}
         </div>
       </div>
