@@ -147,6 +147,7 @@ export type TechniqueCatalogItem = {
     | 'TIMER_POMODORO'
     | 'TIMER_FLOW'
     | 'ACTION_CHUNK_TASK'
+    | 'ACTION_WOOP'
     | 'ACTION_STUDY_NOTES'
     | 'ACTION_HABIT_REMINDER'
 }

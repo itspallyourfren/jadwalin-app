@@ -41,7 +41,20 @@ describe('App & Modals SSR Render Verification', () => {
     const htmlToolkit = renderToString(
       <TechniqueToolkitModal onClose={() => {}} onActivateTechnique={() => {}} />
     )
-    expect(htmlToolkit).toContain('Panduan Teknik Produktivitas')
+    expect(htmlToolkit).toContain('Katalog Teknik Produktivitas')
+
+    // 4b. TaskWorkspaceModal with STUDY and WOOP tabs
+    const htmlStudy = renderToString(
+      <TaskWorkspaceModal taskId={firstTask.id} initialTab="STUDY" onClose={() => {}} />
+    )
+    expect(htmlStudy).toContain('Checklist Membaca SQ3R')
+    expect(htmlStudy).toContain('Metode Feynman')
+    expect(htmlStudy).toContain('Sistem Leitner')
+
+    const htmlWoop = renderToString(
+      <TaskWorkspaceModal taskId={firstTask.id} initialTab="WOOP" onClose={() => {}} />
+    )
+    expect(htmlWoop).toContain('WOOP Framework')
 
     // 5. NotificationAndRecoveryModal
     const htmlNotif = renderToString(

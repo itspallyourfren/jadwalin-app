@@ -187,7 +187,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     shortSummary: 'Perfeksionisme sering membuat tugas tak kunjung dikumpulkan. Saat progres mencapai 85%, beranikan diri menuntaskannya!',
     realWorldSteps: [
       'Cicil sub-langkah tugas hingga mencapai minimal 85%.',
-      'Tekan tombol hijau "Selesaikan di 85% (Anti-Perfeksionis)" yang menyala di kartu tugas.',
+      'Tekan tombol hijau "Selesaikan di 85% (Anti-Perfeksionis)" yang muncul pada tugas.',
     ],
     linkedActionType: 'ACTION_CHUNK_TASK',
   },
@@ -294,7 +294,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     realWorldSteps: [
       'Isi bagian Antisipasi Hambatan (WOOP) di dalam detail tugas yang terasa berat.',
     ],
-    linkedActionType: 'ACTION_CHUNK_TASK',
+    linkedActionType: 'ACTION_WOOP',
   },
   {
     id: 'TEK_14',
@@ -308,7 +308,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     realWorldSteps: [
       'Catat potensi risiko utama di bagian WOOP & Premortem pada detail tugas.',
     ],
-    linkedActionType: 'ACTION_CHUNK_TASK',
+    linkedActionType: 'ACTION_WOOP',
   },
   {
     id: 'TEK_34',
@@ -430,7 +430,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
   {
     id: 'TEK_16',
     name: 'Active Recall & Flashcard',
-    indonesianSubtitle: 'Uji Ingatan Mandiri dengan Kartu Tanya-Jawab',
+    indonesianSubtitle: 'Uji Ingatan Mandiri dengan Flashcard',
     tier: 'TIER_3_STUDY',
     categoryLabel: 'Metode Belajar Aktif',
     timeRequirement: 'Bebas',
@@ -449,7 +449,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     categoryLabel: 'Metode Belajar Aktif',
     timeRequirement: 'Bebas',
     cardAsset: '/assets/cards/tek_20_leitner.webp',
-    shortSummary: 'Kelompokkan kartu tanya-jawab ke Kotak 1 (Ulangi Besok), Kotak 2 (Cukup Paham), dan Kotak 3 (Kuasai).',
+    shortSummary: 'Kelompokkan flashcard ke Kotak 1 (Ulangi Besok), Kotak 2 (Cukup Paham), dan Kotak 3 (Kuasai).',
     realWorldSteps: [
       'Pindahkan status flashcard dari Kotak 1 menuju Kotak 3 setiap kali berhasil menjawab tanpa menyontek.',
     ],

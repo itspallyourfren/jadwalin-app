@@ -14,6 +14,7 @@ import {
 import { TASK_SCALES } from '../data/constants'
 import { calcTaskProgress, isEligibleFor85Rule } from '../engine/boardFrameworksEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
+import { StudyWorkspacePanel } from './StudyWorkspacePanel'
 import type {
   KanbanStatus,
   TaskCategory,
@@ -24,6 +25,7 @@ import type {
 
 type TaskWorkspaceModalProps = {
   taskId: string | null // null = mode Tambah Tugas Baru
+  initialTab?: 'STEPS' | 'WOOP' | 'STUDY'
   onClose: () => void
   onStartFocusFromModal?: (task: TrackerTask) => void
 }
@@ -39,6 +41,7 @@ const TIME_BLOCKS: readonly TimeBlockTag[] = ['Pagi', 'Siang', 'Sore', 'Malam', 
 
 export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   taskId,
+  initialTab = 'STEPS',
   onClose,
   onStartFocusFromModal,
 }) => {
@@ -55,7 +58,6 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   const deleteSubtask = useTrackerStore((s) => s.deleteSubtask)
   const completeTaskVia85Rule = useTrackerStore((s) => s.completeTaskVia85Rule)
   const updateWoopNote = useTrackerStore((s) => s.updateWoopNote)
-  const updateStudyNotes = useTrackerStore((s) => s.updateStudyNotes)
 
   // State untuk form Tugas Baru
   const [title, setTitle] = useState(existingTask?.title ?? '')
@@ -77,13 +79,9 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   const [autoChunkOnCreate, setAutoChunkOnCreate] = useState(true)
 
   // Tab saat membuka Tugas yang sudah ada
-  const [activeTab, setActiveTab] = useState<'STEPS' | 'WOOP' | 'STUDY'>('STEPS')
+  const [activeTab, setActiveTab] = useState<'STEPS' | 'WOOP' | 'STUDY'>(initialTab)
   const [newSubtaskText, setNewSubtaskText] = useState('')
   const [newSubtaskPareto, setNewSubtaskPareto] = useState(false)
-
-  // State Flashcard baru (Leitner System TEK_20)
-  const [fcQuestion, setFcQuestion] = useState('')
-  const [fcAnswer, setFcAnswer] = useState('')
 
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -249,7 +247,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
               </div>
             </div>
 
-            {/* Tenggat Waktu Asli & Target Selesai Pribadi (Hukum Parkinson TEK_34) */}
+            {/* Tenggat Waktu Asli & Target Selesai Pribadi (Hukum Parkinson) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-extrabold text-[#1E1915] mb-1">
@@ -502,7 +500,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                 )}
               </div>
 
-              {/* Subtasks List (Task Chunking TEK_02 & Pareto 80/20 TEK_10) */}
+              {/* Subtasks List (Task Chunking & Pareto 80/20) */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
                 <div>
                   <h3 className="text-sm font-extrabold text-[#1E1915]">
@@ -758,200 +756,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
             </div>
           )}
 
-          {activeTab === 'STUDY' && (
-            <div className="space-y-4">
-              {/* 1. SQ3R Reading Checklist (TEK_17) */}
-              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-2.5">
-                <h3 className="text-sm font-extrabold text-[#1E1915]">
-                  1. Checklist Membaca SQ3R (Survey · Question · Read · Recite · Review)
-                </h3>
-                <div className="flex items-center gap-4 flex-wrap text-xs font-bold text-[#1E1915]">
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={existingTask.studyNotes.sq3r.survey}
-                      onChange={(e) =>
-                        updateStudyNotes(existingTask.id, {
-                          ...existingTask.studyNotes,
-                          sq3r: { ...existingTask.studyNotes.sq3r, survey: e.target.checked },
-                        })
-                      }
-                      className="w-4 h-4 accent-[#2C4A3E]"
-                    />
-                    <span>1. Survey (Pindai Daftar Isi/Subjudul)</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={existingTask.studyNotes.sq3r.read}
-                      onChange={(e) =>
-                        updateStudyNotes(existingTask.id, {
-                          ...existingTask.studyNotes,
-                          sq3r: { ...existingTask.studyNotes.sq3r, read: e.target.checked },
-                        })
-                      }
-                      className="w-4 h-4 accent-[#2C4A3E]"
-                    />
-                    <span>3. Read (Baca Cari Jawaban)</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={existingTask.studyNotes.sq3r.review}
-                      onChange={(e) =>
-                        updateStudyNotes(existingTask.id, {
-                          ...existingTask.studyNotes,
-                          sq3r: { ...existingTask.studyNotes.sq3r, review: e.target.checked },
-                        })
-                      }
-                      className="w-4 h-4 accent-[#2C4A3E]"
-                    />
-                    <span>5. Review (Tinjau Ulang)</span>
-                  </label>
-                </div>
-
-                <input
-                  type="text"
-                  placeholder="2. Question: Pertanyaan utama apa yang ingin kamu jawab dari bab ini?"
-                  value={existingTask.studyNotes.sq3r.question}
-                  onChange={(e) =>
-                    updateStudyNotes(existingTask.id, {
-                      ...existingTask.studyNotes,
-                      sq3r: { ...existingTask.studyNotes.sq3r, question: e.target.value },
-                    })
-                  }
-                  className="w-full px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] text-xs font-semibold"
-                />
-              </div>
-
-              {/* 2. Metode Feynman & Rubber Duck (TEK_15 & TEK_32) */}
-              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-2">
-                <h3 className="text-sm font-extrabold text-[#1E1915]">
-                  2. Metode Feynman &amp; Rubber Duck (Jelaskan dengan Bahasa Sederhana)
-                </h3>
-                <p className="text-xs text-[#5C5148]">
-                  Tuliskan inti konsep materi ini seolah kamu sedang menerangkannya ke teman awam tanpa jargon rumit:
-                </p>
-                <textarea
-                  rows={3}
-                  placeholder="Konsep ini secara sederhana bekerja seperti..."
-                  value={existingTask.studyNotes.feynmanExplanation}
-                  onChange={(e) =>
-                    updateStudyNotes(existingTask.id, {
-                      ...existingTask.studyNotes,
-                      feynmanExplanation: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] text-xs font-semibold"
-                />
-              </div>
-
-              {/* 3. Blurting Method (TEK_18) */}
-              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-2">
-                <h3 className="text-sm font-extrabold text-[#1E1915]">
-                  3. The Blurting Method (Tumpahan Ingatan Tanpa Melihat Catatan)
-                </h3>
-                <textarea
-                  rows={2}
-                  placeholder="Tutup bukumu selama 5 menit, lalu ketik semua kata kunci yang masih kamu ingat di sini..."
-                  value={existingTask.studyNotes.blurtingDump}
-                  onChange={(e) =>
-                    updateStudyNotes(existingTask.id, {
-                      ...existingTask.studyNotes,
-                      blurtingDump: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] text-xs font-semibold"
-                />
-              </div>
-
-              {/* 4. Active Recall & 3-Box Leitner Flashcards (TEK_16 & TEK_20) */}
-              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
-                <h3 className="text-sm font-extrabold text-[#1E1915]">
-                  4. Kartu Tanya-Jawab (Active Recall &amp; Sistem 3 Kotak Leitner)
-                </h3>
-
-                <div className="space-y-2">
-                  {existingTask.studyNotes.flashcards.map((fc) => (
-                    <div
-                      key={fc.id}
-                      className="p-3 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] flex items-start justify-between gap-2"
-                    >
-                      <div className="space-y-0.5 text-xs">
-                        <p className="font-extrabold text-[#1E1915]">T: {fc.question}</p>
-                        <p className="font-semibold text-[#5C5148]">J: {fc.answer}</p>
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        {([1, 2, 3] as const).map((boxNum) => (
-                          <button
-                            key={boxNum}
-                            type="button"
-                            onClick={() =>
-                              updateStudyNotes(existingTask.id, {
-                                ...existingTask.studyNotes,
-                                flashcards: existingTask.studyNotes.flashcards.map((item) =>
-                                  item.id === fc.id ? { ...item, box: boxNum } : item
-                                ),
-                              })
-                            }
-                            className={`px-2 py-1 rounded-lg text-xs font-bold cursor-pointer ${
-                              fc.box === boxNum
-                                ? 'bg-[#2C4A3E] text-white'
-                                : 'bg-[#FFFDF9] border border-[#E2D9C8] text-[#5C5148]'
-                            }`}
-                          >
-                            Kotak {boxNum}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <input
-                    type="text"
-                    placeholder="Pertanyaan uji ingatan..."
-                    value={fcQuestion}
-                    onChange={(e) => setFcQuestion(e.target.value)}
-                    className="px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] text-xs font-semibold"
-                  />
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Jawaban singkat..."
-                      value={fcAnswer}
-                      onChange={(e) => setFcAnswer(e.target.value)}
-                      className="flex-1 px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] text-xs font-semibold"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!fcQuestion.trim() || !fcAnswer.trim()) return
-                        updateStudyNotes(existingTask.id, {
-                          ...existingTask.studyNotes,
-                          flashcards: [
-                            ...existingTask.studyNotes.flashcards,
-                            {
-                              id: `fc-${Date.now()}`,
-                              question: fcQuestion.trim(),
-                              answer: fcAnswer.trim(),
-                              box: 1,
-                            },
-                          ],
-                        })
-                        setFcQuestion('')
-                        setFcAnswer('')
-                      }}
-                      className="px-3 py-2 rounded-xl bg-[#2C4A3E] text-white text-xs font-bold cursor-pointer"
-                    >
-                      + Kartu
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {activeTab === 'STUDY' && <StudyWorkspacePanel task={existingTask} />}
         </div>
 
         {/* Footer */}

@@ -159,7 +159,7 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
     setPasteGameCodeInput('')
     setFeedbackMessage({
       type: 'success',
-      text: `Komitmen Kelompok ${commitment.groupCode} & 3 Kartu Teknik Pilihan berhasil dihubungkan!`,
+      text: `Komitmen Kelompok ${commitment.groupCode} & 3 Rekomendasi Metode Pilihan berhasil dihubungkan!`,
     })
   }
 
@@ -218,7 +218,7 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
             }`}
           >
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Profil, Recovery HP, &amp; Kode Game (JI-R1)</span>
+            <span>Profil &amp; Cadangan Pemulihan HP</span>
           </button>
         </div>
 
@@ -269,12 +269,12 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                 </div>
               </div>
 
-              {/* Habit Stacking Schedule (TEK_35) */}
+              {/* Habit Stacking Schedule */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-extrabold text-[#1E1915]">
-                      Jadwal Pengingat Kebiasaan (TEK_35 Habit Stacking)
+                      Jadwal Pengingat Kebiasaan (Habit Stacking)
                     </h3>
                     <p className="text-xs text-[#5C5148]">
                       Kaitkan jam pengingat dengan rutinitas harianmu agar tidak terasa memaksa.
@@ -433,14 +433,14 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                 </div>
               </div>
 
-              {/* Jembatan Kode Komitmen Game (JI-R1|...) */}
+              {/* Jembatan Kode Komitmen Pelatihan (JI-R1|...) */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-2.5">
                 <div className="flex items-center gap-1.5 text-sm font-extrabold text-[#1E1915]">
                   <Sparkles className="w-4 h-4 text-[#D4532F]" />
-                  <span>Hubungkan Kode Komitmen dari Game Utama (JI-R1)</span>
+                  <span>Hubungkan Kode Komitmen Pelatihan</span>
                 </div>
                 <p className="text-xs text-[#5C5148]">
-                  Tempel kode <code>JI-R1|...</code> dari akhir sesi game untuk memuat Rencana Jika–Maka dan 3 Kartu Teknik Pilihanmu.
+                  Tempel kode komitmen pelatihan (contoh: <code>JI-R1|...</code>) dari sesi workshop untuk memuat Rencana Jika–Maka dan 3 metode pilihanmu.
                 </p>
                 <div className="flex gap-2">
                   <input

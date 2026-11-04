@@ -3,11 +3,14 @@ import React, { useEffect, useState } from 'react'
 import {
   Check,
   Coffee,
+  Flame,
   Pause,
   Play,
   RotateCcw,
   Shuffle,
+  Timer,
   X,
+  Zap,
 } from 'lucide-react'
 import {
   formatSecondsMmSs,
@@ -27,7 +30,6 @@ const TIMER_MODES: Array<{
   mode: TimerMode
   label: string
   shortDesc: string
-  cardAsset: string
   minutesLogged: number
   isPomodoro: boolean
 }> = [
@@ -35,7 +37,6 @@ const TIMER_MODES: Array<{
     mode: 'TEN_MINUTE_RULE',
     label: 'Mulai 10m',
     shortDesc: 'Hitung 5-4-3-2-1 lalu cicil 10 menit saja.',
-    cardAsset: '/assets/cards/tek_08_10_minute.webp',
     minutesLogged: 10,
     isPomodoro: false,
   },
@@ -43,7 +44,6 @@ const TIMER_MODES: Array<{
     mode: 'POMODORO_25_5',
     label: 'Pomodoro 25m',
     shortDesc: '25 menit fokus penuh + 5 menit rehat.',
-    cardAsset: '/assets/cards/tek_01_pomodoro.webp',
     minutesLogged: 25,
     isPomodoro: true,
   },
@@ -51,7 +51,6 @@ const TIMER_MODES: Array<{
     mode: 'FLOW_SPRINT_45',
     label: 'Flow 45m',
     shortDesc: 'Sesi kerja mendalam tanpa interupsi.',
-    cardAsset: '/assets/cards/tek_29_flow_state_sprint.webp',
     minutesLogged: 45,
     isPomodoro: false,
   },
@@ -59,7 +58,6 @@ const TIMER_MODES: Array<{
     mode: 'QUICK_REST_5',
     label: 'Rehat 5m',
     shortDesc: 'Minum air & regangkan badan sejenak.',
-    cardAsset: '/assets/cards/tek_33_biological_prime_time.webp',
     minutesLogged: 0,
     isPomodoro: false,
   },
@@ -194,13 +192,14 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
         {/* Compact Header */}
         <div className="px-4 py-3.5 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img
-              src={currentModeConfig.cardAsset}
-              alt={currentModeConfig.label}
-              className="w-7 h-9 object-cover rounded border border-[#C9B99F]"
-            />
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] flex items-center justify-center shrink-0">
+              {mode === 'TEN_MINUTE_RULE' && <Zap className="w-5 h-5 text-[#D4532F]" />}
+              {mode === 'POMODORO_25_5' && <Timer className="w-5 h-5 text-[#2C4A3E]" />}
+              {mode === 'FLOW_SPRINT_45' && <Flame className="w-5 h-5 text-[#B86B14]" />}
+              {mode === 'QUICK_REST_5' && <Coffee className="w-5 h-5 text-[#1F7A4C]" />}
+            </div>
             <div>
-              <h2 className="text-sm font-bold text-[#1E1915]">Timer Fokus</h2>
+              <h2 className="text-sm font-extrabold text-[#1E1915]">Timer Fokus: {currentModeConfig.label}</h2>
               <p className="text-xs text-[#5C5148]">{currentModeConfig.shortDesc}</p>
             </div>
           </div>

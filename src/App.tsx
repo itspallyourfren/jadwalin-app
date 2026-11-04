@@ -22,7 +22,15 @@ export function App() {
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false)
 
   // Modals
-  const [workspaceTaskId, setWorkspaceTaskId] = useState<string | null | undefined>(undefined)
+  const [workspaceModalState, setWorkspaceModalState] = useState<{
+    open: boolean
+    taskId: string | null
+    initialTab: 'STEPS' | 'WOOP' | 'STUDY'
+  }>({
+    open: false,
+    taskId: null,
+    initialTab: 'STEPS',
+  })
   const [timerModalState, setTimerModalState] = useState<{
     open: boolean
     task: TrackerTask | null
@@ -41,7 +49,7 @@ export function App() {
 
   const handleActivateTechnique = (item: TechniqueCatalogItem) => {
     setShowToolkitModal(false)
-    const firstActive = tasks.find((t) => t.status !== 'COMPLETED') ?? null
+    const firstActive = tasks.find((t) => t.status !== 'COMPLETED') ?? tasks[0] ?? null
 
     switch (item.linkedActionType) {
       case 'VIEW_KANBAN':
@@ -66,8 +74,25 @@ export function App() {
         setTimerModalState({ open: true, task: firstActive, mode: 'FLOW_SPRINT_45' })
         break
       case 'ACTION_CHUNK_TASK':
+        setWorkspaceModalState({
+          open: true,
+          taskId: firstActive ? firstActive.id : null,
+          initialTab: 'STEPS',
+        })
+        break
+      case 'ACTION_WOOP':
+        setWorkspaceModalState({
+          open: true,
+          taskId: firstActive ? firstActive.id : null,
+          initialTab: 'WOOP',
+        })
+        break
       case 'ACTION_STUDY_NOTES':
-        setWorkspaceTaskId(firstActive ? firstActive.id : null)
+        setWorkspaceModalState({
+          open: true,
+          taskId: firstActive ? firstActive.id : null,
+          initialTab: 'STUDY',
+        })
         break
       case 'ACTION_HABIT_REMINDER':
         setNotifRecoveryTab('NOTIFICATION')
@@ -82,7 +107,9 @@ export function App() {
 
   return (
     <DeviceSimulatorWrapper
-      onOpenTaskFromNotification={(taskId) => setWorkspaceTaskId(taskId)}
+      onOpenTaskFromNotification={(taskId) =>
+        setWorkspaceModalState({ open: true, taskId, initialTab: 'STEPS' })
+      }
     >
       {(isSimulatedMobile) => (
         <div className="flex-1 flex h-full overflow-hidden relative">
@@ -116,23 +143,30 @@ export function App() {
 
             <BoardViewContainer
               isSimulatedMobile={isSimulatedMobile}
-              onOpenDetail={(task) => setWorkspaceTaskId(task.id)}
+              onOpenDetail={(task) =>
+                setWorkspaceModalState({ open: true, taskId: task.id, initialTab: 'STEPS' })
+              }
               onStartFocusTimer={(task) => handleStartFocusQuick(task)}
-              onOpenNewTask={() => setWorkspaceTaskId(null)}
+              onOpenNewTask={() =>
+                setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
+              }
             />
 
             {/* Sleek Floating Center Switcher Dock (Non-Repetitive Command Center) */}
             <FloatingSwitcherDock
-              onOpenNewTask={() => setWorkspaceTaskId(null)}
+              onOpenNewTask={() =>
+                setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
+              }
               onOpenFocusTimer={() => handleStartFocusQuick()}
             />
           </div>
 
           {/* Modals */}
-          {workspaceTaskId !== undefined && (
+          {workspaceModalState.open && (
             <TaskWorkspaceModal
-              taskId={workspaceTaskId}
-              onClose={() => setWorkspaceTaskId(undefined)}
+              taskId={workspaceModalState.taskId}
+              initialTab={workspaceModalState.initialTab}
+              onClose={() => setWorkspaceModalState((prev) => ({ ...prev, open: false }))}
               onStartFocusFromModal={(task) => handleStartFocusQuick(task)}
             />
           )}
