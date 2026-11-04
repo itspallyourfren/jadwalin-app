@@ -275,10 +275,10 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-extrabold text-[#1E1915]">
-                      Jadwal Pengingat Kebiasaan (Habit Stacking)
+                      Jadwal Pengingat Kebiasaan Harian
                     </h3>
                     <p className="text-xs text-[#5C5148]">
-                      Kaitkan jam pengingat dengan rutinitas harianmu agar tidak terasa memaksa.
+                      Kaitkan jam pengingat dengan rutinitas harianmu agar konsisten dan alami.
                     </p>
                   </div>
                   <label className="flex items-center gap-1.5 text-xs font-extrabold cursor-pointer">
@@ -295,7 +295,7 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] space-y-1.5">
                     <label className="block text-xs font-extrabold text-[#1E1915]">
-                      Jangkar Pagi (Eat That Frog)
+                      Pengingat Pagi (Fokus Utama)
                     </label>
                     <input
                       type="time"
@@ -314,7 +314,7 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
 
                   <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] space-y-1.5">
                     <label className="block text-xs font-extrabold text-[#1E1915]">
-                      Jangkar Siang (Pomodoro)
+                      Pengingat Siang
                     </label>
                     <input
                       type="time"
@@ -333,7 +333,7 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
 
                   <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#E2D9C8] space-y-1.5">
                     <label className="block text-xs font-extrabold text-[#1E1915]">
-                      Jangkar Malam (Ivy Lee 6)
+                      Pengingat Malam (Rencana Esok)
                     </label>
                     <input
                       type="time"

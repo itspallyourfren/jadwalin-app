@@ -58,7 +58,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       {/* Row 1: Context + Scale + Pin */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-          <span className="text-xs font-semibold text-[#5C5148] truncate max-w-[150px]">
+          <span className="text-xs font-semibold text-[#5C5148] truncate max-w-[140px]">
             {task.courseOrContext}
           </span>
           <span className="text-[#C9B99F]">·</span>
@@ -66,7 +66,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             {task.scale}
           </span>
           {task.timeBlock !== 'Bebas' && (
-            <span className="text-xs font-medium text-[#8C7E72]">{task.timeBlock}</span>
+            <span className="text-xs font-medium text-[#8C7E72] px-1.5 py-0.5 bg-[#F2ECE1] rounded-md">
+              {task.timeBlock}
+            </span>
           )}
           {task.ivyLeeRank !== null && !isCompleted && (
             <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-[#1E1915] text-white">
@@ -79,15 +81,15 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           <button
             type="button"
             onClick={() => toggleEatThatFrog(task.id)}
-            title="Prioritas utama pagi ini (Eat That Frog)"
-            aria-label="Prioritas pagi"
+            title="Prioritas Utama Hari Ini"
+            aria-label="Prioritas Utama"
             className={`p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 ${
               task.isEatThatFrog
                 ? 'bg-[#FDECE8] text-[#D4532F]'
                 : 'text-[#8C7E72]/60 hover:text-[#1E1915] hover:bg-[#F2ECE1]'
             }`}
           >
-            <Flame className="w-3.5 h-3.5" strokeWidth={2} />
+            <Flame className="w-4 h-4" strokeWidth={2} />
           </button>
         )}
       </div>
@@ -173,8 +175,8 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                 {sub.title}
               </span>
               {sub.isParetoCore && (
-                <span title="Bagian inti (Pareto 20%)" className="shrink-0 mt-0.5">
-                  <Star className="w-3 h-3 text-[#B86B14] fill-[#B86B14]" />
+                <span title="Langkah inti" className="shrink-0 mt-0.5">
+                  <Star className="w-3.5 h-3.5 text-[#B86B14] fill-[#B86B14]" />
                 </span>
               )}
             </label>
@@ -183,27 +185,27 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       )}
 
       {/* Row 4: Clean Action Row */}
-      <div className="pt-2 border-t border-[#E2D9C8]/60 flex items-center justify-between gap-2">
+      <div className="pt-2 border-t border-[#E2D9C8]/60 flex items-center justify-between gap-2 flex-wrap">
         {!isCompleted ? (
           <>
             <button
               type="button"
               onClick={() => onStartFocusTimer(task)}
-              className="min-h-[36px] px-3 py-1 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Play className="w-3 h-3 fill-white" />
               <span>Fokus</span>
             </button>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               {task.status === 'BACKLOG' ? (
                 <button
                   type="button"
                   onClick={() => moveTaskStatus(task.id, 'IN_PROGRESS')}
-                  className="min-h-[36px] px-3 py-1 rounded-xl bg-[#2C4A3E] text-white text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                  className="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#2C4A3E] hover:bg-[#21382F] text-white text-xs font-semibold flex items-center gap-1 cursor-pointer"
                 >
                   <span>Kerjakan Hari Ini</span>
-                  <ArrowRight className="w-3 h-3" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               ) : (
                 <>
@@ -212,26 +214,26 @@ export const TaskCard: React.FC<TaskCardProps> = ({
                     onClick={() => moveTaskStatus(task.id, 'BACKLOG')}
                     title="Simpan ke Laci"
                     aria-label="Simpan ke Laci"
-                    className="min-h-[36px] px-2 py-1 rounded-xl text-[#8C7E72] hover:text-[#1E1915] hover:bg-[#F2ECE1] text-xs font-medium flex items-center gap-1 cursor-pointer"
+                    className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-[#8C7E72] hover:text-[#1E1915] hover:bg-[#F2ECE1] text-xs font-medium flex items-center gap-1 cursor-pointer"
                   >
-                    <Undo2 className="w-3.5 h-3.5" />
+                    <Undo2 className="w-4 h-4" />
                   </button>
 
                   {canClutch85 ? (
                     <button
                       type="button"
                       onClick={() => completeTaskVia85Rule(task.id)}
-                      className="min-h-[36px] px-3 py-1 rounded-xl bg-[#1F7A4C] hover:bg-[#18633C] text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
-                      title="Progres sudah mencapai 85% — selesaikan sekarang tanpa perfeksionis"
+                      className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#1F7A4C] hover:bg-[#18633C] text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
+                      title="Progres sudah 85% — kumpulkan sekarang tanpa ragu"
                     >
                       <Check className="w-3.5 h-3.5" />
-                      <span>Tuntas 85%</span>
+                      <span>Selesai Cukup</span>
                     </button>
                   ) : (
                     <button
                       type="button"
                       onClick={() => moveTaskStatus(task.id, 'COMPLETED')}
-                      className="min-h-[36px] px-2.5 py-1 rounded-xl bg-[#E7F6EE] hover:bg-[#D1EEDE] text-[#1F7A4C] text-xs font-bold flex items-center gap-1 cursor-pointer"
+                      className="min-h-[38px] px-3 py-1.5 rounded-xl bg-[#E7F6EE] hover:bg-[#D1EEDE] text-[#1F7A4C] text-xs font-bold flex items-center gap-1 cursor-pointer"
                     >
                       <Check className="w-3.5 h-3.5" />
                       <span>Selesai</span>
@@ -242,9 +244,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             </div>
           </>
         ) : (
-          <div className="w-full flex items-center justify-between text-xs">
+          <div className="w-full flex items-center justify-between text-xs py-0.5">
             <span className="font-semibold text-[#1F7A4C]">
-              Selesai {task.completedVia85Rule ? '(Aturan 85%)' : ''}
+              Selesai {task.completedVia85Rule ? '(Cukup Baik)' : ''}
             </span>
             <button
               type="button"

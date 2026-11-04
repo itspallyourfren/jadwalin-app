@@ -80,7 +80,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     cardAsset: '/assets/cards/tek_09_eat_that_frog.webp',
     shortSummary: 'Tandai 1 tugas yang paling kamu hindari sebagai Prioritas Pagi Terberat. Begitu beres, sisa harimu terasa ringan.',
     realWorldSteps: [
-      'Pasang pin "Eat That Frog" pada 1 tugas paling berat di Fokus Hari Ini.',
+      'Pasang pin "Prioritas Utama" pada 1 tugas paling penting di Fokus Hari Ini.',
       'Kerjakan tugas tersebut pertama kali di pagi hari saat energi masih penuh.',
     ],
     linkedActionType: 'VIEW_KANBAN',
@@ -156,7 +156,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     cardAsset: '/assets/cards/tek_02_task_chunking.webp',
     shortSummary: 'Otak cenderung menunda tugas yang terlihat besar dan kabur. Pecah menjadi 3–5 langkah konkret yang mudah dicentang.',
     realWorldSteps: [
-      'Buka detail tugas lalu klik tombol "Pecah Langkah Otomatis (Task Chunking)".',
+      'Buka detail tugas lalu klik tombol "Bantu Pecah Tugas".',
       'Centang sub-langkah satu per satu untuk melihat progress bar bergerak naik.',
     ],
     linkedActionType: 'ACTION_CHUNK_TASK',
@@ -171,7 +171,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     cardAsset: '/assets/cards/tek_10_pareto.webp',
     shortSummary: '80% nilai tugas berasal dari 20% bagian intinya. Kerjakan bagian inti dulu sebelum memoles tampilan.',
     realWorldSteps: [
-      'Di daftar sub-langkah tugas, beri tanda bintang "Inti 20%" pada langkah yang paling krusial.',
+      'Di daftar sub-langkah tugas, beri tanda bintang "Inti" pada langkah yang paling krusial.',
       'Selesaikan semua langkah berbintang terlebih dahulu.',
     ],
     linkedActionType: 'ACTION_CHUNK_TASK',
@@ -187,7 +187,7 @@ export const TECHNIQUE_CATALOG: readonly TechniqueCatalogItem[] = [
     shortSummary: 'Perfeksionisme sering membuat tugas tak kunjung dikumpulkan. Saat progres mencapai 85%, beranikan diri menuntaskannya!',
     realWorldSteps: [
       'Cicil sub-langkah tugas hingga mencapai minimal 85%.',
-      'Tekan tombol hijau "Selesaikan di 85% (Anti-Perfeksionis)" yang muncul pada tugas.',
+      'Tekan tombol hijau "Selesai Cukup" yang muncul pada tugas.',
     ],
     linkedActionType: 'ACTION_CHUNK_TASK',
   },

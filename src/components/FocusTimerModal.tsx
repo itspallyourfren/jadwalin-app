@@ -274,11 +274,11 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
           <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] py-6 px-4 text-center space-y-4">
             {fiveSecCountdown !== null ? (
               <div className="py-2 space-y-1">
-                <span className="text-xs font-bold text-[#D4532F]">5-Second Rule</span>
+                <span className="text-xs font-bold text-[#D4532F]">Siap Fokus</span>
                 <div className="text-5xl font-black text-[#1E1915] tabular-nums">
                   {fiveSecCountdown}
                 </div>
-                <p className="text-xs text-[#5C5148]">Siap mulai saat angka habis...</p>
+                <p className="text-xs text-[#5C5148]">Mulai begitu hitungan selesai...</p>
               </div>
             ) : (
               <>
@@ -291,7 +291,7 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
                     <button
                       type="button"
                       onClick={handleStartClick}
-                      className="min-h-[42px] px-5 py-2 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                      className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#D4532F] hover:bg-[#B84322] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       <Play className="w-3.5 h-3.5 fill-white" />
                       <span>Mulai</span>
@@ -300,7 +300,7 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setIsRunning(false)}
-                      className="min-h-[42px] px-5 py-2 rounded-xl bg-[#1E1915] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                      className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#1E1915] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                     >
                       <Pause className="w-3.5 h-3.5" />
                       <span>Jeda</span>
@@ -315,7 +315,7 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
                       setSessionCompleted(false)
                     }}
                     aria-label="Reset timer"
-                    className="min-h-[42px] px-3 py-2 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                    className="min-h-[44px] px-3.5 py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-semibold flex items-center gap-1 cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                   </button>
@@ -324,7 +324,7 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
                     <button
                       type="button"
                       onClick={handleCompleteEarlyAndLog}
-                      className="min-h-[42px] px-3.5 py-2 rounded-xl bg-[#E7F6EE] text-[#1F7A4C] text-xs font-bold flex items-center gap-1 cursor-pointer"
+                      className="min-h-[44px] px-3.5 py-2.5 rounded-xl bg-[#E7F6EE] hover:bg-[#D1EEDE] text-[#1F7A4C] text-xs font-bold flex items-center gap-1 cursor-pointer"
                     >
                       <Check className="w-3.5 h-3.5" />
                       <span>Simpan Sesi</span>
@@ -359,7 +359,7 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
           </div>
 
           {/* Compact Pre-Flight Checkboxes */}
-          <div className="flex items-center justify-between gap-3 px-1 text-xs text-[#5C5148]">
+          <div className="flex items-center justify-between gap-3 px-1 text-xs text-[#5C5148] flex-wrap">
             <label className="flex items-center gap-1.5 cursor-pointer">
               <input
                 type="checkbox"
@@ -367,7 +367,7 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
                 onChange={(e) => setUlyssesChecked(e.target.checked)}
                 className="w-3.5 h-3.5 accent-[#2C4A3E]"
               />
-              <span>Jauhkan HP (Ulysses Pact)</span>
+              <span>Jauhkan HP &amp; notifikasi</span>
             </label>
             <label className="flex items-center gap-1.5 cursor-pointer">
               <input
@@ -376,7 +376,7 @@ export const FocusTimerModal: React.FC<FocusTimerModalProps> = ({
                 onChange={(e) => setBundlingChecked(e.target.checked)}
                 className="w-3.5 h-3.5 accent-[#2C4A3E]"
               />
-              <span>Kopi / Playlist siap</span>
+              <span>Air minum &amp; musik siap</span>
             </label>
           </div>
 

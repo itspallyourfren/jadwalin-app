@@ -144,13 +144,13 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
   // Mode 1: Tambah Tugas Baru
   if (!existingTask) {
     return (
-      <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto">
-        <div className="bg-[#FAF7F2] w-full max-w-lg rounded-3xl border border-[#C9B99F] shadow-xl overflow-hidden">
-          <div className="px-5 py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between">
+      <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div className="bg-[#FAF7F2] w-full max-w-lg rounded-2xl sm:rounded-3xl border border-[#C9B99F] shadow-xl overflow-hidden flex flex-col max-h-[92vh]">
+          <div className="px-5 py-4 bg-[#FFFDF9] border-b border-[#E2D9C8] flex items-center justify-between shrink-0">
             <div>
-              <h2 className="text-lg font-extrabold text-[#1E1915]">Tambah Target Tugas Baru</h2>
+              <h2 className="text-base sm:text-lg font-extrabold text-[#1E1915]">Tambah Tugas Baru</h2>
               <p className="text-xs text-[#5C5148] font-medium">
-                Catat tugasmu dan pecah menjadi langkah kecil agar mudah dimulai.
+                Catat tugas yang ingin kamu selesaikan.
               </p>
             </div>
             <button
@@ -163,7 +163,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
             </button>
           </div>
 
-          <form onSubmit={handleCreateSubmit} className="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+          <form onSubmit={handleCreateSubmit} className="p-4 sm:p-5 space-y-4 overflow-y-auto flex-1">
             <div>
               <label className="block text-xs font-extrabold text-[#1E1915] mb-1">
                 Judul Tugas / Target *
@@ -244,25 +244,25 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
               </div>
             </div>
 
-            {/* Kolom Awal & Blok Waktu */}
+            {/* Status Pengerjaan & Waktu Pengerjaan */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-extrabold text-[#1E1915] mb-1">
-                  Taruh di Kolom Kanban
+                  Status Pengerjaan
                 </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as KanbanStatus)}
                   className="w-full px-3 py-2 rounded-xl bg-[#FFFDF9] border border-[#E2D9C8] text-sm font-semibold text-[#1E1915]"
                 >
-                  <option value="IN_PROGRESS">Fokus Hari Ini (Di Meja)</option>
-                  <option value="BACKLOG">Laci Tugas (Simpan Dulu)</option>
+                  <option value="IN_PROGRESS">Mulai Kerjakan Hari Ini</option>
+                  <option value="BACKLOG">Simpan di Laci Dulu</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-xs font-extrabold text-[#1E1915] mb-1">
-                  Blok Waktu Terbaik (Time Blocking)
+                  Waktu Pengerjaan
                 </label>
                 <select
                   value={timeBlock}
@@ -278,7 +278,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
               </div>
             </div>
 
-            {/* Tenggat Waktu Asli & Target Selesai Pribadi (Hukum Parkinson) */}
+            {/* Tenggat Waktu & Target Selesai Lebih Awal */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-extrabold text-[#1E1915] mb-1">
@@ -293,7 +293,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
               </div>
               <div>
                 <label className="block text-xs font-extrabold text-[#1E1915] mb-1">
-                  Target Selesai Pribadi (Hukum Parkinson)
+                  Target Selesai Lebih Awal (Opsional)
                 </label>
                 <input
                   type="datetime-local"
@@ -304,7 +304,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
               </div>
             </div>
 
-            {/* Opsi Teknik Bawaan saat Buat Tugas */}
+            {/* Opsi Pembantu Mulai Tugas */}
             <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 space-y-2.5">
               <label className="flex items-start gap-2.5 cursor-pointer">
                 <input
@@ -315,10 +315,10 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                 />
                 <div>
                   <span className="text-xs font-extrabold text-[#1E1915] block">
-                    Otomatis Pecah Jadi Langkah Kecil (Task Chunking + Zeigarnik Starter)
+                    Pecah jadi langkah kecil otomatis
                   </span>
                   <span className="text-xs text-[#5C5148]">
-                    Membuat checklist langkah pembuka 2 menit dan penanda 20% bagian inti (Pareto).
+                    Membuat langkah awal 2 menit dan penanda langkah inti.
                   </span>
                 </div>
               </label>
@@ -332,10 +332,10 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                 />
                 <div>
                   <span className="text-xs font-extrabold text-[#1E1915] block">
-                    Tugas Penting &amp; Berdampak Tinggi (Matriks Eisenhower)
+                    Tandai sebagai prioritas tinggi
                   </span>
                   <span className="text-xs text-[#5C5148]">
-                    Masuk ke Kuadran 1 (Kerjakan Segera) atau Kuadran 2 (Jadwalkan).
+                    Fokus utama yang memberi dampak paling besar.
                   </span>
                 </div>
               </label>
@@ -349,10 +349,10 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                 />
                 <div>
                   <span className="text-xs font-extrabold text-[#1E1915] block">
-                    Jadikan Prioritas Pagi Terberat (Eat That Frog!)
+                    Fokus utama hari ini
                   </span>
                   <span className="text-xs text-[#5C5148]">
-                    Sematkan di urutan paling atas Fokus Hari Ini agar diselesaikan paling awal.
+                    Disematkan di paling atas agar diselesaikan pertama kali.
                   </span>
                 </div>
               </label>
@@ -433,45 +433,45 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('STEPS')}
-            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeTab === 'STEPS'
                 ? 'border-[#2C4A3E] text-[#1E1915]'
                 : 'border-transparent text-[#8C7E72] hover:text-[#1E1915]'
             }`}
           >
             <Scissors className="w-3.5 h-3.5" />
-            <span>Langkah Kecil &amp; Rincian ({existingTask.subtasks.length})</span>
+            <span>Langkah Kerja ({existingTask.subtasks.length})</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('WOOP')}
-            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeTab === 'WOOP'
                 ? 'border-[#2C4A3E] text-[#1E1915]'
                 : 'border-transparent text-[#8C7E72] hover:text-[#1E1915]'
             }`}
           >
             <ShieldAlert className="w-3.5 h-3.5" />
-            <span>Antisipasi Hambatan (WOOP)</span>
+            <span>Rencana Antisipasi</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('STUDY')}
-            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+            className={`pb-2.5 px-3 text-xs font-extrabold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeTab === 'STUDY'
                 ? 'border-[#2C4A3E] text-[#1E1915]'
                 : 'border-transparent text-[#8C7E72] hover:text-[#1E1915]'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Ruang Belajar (SQ3R · Feynman · Flashcard)</span>
+            <span>Catatan Belajar</span>
           </button>
         </div>
 
         {/* Body Content */}
-        <div className="p-5 overflow-y-auto flex-1 space-y-5">
+        <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 sm:space-y-5">
           {activeTab === 'STEPS' && (
             <>
               {/* Progress & 85% Rule Box */}
@@ -487,7 +487,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                       className="px-2.5 py-1 rounded-xl bg-[#E7F6EE] hover:bg-[#D1EEDE] text-[#1F7A4C] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
                     >
                       <Brain className="w-3.5 h-3.5" />
-                      <span>Asisten Alur Cerdas</span>
+                      <span>Bantu Pecah Tugas</span>
                     </button>
                     <button
                       type="button"
@@ -538,19 +538,19 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                     className="w-full py-2.5 px-4 rounded-xl bg-[#1F7A4C] hover:bg-[#18633C] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Sparkles className="w-4 h-4" />
-                    <span>Sudah {progress}%! Tuntaskan Sekarang via The 85% Rule</span>
+                    <span>Sudah {progress}%! Selesaikan Sekarang (Cukup Baik)</span>
                   </button>
                 )}
               </div>
 
-              {/* Subtasks List (Task Chunking & Pareto 80/20) */}
+              {/* Subtasks List */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
                 <div>
                   <h3 className="text-sm font-extrabold text-[#1E1915]">
-                    Daftar Sub-Langkah (Task Chunking &amp; Pareto 80/20)
+                    Daftar Sub-Langkah
                   </h3>
                   <p className="text-xs text-[#5C5148]">
-                    Klik ikon bintang untuk menandai <strong>20% langkah inti paling berdampak</strong>.
+                    Beri bintang pada <strong>langkah inti paling penting</strong>.
                   </p>
                 </div>
 
@@ -576,7 +576,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                       <button
                         type="button"
                         onClick={() => toggleSubtaskPareto(existingTask.id, sub.id)}
-                        title="Tandai sebagai 20% Inti Berdampak (Prinsip Pareto)"
+                        title="Tandai sebagai langkah inti"
                         className={`px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer ${
                           sub.isParetoCore
                             ? 'bg-[#FEF3E2] text-[#B86B14] border border-[#B86B14]/30'
@@ -586,7 +586,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                         <Star
                           className={`w-3.5 h-3.5 ${sub.isParetoCore ? 'fill-[#B86B14]' : ''}`}
                         />
-                        <span>Inti 20%</span>
+                        <span>★ Inti</span>
                       </button>
                       <button
                         type="button"
@@ -601,7 +601,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                 </div>
 
                 {/* Add Subtask Input */}
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex items-center gap-2 pt-1 flex-wrap sm:flex-nowrap">
                   <input
                     type="text"
                     placeholder="Tambah sub-langkah kecil baru..."
@@ -614,37 +614,39 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                         setNewSubtaskText('')
                       }
                     }}
-                    className="flex-1 px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#C9B99F] text-xs font-semibold text-[#1E1915]"
+                    className="flex-1 min-w-[200px] px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#C9B99F] text-xs font-semibold text-[#1E1915]"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setNewSubtaskPareto((v) => !v)}
-                    className={`px-2.5 py-2 rounded-xl text-xs font-bold border cursor-pointer ${
-                      newSubtaskPareto
-                        ? 'bg-[#FEF3E2] text-[#B86B14] border-[#B86B14]'
-                        : 'bg-[#FAF7F2] text-[#5C5148] border-[#E2D9C8]'
-                    }`}
-                  >
-                    ★ Inti
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      addSubtask(existingTask.id, newSubtaskText, newSubtaskPareto)
-                      setNewSubtaskText('')
-                    }}
-                    className="px-3 py-2 rounded-xl bg-[#2C4A3E] text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Tambah</span>
-                  </button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setNewSubtaskPareto((v) => !v)}
+                      className={`px-2.5 py-2 rounded-xl text-xs font-bold border cursor-pointer ${
+                        newSubtaskPareto
+                          ? 'bg-[#FEF3E2] text-[#B86B14] border-[#B86B14]'
+                          : 'bg-[#FAF7F2] text-[#5C5148] border-[#E2D9C8]'
+                      }`}
+                    >
+                      ★ Inti
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        addSubtask(existingTask.id, newSubtaskText, newSubtaskPareto)
+                        setNewSubtaskText('')
+                      }}
+                      className="px-3 py-2 rounded-xl bg-[#2C4A3E] text-white text-xs font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Tambah</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* Edit Basic Task Metadata & Parkinson Internal Deadline */}
+              {/* Edit Basic Task Metadata */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
                 <h3 className="text-sm font-extrabold text-[#1E1915]">
-                  Pengaturan Tugas &amp; Hukum Parkinson
+                  Pengaturan &amp; Tenggat Tugas
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
@@ -673,7 +675,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[#5C5148] mb-1">
-                      Tenggat Resmi
+                      Tenggat Waktu (Deadline)
                     </label>
                     <input
                       type="datetime-local"
@@ -691,7 +693,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[#5C5148] mb-1">
-                      Target Selesai Pribadi (Hukum Parkinson)
+                      Target Selesai Lebih Awal (Opsional)
                     </label>
                     <input
                       type="datetime-local"
@@ -716,17 +718,17 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
             <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
               <div>
                 <h3 className="text-sm font-extrabold text-[#1E1915]">
-                  WOOP Framework &amp; Premortem Analysis
+                  Rencana Menghadapi Godaan &amp; Hambatan
                 </h3>
                 <p className="text-xs text-[#5C5148]">
-                  Kenali potensi rintangan internal maupun eksternal sebelum terjadi, lalu siapkan langkah antisipasi <strong>Jika–Maka</strong>.
+                  Siapkan antisipasi jika–maka sebelum rasa malas atau distraksi datang.
                 </p>
               </div>
 
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs font-extrabold text-[#1E1915] mb-1">
-                    Wish (Target Spesifik yang Ingin Dicapai):
+                    Target Spesifik yang Ingin Dicapai:
                   </label>
                   <input
                     type="text"
@@ -744,7 +746,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
 
                 <div>
                   <label className="block text-xs font-extrabold text-[#1E1915] mb-1">
-                    Outcome (Hasil Terbaik yang Kamu Rasakan Saat Beres):
+                    Hasil Positif Saat Tugas Selesai:
                   </label>
                   <input
                     type="text"
@@ -762,7 +764,7 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
 
                 <div>
                   <label className="block text-xs font-extrabold text-[#C8432B] mb-1">
-                    Obstacle / Premortem (Hambatan Terbesar yang Sering Membuatmu Menunda):
+                    Godaan atau Hambatan Terbesar:
                   </label>
                   <textarea
                     rows={2}
@@ -780,11 +782,11 @@ export const TaskWorkspaceModal: React.FC<TaskWorkspaceModalProps> = ({
 
                 <div>
                   <label className="block text-xs font-extrabold text-[#1F7A4C] mb-1">
-                    Plan Jika–Maka (Solusi Otomatis Saat Hambatan Muncul):
+                    Rencana Antisipasi (Jika–Maka):
                   </label>
                   <textarea
                     rows={2}
-                    placeholder="Contoh: JIKA aku mulai bingung dan ingin buka medsos, MAKA aku akan nyalakan 10-Minute Rule dan tulis 1 paragraf kasar saja."
+                    placeholder="Contoh: JIKA aku mulai bingung dan ingin buka medsos, MAKA aku akan nyalakan timer 10 menit dan tulis 1 paragraf kasar saja."
                     value={existingTask.woop.ifThenPlan}
                     onChange={(e) =>
                       updateWoopNote(existingTask.id, {

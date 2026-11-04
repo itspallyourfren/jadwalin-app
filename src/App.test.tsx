@@ -35,7 +35,7 @@ describe('App & Modals SSR Render Verification', () => {
 
     // 2. TaskWorkspaceModal (New & Existing)
     const htmlNewTask = renderToString(<TaskWorkspaceModal taskId={null} onClose={() => {}} />)
-    expect(htmlNewTask).toContain('Tambah Target Tugas Baru')
+    expect(htmlNewTask).toContain('Tambah Tugas Baru')
 
     const htmlExistingTask = renderToString(
       <TaskWorkspaceModal taskId={firstTask.id} task={firstTask} onClose={() => {}} />
@@ -48,7 +48,7 @@ describe('App & Modals SSR Render Verification', () => {
       <FocusTimerModal initialTask={firstTask} initialMode="TEN_MINUTE_RULE" onClose={() => {}} />
     )
     expect(htmlTimer).toContain('Mulai 10m')
-    expect(htmlTimer).toContain('Ulysses Pact')
+    expect(htmlTimer).toContain('Jauhkan HP')
 
     // 4. TechniqueToolkitModal
     const htmlToolkit = renderToString(
@@ -60,29 +60,29 @@ describe('App & Modals SSR Render Verification', () => {
     const htmlStudy = renderToString(
       <TaskWorkspaceModal taskId={firstTask.id} task={firstTask} initialTab="STUDY" onClose={() => {}} />
     )
-    expect(htmlStudy).toContain('Checklist Membaca SQ3R')
+    expect(htmlStudy).toContain('Membaca Efektif')
     expect(htmlStudy).toContain('Metode Feynman')
-    expect(htmlStudy).toContain('Sistem Leitner')
+    expect(htmlStudy).toContain('Flashcard')
 
     const htmlWoop = renderToString(
       <TaskWorkspaceModal taskId={firstTask.id} task={firstTask} initialTab="WOOP" onClose={() => {}} />
     )
-    expect(htmlWoop).toContain('WOOP Framework')
+    expect(htmlWoop).toContain('Rencana Menghadapi Godaan &amp; Hambatan')
 
     // 4c. SmartDecompositionModal (Adaptive Strategy Engine)
     const htmlSmart = renderToString(
       <SmartDecompositionModal task={firstTask} onClose={() => {}} onApplySteps={() => {}} />
     )
-    expect(htmlSmart).toContain('Asisten Alur Kerja Cerdas')
+    expect(htmlSmart).toContain('Bantu Pecah Tugas')
     expect(htmlSmart).toContain('Pilih Gaya Pengerjaan')
     expect(htmlSmart).toContain('Sprint Mepet')
-    expect(htmlSmart).toContain('Peta Fase')
+    expect(htmlSmart).toContain('Rencana Langkah')
 
     // 5. NotificationAndRecoveryModal
     const htmlNotif = renderToString(
       <NotificationAndRecoveryModal initialTab="NOTIFICATION" onClose={() => {}} />
     )
-    expect(htmlNotif).toContain('Habit Stacking')
+    expect(htmlNotif).toContain('Jadwal Pengingat Kebiasaan')
 
     const htmlRecov = renderToString(
       <NotificationAndRecoveryModal initialTab="RECOVERY" onClose={() => {}} />

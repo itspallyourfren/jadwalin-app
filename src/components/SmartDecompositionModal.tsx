@@ -104,14 +104,14 @@ export const SmartDecompositionModal: React.FC<SmartDecompositionModalProps> = (
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-base font-extrabold text-[#1E1915]">
-                  Asisten Alur Kerja Cerdas
+                  Bantu Pecah Tugas
                 </h2>
                 <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#FAF7F2] text-[#2C4A3E] border border-[#C9B99F]">
                   {plan.domainLabel}
                 </span>
               </div>
               <p className="text-xs text-[#5C5148] font-medium mt-0.5">
-                Memetakan strategi pengerjaan berbasis pola tugas &amp; sisa waktu.
+                Rekomendasi alur pengerjaan praktis berdasarkan jenis tugasmu.
               </p>
             </div>
           </div>
@@ -199,10 +199,10 @@ export const SmartDecompositionModal: React.FC<SmartDecompositionModalProps> = (
           <div className="space-y-3">
             <div className="flex items-center justify-between px-0.5">
               <span className="text-xs font-extrabold text-[#1E1915] uppercase tracking-wider">
-                Peta Fase &amp; Langkah Terurai ({activeCount} dipilih)
+                Rencana Langkah ({activeCount} dipilih)
               </span>
               <span className="text-xs text-[#5C5148] font-medium">
-                ★ = Bagian Inti (Pareto 20%)
+                ★ = Langkah Inti
               </span>
             </div>
 
@@ -214,7 +214,7 @@ export const SmartDecompositionModal: React.FC<SmartDecompositionModalProps> = (
                 <div className="flex items-center justify-between gap-2 border-b border-[#E2D9C8]/60 pb-2">
                   <div>
                     <h3 className="text-xs font-extrabold text-[#1E1915]">{phase.phaseName}</h3>
-                    <p className="text-[11px] text-[#5C5148]">{phase.purpose}</p>
+                    <p className="text-xs text-[#5C5148]">{phase.purpose}</p>
                   </div>
                   <span className="text-xs font-bold text-[#8C7E72] tabular-nums shrink-0">
                     ~{phase.estimatedMinutes}m
@@ -244,19 +244,19 @@ export const SmartDecompositionModal: React.FC<SmartDecompositionModalProps> = (
                             {st.title}
                           </p>
                           {st.starterTrigger && (
-                            <p className="text-[11px] text-[#D4532F] font-semibold mt-0.5">
-                              Pemicu Mulai: {st.starterTrigger}
+                            <p className="text-xs text-[#D4532F] font-semibold mt-0.5">
+                              Langkah Awal: {st.starterTrigger}
                             </p>
                           )}
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0">
                           {st.isParetoCore && (
                             <span
-                              title="Bagian Inti (Prinsip Pareto 20%)"
-                              className="px-1.5 py-0.5 rounded bg-[#FEF3E2] text-[#B86B14] text-[10px] font-black flex items-center gap-0.5"
+                              title="Langkah Inti"
+                              className="px-2 py-0.5 rounded bg-[#FEF3E2] text-[#B86B14] text-xs font-extrabold flex items-center gap-1"
                             >
-                              <Star className="w-3 h-3 fill-[#B86B14]" />
-                              <span>20% Inti</span>
+                              <Star className="w-3.5 h-3.5 fill-[#B86B14]" />
+                              <span>Inti</span>
                             </span>
                           )}
                           <span className="text-xs font-medium text-[#8C7E72] tabular-nums">
@@ -275,7 +275,7 @@ export const SmartDecompositionModal: React.FC<SmartDecompositionModalProps> = (
           <div className="bg-[#FAF7F2] rounded-2xl border border-[#E2D9C8] p-3.5 space-y-2">
             <div className="flex items-center gap-1.5 text-xs font-extrabold text-[#1E1915]">
               <Lightbulb className="w-4 h-4 text-[#D4532F]" />
-              <span>Sains Perilaku yang Direkomendasikan:</span>
+              <span>Tips Memulai:</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {plan.recommendedTechniques.map((rec, rIdx) => (
@@ -284,7 +284,7 @@ export const SmartDecompositionModal: React.FC<SmartDecompositionModalProps> = (
                   className="p-2.5 rounded-xl bg-[#FFFDF9] border border-[#E2D9C8] space-y-0.5"
                 >
                   <p className="text-xs font-extrabold text-[#2C4A3E]">{rec.name}</p>
-                  <p className="text-[11px] text-[#5C5148] leading-snug font-medium">{rec.why}</p>
+                  <p className="text-xs text-[#5C5148] leading-snug font-medium">{rec.why}</p>
                 </div>
               ))}
             </div>

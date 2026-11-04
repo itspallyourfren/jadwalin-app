@@ -57,7 +57,7 @@ export const DeviceSimulatorWrapper: React.FC<DeviceSimulatorWrapperProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1E1915] flex flex-col">
+    <div className="h-[100dvh] min-h-[100dvh] bg-[#FAF7F2] text-[#1E1915] flex flex-col overflow-hidden">
       {/* Slim Desktop Preview Bar (Hidden on actual mobile devices) */}
       <div className="hidden md:flex items-center justify-between px-4 py-1.5 bg-[#F2ECE1] border-b border-[#E2D9C8] text-xs">
         <span className="font-semibold text-[#5C5148]">Tampilan Layar</span>

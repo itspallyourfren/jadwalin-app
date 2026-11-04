@@ -17,12 +17,12 @@ export const StudyWorkspacePanel: React.FC<StudyWorkspacePanelProps> = ({ task }
 
   return (
     <div className="space-y-4">
-      {/* 1. SQ3R Reading Checklist */}
+      {/* 1. Membaca Efektif (SQ3R) */}
       <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-2.5">
         <h3 className="text-sm font-extrabold text-[#1E1915]">
-          1. Checklist Membaca SQ3R (Survey · Question · Read · Recite · Review)
+          1. Membaca Efektif (Pindai, Tanya, Pahami)
         </h3>
-        <div className="flex items-center gap-4 flex-wrap text-xs font-bold text-[#1E1915]">
+        <div className="flex items-center gap-3 flex-wrap text-xs font-bold text-[#1E1915]">
           <label className="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
@@ -35,7 +35,7 @@ export const StudyWorkspacePanel: React.FC<StudyWorkspacePanelProps> = ({ task }
               }
               className="w-4 h-4 accent-[#2C4A3E]"
             />
-            <span>1. Survey (Pindai Daftar Isi/Subjudul)</span>
+            <span>Pindai Daftar Isi / Subjudul</span>
           </label>
           <label className="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -49,7 +49,7 @@ export const StudyWorkspacePanel: React.FC<StudyWorkspacePanelProps> = ({ task }
               }
               className="w-4 h-4 accent-[#2C4A3E]"
             />
-            <span>3. Read (Baca Cari Jawaban)</span>
+            <span>Baca Cari Jawaban</span>
           </label>
           <label className="flex items-center gap-1.5 cursor-pointer">
             <input
@@ -63,13 +63,13 @@ export const StudyWorkspacePanel: React.FC<StudyWorkspacePanelProps> = ({ task }
               }
               className="w-4 h-4 accent-[#2C4A3E]"
             />
-            <span>5. Review (Tinjau Ulang)</span>
+            <span>Tinjau Ulang Inti Bab</span>
           </label>
         </div>
 
         <input
           type="text"
-          placeholder="2. Question: Pertanyaan utama apa yang ingin kamu jawab dari bab ini?"
+          placeholder="Pertanyaan utama apa yang ingin kamu temukan jawabannya dari materi ini?"
           value={task.studyNotes.sq3r.question}
           onChange={(e) =>
             updateStudyNotes(task.id, {
@@ -81,13 +81,13 @@ export const StudyWorkspacePanel: React.FC<StudyWorkspacePanelProps> = ({ task }
         />
       </div>
 
-      {/* 2. Metode Feynman & Rubber Duck */}
+      {/* 2. Jelaskan dengan Bahasa Sederhana */}
       <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-2">
         <h3 className="text-sm font-extrabold text-[#1E1915]">
-          2. Metode Feynman &amp; Rubber Duck (Jelaskan dengan Bahasa Sederhana)
+          2. Jelaskan dengan Bahasa Sendiri (Metode Feynman)
         </h3>
         <p className="text-xs text-[#5C5148]">
-          Tuliskan inti konsep materi ini seolah kamu sedang menerangkannya ke teman awam tanpa jargon rumit:
+          Tuliskan inti konsep ini seolah kamu sedang menerangkannya ke teman awam tanpa istilah rumit:
         </p>
         <textarea
           rows={3}
@@ -103,14 +103,14 @@ export const StudyWorkspacePanel: React.FC<StudyWorkspacePanelProps> = ({ task }
         />
       </div>
 
-      {/* 3. The Blurting Method */}
+      {/* 3. Tulis Ingatan Bebas */}
       <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-2">
         <h3 className="text-sm font-extrabold text-[#1E1915]">
-          3. The Blurting Method (Tumpahan Ingatan Tanpa Melihat Catatan)
+          3. Tulis Ingatan Bebas (Blurting)
         </h3>
         <textarea
           rows={2}
-          placeholder="Tutup bukumu selama 5 menit, lalu ketik semua kata kunci yang masih kamu ingat di sini..."
+          placeholder="Tutup buku atau slide, lalu ketik semua kata kunci dan alur yang masih kamu ingat di sini..."
           value={task.studyNotes.blurtingDump}
           onChange={(e) =>
             updateStudyNotes(task.id, {
@@ -122,15 +122,15 @@ export const StudyWorkspacePanel: React.FC<StudyWorkspacePanelProps> = ({ task }
         />
       </div>
 
-      {/* 4. Active Recall & 3-Box Leitner Flashcards */}
+      {/* 4. Flashcard Tanya-Jawab */}
       <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-extrabold text-[#1E1915]">
-              4. Flashcard Tanya-Jawab (Active Recall &amp; Sistem Leitner)
+              4. Kartu Tanya-Jawab (Flashcard)
             </h3>
             <p className="text-xs text-[#5C5148]">
-              Uji ingatanmu terlebih dahulu sebelum membuka jawaban. Pindahkan ke Kotak 3 saat sudah menguasai.
+              Uji ingatanmu sebelum membuka jawaban. Simpan ke Kotak 3 (K3) saat materi sudah kamu kuasai.
             </p>
           </div>
           <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#FAF7F2] text-[#2C4A3E]">

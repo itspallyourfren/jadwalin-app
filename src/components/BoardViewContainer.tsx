@@ -103,7 +103,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
         <div
           className={`${
             isSimulatedMobile ? 'flex' : 'flex md:hidden'
-          } bg-[#F2ECE1] p-1 rounded-xl border border-[#E2D9C8] gap-1`}
+          } bg-[#F2ECE1] p-1 rounded-2xl border border-[#E2D9C8] gap-1`}
         >
           {mobileTabsOrder.map((col) => {
             const active = activeMobileKanbanTab === col.status
@@ -112,13 +112,20 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                 key={col.status}
                 type="button"
                 onClick={() => setActiveMobileKanbanTab(col.status)}
-                className={`flex-1 py-2 px-2 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                className={`flex-1 min-h-[42px] py-2 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                   active
-                    ? 'bg-[#FFFDF9] text-[#1E1915] shadow-2xs'
+                    ? 'bg-[#FFFDF9] text-[#1E1915] shadow-xs'
                     : 'text-[#5C5148] hover:text-[#1E1915]'
                 }`}
               >
-                {col.title} ({col.items.length})
+                <span>{col.title}</span>
+                <span
+                  className={`text-[11px] px-1.5 py-0.2 rounded-full font-extrabold ${
+                    active ? 'bg-[#2C4A3E] text-white' : 'bg-[#E2D9C8] text-[#5C5148]'
+                  }`}
+                >
+                  {col.items.length}
+                </span>
               </button>
             )
           })}
@@ -359,7 +366,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
         {alloc.unassigned.length > 0 && (
           <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-3.5 space-y-2">
             <h3 className="text-xs font-bold text-[#5C5148] uppercase tracking-wider">
-              Pilih dari Laci ke Target 1-3-5
+              Pilih Tugas untuk Target Hari Ini (1-3-5)
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {alloc.unassigned.map((t) => (
@@ -373,7 +380,8 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                       type="button"
                       disabled={alloc.isLargeFull}
                       onClick={() => setOneThreeFiveSlot(t.id, 'LARGE_1')}
-                      className="px-2 py-1 rounded bg-[#FDECE8] text-[#C8432B] text-xs font-semibold disabled:opacity-40 cursor-pointer"
+                      title="Slot 1 Tugas Besar"
+                      className="px-2.5 py-1 rounded-lg bg-[#FDECE8] text-[#C8432B] text-xs font-bold disabled:opacity-40 cursor-pointer"
                     >
                       1B
                     </button>
@@ -381,7 +389,8 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                       type="button"
                       disabled={alloc.isMediumFull}
                       onClick={() => setOneThreeFiveSlot(t.id, 'MEDIUM_3')}
-                      className="px-2 py-1 rounded bg-[#FEF3E2] text-[#B86B14] text-xs font-semibold disabled:opacity-40 cursor-pointer"
+                      title="Slot 3 Tugas Sedang"
+                      className="px-2.5 py-1 rounded-lg bg-[#FEF3E2] text-[#B86B14] text-xs font-bold disabled:opacity-40 cursor-pointer"
                     >
                       3S
                     </button>
@@ -389,7 +398,8 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                       type="button"
                       disabled={alloc.isSmallFull}
                       onClick={() => setOneThreeFiveSlot(t.id, 'SMALL_5')}
-                      className="px-2 py-1 rounded bg-[#EBF1FF] text-[#2B59C3] text-xs font-semibold disabled:opacity-40 cursor-pointer"
+                      title="Slot 5 Tugas Kecil"
+                      className="px-2.5 py-1 rounded-lg bg-[#EBF1FF] text-[#2B59C3] text-xs font-bold disabled:opacity-40 cursor-pointer"
                     >
                       5K
                     </button>
@@ -442,10 +452,10 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                       key={r}
                       type="button"
                       onClick={() => setIvyLeeRank(task.id, r)}
-                      className={`w-6 h-6 rounded text-xs font-bold cursor-pointer ${
+                      className={`w-7 h-7 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
                         task.ivyLeeRank === r
-                          ? 'bg-[#1E1915] text-white'
-                          : 'bg-[#FFFDF9] border border-[#E2D9C8] text-[#5C5148]'
+                          ? 'bg-[#1E1915] text-white shadow-2xs'
+                          : 'bg-[#FFFDF9] border border-[#E2D9C8] text-[#5C5148] hover:text-[#1E1915]'
                       }`}
                     >
                       {r}
@@ -482,7 +492,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
                         key={r}
                         type="button"
                         onClick={() => setIvyLeeRank(t.id, r)}
-                        className="px-2 py-0.5 rounded bg-[#FFFDF9] hover:bg-[#1E1915] hover:text-white border border-[#E2D9C8] text-xs font-semibold cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg bg-[#FFFDF9] hover:bg-[#1E1915] hover:text-white border border-[#E2D9C8] text-xs font-semibold cursor-pointer"
                       >
                         #{r}
                       </button>
@@ -500,52 +510,50 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
   return (
     <main
       className={`flex-1 overflow-y-auto ${
-        isSimulatedMobile ? 'px-3.5 py-3 pb-24' : 'max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 pb-24'
+        isSimulatedMobile ? 'px-3 py-2.5 pb-32' : 'max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 pb-28'
       }`}
     >
-      {/* Unified Compact Toolbar: View Switcher + Time Block Filter */}
-      <div className="mb-3.5 flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1 overflow-x-auto">
-          {VIEW_TABS.map((tab) => {
-            const active = activeBoardView === tab.id
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveBoardView(tab.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer ${
-                  active
-                    ? 'bg-[#2C4A3E] text-[#FAF7F2]'
-                    : 'bg-[#FFFDF9] text-[#5C5148] hover:text-[#1E1915] border border-[#E2D9C8]'
-                }`}
-              >
-                {tab.icon}
-                <span>{tab.label}</span>
-              </button>
-            )
-          })}
-        </div>
+      {/* Streamlined Horizontal Scroll Toolbar (Zero Stacking Clutter on Mobile) */}
+      <div className="mb-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+        {VIEW_TABS.map((tab) => {
+          const active = activeBoardView === tab.id
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveBoardView(tab.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer ${
+                active
+                  ? 'bg-[#2C4A3E] text-[#FAF7F2] shadow-2xs'
+                  : 'bg-[#FFFDF9] text-[#5C5148] hover:text-[#1E1915] border border-[#E2D9C8]'
+              }`}
+            >
+              {tab.icon}
+              <span>{tab.label}</span>
+            </button>
+          )
+        })}
 
-        {/* Compact Time Block Filter */}
-        <div className="flex items-center gap-1 overflow-x-auto">
-          {TIME_OPTIONS.map((opt) => {
-            const active = activeTimeFilter === opt.value
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => setActiveTimeFilter(opt.value)}
-                className={`px-2 py-1 rounded-lg text-xs font-semibold transition-colors shrink-0 cursor-pointer ${
-                  active
-                    ? 'bg-[#1E1915] text-white'
-                    : 'text-[#5C5148] hover:bg-[#F2ECE1]'
-                }`}
-              >
-                {opt.label}
-              </button>
-            )
-          })}
-        </div>
+        <div className="h-4 w-px bg-[#E2D9C8] mx-1 shrink-0" />
+
+        {/* Time Block Filter Chips */}
+        {TIME_OPTIONS.map((opt) => {
+          const active = activeTimeFilter === opt.value
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setActiveTimeFilter(opt.value)}
+              className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-colors shrink-0 cursor-pointer ${
+                active
+                  ? 'bg-[#1E1915] text-white'
+                  : 'text-[#5C5148] bg-[#F2ECE1]/70 hover:bg-[#F2ECE1]'
+              }`}
+            >
+              {opt.label}
+            </button>
+          )
+        })}
       </div>
 
       {tasks.length === 0 && (
