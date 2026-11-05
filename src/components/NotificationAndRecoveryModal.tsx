@@ -563,32 +563,32 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
               </div>
 
               {/* ☁️ Cloudflare Edge Vault Sync (On-Demand & Zero Spam) */}
-              <div className="bg-[#FFFDF9] rounded-2xl border border-[#2C4A3E]/30 p-4 space-y-3 shadow-2xs">
+              <div className="bg-[#FFFDF9] rounded-2xl border border-[#2C4A3E]/35 p-4 space-y-3.5 shadow-2xs">
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-[#E8EFE9] text-[#2C4A3E] flex items-center justify-center shrink-0">
-                      <Cloud className="w-4 h-4 stroke-[2.2]" />
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-[#E8EFE9] text-[#2C4A3E] flex items-center justify-center shrink-0">
+                      <Cloud className="w-5 h-5 stroke-[2.2]" />
                     </div>
                     <div>
                       <h3 className="text-sm font-extrabold text-[#1E1915]">
                         Cadangan Cloud Peserta (Cloudflare Edge)
                       </h3>
                       <p className="text-[11px] text-[#5C5148]">
-                        Sinkronisasi on-demand tanpa spam request. Akses data di HP/laptop lain.
+                        Sinkronisasi on-demand tanpa spam request. Buka &amp; lanjutkan tugas di HP atau laptop lain.
                       </p>
                     </div>
                   </div>
 
                   {cloudSyncCode && (
-                    <div className="flex items-center gap-1.5 bg-[#F2ECE1] px-2.5 py-1 rounded-xl border border-[#E2D9C8]">
-                      <span className="text-[10px] font-bold text-[#8C7E72]">Kode Vault:</span>
+                    <div className="flex items-center gap-1.5 bg-[#E8EFE9] px-2.5 py-1 rounded-xl border border-[#2C4A3E]/20">
+                      <span className="text-[10px] font-bold text-[#2C4A3E]/80">Kode Vault:</span>
                       <span className="text-xs font-black text-[#2C4A3E] tracking-wider font-mono">
                         {cloudSyncCode}
                       </span>
                       <button
                         type="button"
                         onClick={handleCopyCloudCode}
-                        className="text-[#5C5148] hover:text-[#1E1915] p-0.5 cursor-pointer"
+                        className="text-[#2C4A3E] hover:text-[#1E1915] p-0.5 cursor-pointer ml-0.5"
                         title="Salin kode vault"
                       >
                         {copiedCloudCode ? (
@@ -602,7 +602,9 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-[#8C7E72] bg-[#FAF7F2] p-2.5 rounded-xl border border-[#E2D9C8]">
-                  <span>Status Cloud: {cloudSyncCode ? 'Terhubung (Auto-Sync Aktif)' : 'Belum Pernah Disinkronkan'}</span>
+                  <span className="font-medium">
+                    Status: <strong className={cloudSyncCode ? 'text-[#1F7A4C]' : 'text-[#8C7E72]'}>{cloudSyncCode ? 'Terhubung (Auto-Sync Aktif)' : 'Belum Pernah Disinkronkan'}</strong>
+                  </span>
                   <span>
                     {lastCloudSyncIso
                       ? `Tersimpan: ${new Date(lastCloudSyncIso).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`
@@ -616,7 +618,7 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                     type="button"
                     onClick={handlePushCloud}
                     disabled={isSyncingCloud}
-                    className="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs disabled:opacity-50"
+                    className="min-h-[42px] px-3.5 py-2 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs disabled:opacity-50"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin' : ''}`} />
                     <span>{isSyncingCloud ? 'Menyimpan...' : 'Cadangkan ke Cloud Sekarang'}</span>
@@ -628,13 +630,13 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                       placeholder="Ketik Kode JDW-XXXX..."
                       value={cloudCodeInput}
                       onChange={(e) => setCloudCodeInput(e.target.value.toUpperCase())}
-                      className="flex-1 px-3 py-2 rounded-xl bg-[#FFFDF9] border border-[#C9B99F] text-xs font-bold text-[#1E1915] placeholder:text-[#8C7E72]/60 focus:outline-2 focus:outline-[#2C4A3E]"
+                      className="flex-1 px-3 py-2 min-h-[42px] rounded-xl bg-[#FFFDF9] border border-[#C9B99F] text-xs font-bold text-[#1E1915] placeholder:text-[#8C7E72]/60 focus:outline-2 focus:outline-[#2C4A3E]"
                     />
                     <button
                       type="button"
                       onClick={handlePullCloud}
                       disabled={isRestoringCloud || !cloudCodeInput.trim()}
-                      className="px-3.5 py-2 min-h-[40px] rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-extrabold flex items-center justify-center gap-1 cursor-pointer transition-colors shrink-0 disabled:opacity-40"
+                      className="px-3.5 py-2 min-h-[42px] rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-extrabold flex items-center justify-center gap-1 cursor-pointer transition-colors shrink-0 disabled:opacity-40"
                     >
                       <Download className="w-3.5 h-3.5 text-[#5C5148]" />
                       <span>{isRestoringCloud ? '...' : 'Tarik'}</span>
@@ -643,71 +645,21 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                 </div>
               </div>
 
-              {/* Cadangan Cepat di HP (Paling Sering Digunakan) */}
-              <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] p-4 space-y-3">
-                <div className="flex items-center justify-between flex-wrap gap-1">
-                  <h3 className="text-sm font-extrabold text-[#1E1915]">
-                    Cadangan &amp; Pemulihan Lokal HP
-                  </h3>
-                  <span className="text-[11px] text-[#8C7E72]">
-                    Sync:{' '}
-                    {lastBackupSyncedIso
-                      ? new Date(lastBackupSyncedIso).toLocaleTimeString('id-ID', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })
-                      : 'Baru saja'}
-                  </span>
-                </div>
-                <p className="text-xs text-[#5C5148] leading-relaxed">
-                  Data tugasmu tersimpan offline di peramban HP ini. Buat salinan cadangan sebelum membersihkan cache peramban.
-                </p>
-
-                <div className="flex items-center gap-2 flex-wrap">
-                  <button
-                    type="button"
-                    onClick={handleCopyRecoveryCode}
-                    className="flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-xs"
-                  >
-                    {copiedRecoveryCode ? (
-                      <>
-                        <Check className="w-4 h-4 text-emerald-300" />
-                        <span>Kode Tersalin!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        <span>Salin Kode Teks</span>
-                      </>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleDownloadJson}
-                    className="flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                  >
-                    <Download className="w-4 h-4 text-[#5C5148]" />
-                    <span>Unduh File (.json)</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Opsi Lanjutan: Pemulihan Manual & Kode Pelatihan Workshop (Disembunyikan Rapi) */}
+              {/* Opsi Cadangan Darurat (Offline / File Manual) */}
               <div className="bg-[#FFFDF9] rounded-2xl border border-[#E2D9C8] overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setShowAdvancedWorkshop((prev) => !prev)}
                   className="w-full p-4 flex items-center justify-between text-left hover:bg-[#FAF7F2] transition-colors cursor-pointer"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     <Sparkles className="w-4 h-4 text-[#8C7E72]" />
                     <div>
                       <span className="text-xs font-black text-[#1E1915] block">
-                        Opsi Pemulihan Manual &amp; Pelatihan
+                        Opsi Cadangan Darurat (Offline / File Manual)
                       </span>
                       <span className="text-[10px] text-[#8C7E72]">
-                        Pulihkan dari file/kode, jembatan workshop, &amp; reset
+                        Unduh file .json cadangan, salin kode teks, pulihkan manual, atau sambungkan workshop
                       </span>
                     </div>
                   </div>
@@ -719,11 +671,56 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                 </button>
 
                 {showAdvancedWorkshop && (
-                  <div className="p-4 pt-1 border-t border-[#E2D9C8]/70 space-y-4 bg-[#FAF7F2]/40">
+                  <div className="p-4 pt-2 border-t border-[#E2D9C8]/70 space-y-4 bg-[#FAF7F2]/40">
+                    {/* Buat Salinan Cadangan Offline */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#1E1915] block">
+                          1. Buat Salinan Offline (File / Teks)
+                        </span>
+                        <span className="text-[10px] text-[#8C7E72]">
+                          Sinkron lokal:{' '}
+                          {lastBackupSyncedIso
+                            ? new Date(lastBackupSyncedIso).toLocaleTimeString('id-ID', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })
+                            : 'Baru saja'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={handleCopyRecoveryCode}
+                          className="flex-1 min-w-[130px] px-3 py-2 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                        >
+                          {copiedRecoveryCode ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-300" />
+                              <span>Kode Tersalin!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>Salin Kode Teks</span>
+                            </>
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleDownloadJson}
+                          className="flex-1 min-w-[130px] px-3 py-2 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                        >
+                          <Download className="w-3.5 h-3.5 text-[#5C5148]" />
+                          <span>Unduh File (.json)</span>
+                        </button>
+                      </div>
+                    </div>
+
                     {/* Restore File */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 pt-2 border-t border-[#E2D9C8]/60">
                       <span className="text-xs font-bold text-[#1E1915] block">
-                        1. Pulihkan dari File Cadangan
+                        2. Pulihkan dari File Cadangan
                       </span>
                       <label className="w-full px-3.5 py-2 rounded-xl bg-[#FFFDF9] border border-[#C9B99F] hover:bg-[#F2ECE1] text-[#1E1915] text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors">
                         <Upload className="w-4 h-4 text-[#5C5148]" />
@@ -738,9 +735,9 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                     </div>
 
                     {/* Restore from Code */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 pt-2 border-t border-[#E2D9C8]/60">
                       <label className="block text-xs font-bold text-[#1E1915]">
-                        2. Pulihkan dari Kode Teks (<code>JDW-MOB|v1|...</code>)
+                        3. Pulihkan dari Kode Teks (<code>JDW-MOB|v1|...</code>)
                       </label>
                       <div className="flex gap-2">
                         <input
@@ -763,7 +760,7 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                     {/* Hubungkan Kode Pelatihan */}
                     <div className="space-y-1.5 pt-2 border-t border-[#E2D9C8]/60">
                       <label className="block text-xs font-bold text-[#1E1915]">
-                        3. Hubungkan Kode Pelatihan (<code>JI-R1|...</code>)
+                        4. Hubungkan Kode Pelatihan (<code>JI-R1|...</code>)
                       </label>
                       <p className="text-[11px] text-[#5C5148]">
                         Tempel kode komitmen dari web workshop Jadwal-In untuk menyinkronkan 3 metode pilihanmu.

@@ -275,6 +275,7 @@ export function App() {
               setWorkspaceModalState({ open: true, taskId: null, initialTab: 'STEPS' })
             }
             onOpenDiagnostic={() => setShowDiagnosticModal(true)}
+            onOpenBackup={() => setNotifRecoveryTab('RECOVERY')}
           />
 
           {/* Sleek Floating Center Switcher Dock (Non-Repetitive Command Center) */}

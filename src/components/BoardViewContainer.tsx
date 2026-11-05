@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import {
   CheckCircle2,
   ChevronRight,
+  Cloud,
   Columns2,
   Columns3,
   FolderTree,
@@ -38,6 +39,7 @@ type BoardViewContainerProps = {
   onStartFocusTimer: (task: TrackerTask) => void
   onOpenNewTask: () => void
   onOpenDiagnostic: () => void
+  onOpenBackup?: () => void
 }
 
 const TIME_OPTIONS: Array<{ value: TimeBlockTag | 'ALL'; label: string }> = [
@@ -54,6 +56,7 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
   onStartFocusTimer,
   onOpenNewTask,
   onOpenDiagnostic,
+  onOpenBackup,
 }) => {
   const tasks = useTrackerStore((s) => s.tasks)
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
@@ -792,6 +795,17 @@ export const BoardViewContainer: React.FC<BoardViewContainerProps> = ({
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>Tambah Tugas Langsung</span>
             </button>
+            {onOpenBackup && (
+              <button
+                type="button"
+                onClick={onOpenBackup}
+                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#F2ECE1] hover:bg-[#EADBCE] border border-[#E2D9C8] active:scale-95 text-[#2C4A3E] text-xs font-extrabold cursor-pointer transition-all"
+                title="Punya kode cadangan dari HP atau laptop lain? Pulihkan tugas di sini"
+              >
+                <Cloud className="w-4 h-4 text-[#2C4A3E]" />
+                <span>Punya Kode Cloud? Pulihkan</span>
+              </button>
+            )}
           </div>
         </div>
       )}

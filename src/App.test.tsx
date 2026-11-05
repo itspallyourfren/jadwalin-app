@@ -124,6 +124,7 @@ describe('App & Modals SSR Render Verification', () => {
     const htmlRecov = renderToString(
       <NotificationAndRecoveryModal initialTab="RECOVERY" onClose={() => {}} />
     )
-    expect(htmlRecov).toContain('Cadangan &amp; Pemulihan Lokal HP')
+    expect(htmlRecov).toContain('Cadangan Cloud Peserta (Cloudflare Edge)')
+    expect(htmlRecov).toContain('Opsi Cadangan Darurat')
   })
 })

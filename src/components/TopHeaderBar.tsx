@@ -1,7 +1,7 @@
 // src/components/TopHeaderBar.tsx - Sleek Minimal Top Bar with Tactile Animations & Shortcut Hints
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Bell, Flame, Keyboard, Menu, Plus, Volume2, VolumeX } from 'lucide-react'
+import { Bell, Cloud, Flame, Keyboard, Menu, Plus, Volume2, VolumeX } from 'lucide-react'
 import { calcSeinfeldStreak } from '../engine/studyAndTimerEngine'
 import { useTrackerStore } from '../store/useTrackerStore'
 import type { BoardFrameworkView } from '../data/types'
@@ -32,6 +32,7 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
 }) => {
   const activeBoardView = useTrackerStore((s) => s.activeBoardView)
   const completedDates = useTrackerStore((s) => s.completedDates)
+  const cloudSyncCode = useTrackerStore((s) => s.cloudSyncCode)
   const soundEnabled = useTrackerStore((s) => s.soundEnabled)
   const toggleSound = useTrackerStore((s) => s.toggleSound)
   const streak = calcSeinfeldStreak(completedDates)
@@ -116,6 +117,34 @@ export const TopHeaderBar: React.FC<TopHeaderBarProps> = ({
               strokeWidth={2}
             />
             <span>{streak.currentStreak} hr</span>
+          </motion.button>
+
+          {/* Cloud Sync Status Indicator */}
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.92 }}
+            onClick={onOpenBackupModal}
+            title={
+              cloudSyncCode
+                ? `Tersinkron ke Cloudflare Vault (${cloudSyncCode}) - Buka cadangan`
+                : 'Cadangkan data ke Cloudflare Vault'
+            }
+            aria-label="Status Cloud Vault"
+            className={`min-h-[36px] sm:min-h-[40px] flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 rounded-xl border transition-colors cursor-pointer shadow-2xs ${
+              cloudSyncCode
+                ? 'bg-[#E8EFE9] hover:bg-[#D9E6DB] border-[#2C4A3E]/30 text-[#2C4A3E]'
+                : 'bg-[#FFFDF9] hover:bg-[#F2ECE1] border-[#E2D9C8] text-[#8C7E72]'
+            }`}
+          >
+            <Cloud className="w-3.5 h-3.5 stroke-[2.2]" />
+            {cloudSyncCode ? (
+              <span className="hidden md:inline font-mono font-black text-[11px] tracking-wide">
+                {cloudSyncCode}
+              </span>
+            ) : (
+              <span className="hidden lg:inline text-[11px] font-bold">Cloud</span>
+            )}
           </motion.button>
 
           <motion.button
