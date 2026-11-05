@@ -30,6 +30,11 @@ import type {
   WoopNote,
 } from '../data/types'
 import { generateStarterTaskForProfile } from '../engine/procrastinationDiagnosticEngine'
+import {
+  pushBackupToCloud,
+  pullBackupFromCloud,
+  scheduleDebouncedCloudSync,
+} from '../lib/cloudSyncService'
 
 export type NewTaskInput = {
   title: string
@@ -61,6 +66,9 @@ export type TrackerStoreState = {
   hasCompletedDiagnosis: boolean
   userProfile: UserProcrastinationProfile | null
   soundEnabled: boolean
+  cloudSyncCode: string | null
+  lastCloudSyncIso: string | null
+  isCloudAutoSyncEnabled: boolean
 
   // Actions
   setParticipantProfile: (name: string, characterId: CharacterId) => void
@@ -102,6 +110,11 @@ export type TrackerStoreState = {
   importBackupPayload: (payload: MobileBackupPayload) => void
   importGameCommitment: (commitment: ImportedGameCommitment) => void
   recoverFromIndexedDbIfNeeded: () => Promise<boolean>
+
+  setCloudSyncInfo: (code: string | null, syncedIso?: string | null) => void
+  setCloudAutoSyncEnabled: (enabled: boolean) => void
+  syncWithCloud: () => Promise<{ success: boolean; syncCode?: string; error?: string }>
+  restoreFromCloud: (syncCode: string) => Promise<{ success: boolean; error?: string }>
 }
 
 function buildBackupSnapshot(state: TrackerStoreState): MobileBackupPayload {
@@ -126,6 +139,12 @@ export const useTrackerStore = create<TrackerStoreState>()(
       const mirrorToIdb = () => {
         const snapshot = buildBackupSnapshot(get())
         void saveSnapshotToIndexedDb(snapshot)
+        const st = get()
+        if (st.isCloudAutoSyncEnabled && st.cloudSyncCode) {
+          scheduleDebouncedCloudSync(() => {
+            void get().syncWithCloud()
+          }, 4000)
+        }
       }
 
       const markTodayActive = (dates: string[]): string[] => {
@@ -149,6 +168,9 @@ export const useTrackerStore = create<TrackerStoreState>()(
         hasCompletedDiagnosis: false,
         userProfile: null,
         soundEnabled: true,
+        cloudSyncCode: null,
+        lastCloudSyncIso: null,
+        isCloudAutoSyncEnabled: false,
 
         setParticipantProfile: (participantName, characterId) => {
           set({ participantName, characterId, lastBackupSyncedIso: new Date().toISOString() })
@@ -650,6 +672,46 @@ export const useTrackerStore = create<TrackerStoreState>()(
             }
           }
           return false
+        },
+
+        setCloudSyncInfo: (cloudSyncCode, lastCloudSyncIso = new Date().toISOString()) => {
+          set({ cloudSyncCode, lastCloudSyncIso })
+          mirrorToIdb()
+        },
+
+        setCloudAutoSyncEnabled: (isCloudAutoSyncEnabled) => {
+          set({ isCloudAutoSyncEnabled })
+          mirrorToIdb()
+        },
+
+        syncWithCloud: async () => {
+          const state = get()
+          const payload = state.exportBackupPayload()
+          const res = await pushBackupToCloud(payload, state.participantName, state.cloudSyncCode)
+          if (res.success && res.syncCode) {
+            set({
+              cloudSyncCode: res.syncCode,
+              lastCloudSyncIso: res.updatedAtIso || new Date().toISOString(),
+              isCloudAutoSyncEnabled: true,
+            })
+            mirrorToIdb()
+          }
+          return res
+        },
+
+        restoreFromCloud: async (syncCode: string) => {
+          const res = await pullBackupFromCloud(syncCode)
+          if (res.success && res.payload) {
+            get().importBackupPayload(res.payload)
+            set({
+              cloudSyncCode: res.syncCode || syncCode.trim().toUpperCase(),
+              lastCloudSyncIso: res.updatedAtIso || new Date().toISOString(),
+              isCloudAutoSyncEnabled: true,
+            })
+            mirrorToIdb()
+            return { success: true }
+          }
+          return { success: false, error: res.error }
         },
       }
     },

@@ -72,6 +72,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   const soundEnabled = useTrackerStore((s) => s.soundEnabled)
   const toggleSound = useTrackerStore((s) => s.toggleSound)
   const gameCommitment = useTrackerStore((s) => s.gameCommitment)
+  const cloudSyncCode = useTrackerStore((s) => s.cloudSyncCode)
   const { isInstalled, installApp } = usePwaInstall()
 
   const charProfile = CHARACTER_PROFILES[characterId] ?? CHARACTER_PROFILES['CHR-01']
@@ -384,7 +385,9 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           >
             <ShieldCheck className="w-4 h-4 text-[#1F7A4C] shrink-0" />
             {(!isCollapsed || isOverlayMode) && (
-              <span className="flex-1 text-left truncate">Cadangan Data [B]</span>
+              <span className="flex-1 text-left truncate">
+                Cadangan {cloudSyncCode ? `(${cloudSyncCode})` : 'Data [B]'}
+              </span>
             )}
           </button>
 

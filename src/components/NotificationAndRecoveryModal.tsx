@@ -5,8 +5,10 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
+  Cloud,
   Copy,
   Download,
+  RefreshCw,
   ShieldCheck,
   Sparkles,
   Upload,
@@ -49,6 +51,10 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
   const importGameCommitment = useTrackerStore((s) => s.importGameCommitment)
   const clearAllTasks = useTrackerStore((s) => s.clearAllTasks)
   const lastBackupSyncedIso = useTrackerStore((s) => s.lastBackupSyncedIso)
+  const cloudSyncCode = useTrackerStore((s) => s.cloudSyncCode)
+  const lastCloudSyncIso = useTrackerStore((s) => s.lastCloudSyncIso)
+  const syncWithCloud = useTrackerStore((s) => s.syncWithCloud)
+  const restoreFromCloud = useTrackerStore((s) => s.restoreFromCloud)
 
   const [permStatus, setPermStatus] = useState<string>('prompt')
   const [scheduledCount, setScheduledCount] = useState<number>(0)
@@ -59,6 +65,10 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
   const [showAvatarPicker, setShowAvatarPicker] = useState(false)
   const [showAdvancedWorkshop, setShowAdvancedWorkshop] = useState(false)
   const [copiedRecoveryCode, setCopiedRecoveryCode] = useState(false)
+  const [copiedCloudCode, setCopiedCloudCode] = useState(false)
+  const [isSyncingCloud, setIsSyncingCloud] = useState(false)
+  const [isRestoringCloud, setIsRestoringCloud] = useState(false)
+  const [cloudCodeInput, setCloudCodeInput] = useState('')
   const [pasteRecoveryInput, setPasteRecoveryInput] = useState('')
   const [pasteGameCodeInput, setPasteGameCodeInput] = useState('')
   const [feedbackMessage, setFeedbackMessage] = useState<{
@@ -94,6 +104,59 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
       setTimeout(() => setCopiedRecoveryCode(false), 2500)
     } catch {
       setPasteRecoveryInput(code)
+    }
+  }
+
+  const handlePushCloud = async () => {
+    setIsSyncingCloud(true)
+    const res = await syncWithCloud()
+    setIsSyncingCloud(false)
+    if (res.success && res.syncCode) {
+      setFeedbackMessage({
+        type: 'success',
+        text: `Data tugas berhasil dicadangkan ke Cloudflare Edge! Kode: ${res.syncCode}`,
+      })
+    } else {
+      setFeedbackMessage({
+        type: 'error',
+        text: res.error || 'Gagal menyinkronkan data ke cloud.',
+      })
+    }
+  }
+
+  const handlePullCloud = async () => {
+    if (!cloudCodeInput.trim()) {
+      setFeedbackMessage({
+        type: 'error',
+        text: 'Masukkan kode sinkronisasi (contoh: JDW-8K2M)',
+      })
+      return
+    }
+    setIsRestoringCloud(true)
+    const res = await restoreFromCloud(cloudCodeInput.trim())
+    setIsRestoringCloud(false)
+    if (res.success) {
+      setFeedbackMessage({
+        type: 'success',
+        text: 'Data tugas peserta berhasil dipulihkan dari Cloudflare Vault!',
+      })
+      setCloudCodeInput('')
+    } else {
+      setFeedbackMessage({
+        type: 'error',
+        text: res.error || 'Kode tidak ditemukan di cloud.',
+      })
+    }
+  }
+
+  const handleCopyCloudCode = async () => {
+    if (!cloudSyncCode) return
+    try {
+      await navigator.clipboard.writeText(cloudSyncCode)
+      setCopiedCloudCode(true)
+      setTimeout(() => setCopiedCloudCode(false), 2000)
+    } catch {
+      // fallback
     }
   }
 
@@ -496,6 +559,87 @@ export const NotificationAndRecoveryModal: React.FC<NotificationAndRecoveryModal
                       })}
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* ☁️ Cloudflare Edge Vault Sync (On-Demand & Zero Spam) */}
+              <div className="bg-[#FFFDF9] rounded-2xl border border-[#2C4A3E]/30 p-4 space-y-3 shadow-2xs">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-[#E8EFE9] text-[#2C4A3E] flex items-center justify-center shrink-0">
+                      <Cloud className="w-4 h-4 stroke-[2.2]" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-extrabold text-[#1E1915]">
+                        Cadangan Cloud Peserta (Cloudflare Edge)
+                      </h3>
+                      <p className="text-[11px] text-[#5C5148]">
+                        Sinkronisasi on-demand tanpa spam request. Akses data di HP/laptop lain.
+                      </p>
+                    </div>
+                  </div>
+
+                  {cloudSyncCode && (
+                    <div className="flex items-center gap-1.5 bg-[#F2ECE1] px-2.5 py-1 rounded-xl border border-[#E2D9C8]">
+                      <span className="text-[10px] font-bold text-[#8C7E72]">Kode Vault:</span>
+                      <span className="text-xs font-black text-[#2C4A3E] tracking-wider font-mono">
+                        {cloudSyncCode}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleCopyCloudCode}
+                        className="text-[#5C5148] hover:text-[#1E1915] p-0.5 cursor-pointer"
+                        title="Salin kode vault"
+                      >
+                        {copiedCloudCode ? (
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-[#8C7E72] bg-[#FAF7F2] p-2.5 rounded-xl border border-[#E2D9C8]">
+                  <span>Status Cloud: {cloudSyncCode ? 'Terhubung (Auto-Sync Aktif)' : 'Belum Pernah Disinkronkan'}</span>
+                  <span>
+                    {lastCloudSyncIso
+                      ? `Tersimpan: ${new Date(lastCloudSyncIso).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`
+                      : 'N/A'}
+                  </span>
+                </div>
+
+                {/* Sync & Restore Actions */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-0.5">
+                  <button
+                    type="button"
+                    onClick={handlePushCloud}
+                    disabled={isSyncingCloud}
+                    className="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#2C4A3E] hover:bg-[#233B32] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin' : ''}`} />
+                    <span>{isSyncingCloud ? 'Menyimpan...' : 'Cadangkan ke Cloud Sekarang'}</span>
+                  </button>
+
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      type="text"
+                      placeholder="Ketik Kode JDW-XXXX..."
+                      value={cloudCodeInput}
+                      onChange={(e) => setCloudCodeInput(e.target.value.toUpperCase())}
+                      className="flex-1 px-3 py-2 rounded-xl bg-[#FFFDF9] border border-[#C9B99F] text-xs font-bold text-[#1E1915] placeholder:text-[#8C7E72]/60 focus:outline-2 focus:outline-[#2C4A3E]"
+                    />
+                    <button
+                      type="button"
+                      onClick={handlePullCloud}
+                      disabled={isRestoringCloud || !cloudCodeInput.trim()}
+                      className="px-3.5 py-2 min-h-[40px] rounded-xl bg-[#F2ECE1] hover:bg-[#E2D9C8] text-[#1E1915] text-xs font-extrabold flex items-center justify-center gap-1 cursor-pointer transition-colors shrink-0 disabled:opacity-40"
+                    >
+                      <Download className="w-3.5 h-3.5 text-[#5C5148]" />
+                      <span>{isRestoringCloud ? '...' : 'Tarik'}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
